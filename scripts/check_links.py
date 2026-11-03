@@ -23,6 +23,8 @@ NAV_RE = re.compile(r"\.md$")
 def check_markdown() -> list[str]:
     problems: list[str] = []
     for md in sorted(DOCS.rglob("*.md")):
+        if md.name.startswith("_"):
+            continue  # 模板文件不参与构建
         text = md.read_text(encoding="utf-8")
         for m in LINK_RE.finditer(text):
             target = m.group(1)

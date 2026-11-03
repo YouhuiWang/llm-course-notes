@@ -59,7 +59,8 @@ dist/            PDF 产物
 | M2–M6 | L1–L24 成文 | ⬜ 待开始 |
 | M7 | PDF 精排与校对 | ⬜ 待开始 |
 
-当前可读：[第 4 讲 注意力机制完全拆解](docs/02-transformer/l04-attention.md)、
+当前可读：[第 4 讲 注意力机制](docs/02-transformer/l04-attention.md)、
+[第 9 讲 偏好优化](docs/03-对齐/l09-preference-optimization.md)、
 [第 17 讲 Agent（一）](docs/05-应用层/l17-agent-1.md)。其余讲次为带大纲的占位页。
 
 详见 [PLAN.md](PLAN.md)。

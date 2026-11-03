@@ -60,8 +60,8 @@ agent 的每一个组件，都对应消除其中一条限制。反过来说：**
 这是工程上最重要的一次选择，却经常被跳过。二者的根本区别是：**谁决定控制流**。
 
 <figure markdown="span">
-  ![图 L17-1](../assets/img/l17-decision-tree.svg){ width="100%" }
-  <figcaption>图 L17-1　Agent 还是 Workflow 的判定树。核心判据是"谁决定控制流"：步骤已知就用 workflow，需要动态决策才用 agent。</figcaption>
+  ![图 L17-2](../assets/img/l17-decision-tree.svg){ width="100%" }
+  <figcaption>图 L17-2　Agent 还是 Workflow 的判定树。核心判据是"谁决定控制流"：步骤已知就用 workflow，需要动态决策才用 agent。</figcaption>
 </figure>
 
 
@@ -180,6 +180,32 @@ def run_agent(task, tools, max_steps=15, max_tokens=100_000):
 
 四个终止条件缺一不可。少任何一个，都会出现"无限循环烧钱"或"永远不收敛"的生产事故。
 
+### 例 17.1　一次完整的轨迹
+
+任务："统计这个仓库里 Python 代码的总行数，并找出最大的文件。"
+
+<figure markdown="span">
+  ![图 L17-1](../assets/img/l17-trace.svg){ width="100%" }
+  <figcaption>图 L17-1　四步 ReAct 轨迹。每轮"思考 → 动作 → 观测"只推进一小步，观测结果进入下一轮上下文。</figcaption>
+</figure>
+
+| 步 | 思考 | 动作 | 观测 | 累计 token |
+|---|---|---|---|---|
+| 1 | 先找所有 .py 文件 | `search_files("**/*.py")` | 找到 23 个文件 | 1.2k |
+| 2 | 逐个读太慢，先看结构 | `list_dir("src")` | 8 个模块，3 个测试 | 2.8k |
+| 3 | 统计总行数 | `run_python("wc -l …")` | 总计 4821 行 | 5.1k |
+| 4 | 核对最大的文件 | `run_python("sort -n …")` | train.py 812 行 | 6.9k |
+| — | 收敛，输出答案 | — | — | 7.4k |
+
+三个值得注意的细节：
+
+1. **第 2 步是"绕路"，但值得**：直接读 23 个文件会把上下文撑爆；先看目录结构，把问题从"23 个文件"缩小到"8 个模块"。
+2. **每一步都能被独立验证**：第 3 步的结果可以用 `find . -name "*.py" | xargs wc -l` 复核。这是 agent 相对"一次性生成"的核心优势——中间结果可以查。
+3. **token 增长是超线性的**：每轮都要把完整历史重新送进模型，所以第 4 步的单位成本远高于第 1 步（前缀缓存能缓解，见 §7.4）。
+
+!!! tip "如果任务再复杂一点"
+    把第 1 步和第 3 步合并（直接 `run_python` 一次性统计），链路从 4 步降到 3 步，按 (L17.1)，成功率会明显上升。**能用一次工具调用解决的，不要拆成三次。**
+
 ### 3.3 从自由文本解析到原生协议
 
 早期 ReAct 靠正则从文本里抠 `Action: xxx[args]`，脆弱且易被注入。现在主流是**原生函数调用**：模型直接输出结构化的 `tool_calls` 字段，由推理引擎保证格式合法。
@@ -215,8 +241,8 @@ def run_agent(task, tools, max_steps=15, max_tokens=100_000):
 Manager–Worker 结构把"分解"与"执行"分开：
 
 <figure markdown="span">
-  ![图 L17-2](../assets/img/l17-manager-worker.svg){ width="100%" }
-  <figcaption>图 L17-2　Manager–Worker 层级规划。Manager 负责分解、分配与验收，Worker 负责执行；分解与执行分离使计划可审查、子任务可并行。</figcaption>
+  ![图 L17-3](../assets/img/l17-manager-worker.svg){ width="100%" }
+  <figcaption>图 L17-3　Manager–Worker 层级规划。Manager 负责分解、分配与验收，Worker 负责执行；分解与执行分离使计划可审查、子任务可并行。</figcaption>
 </figure>
 
 
@@ -242,8 +268,8 @@ $$P_{\text{task}} = p^n \tag{L17.1}$$
 $p=0.95$、$n=20$ 时，$P=0.95^{20}\approx 0.358$。**单步 95% 的可靠性，在 20 步任务上只剩三分之一。**
 
 <figure markdown="span">
-  ![图 L17-3](../assets/img/l17-error-accumulation.svg){ width="100%" }
-  <figcaption>图 L17-3　误差累积。(a) 整体成功率随步数指数衰减；(b) 整体成功率跌到 50% 所允许的最长链路：$p=0.99$ 可撑 69 步，$p=0.95$ 只有 14 步。</figcaption>
+  ![图 L17-4](../assets/img/l17-error-accumulation.svg){ width="100%" }
+  <figcaption>图 L17-4　误差累积。(a) 整体成功率随步数指数衰减；(b) 整体成功率跌到 50% 所允许的最长链路：$p=0.99$ 可撑 69 步，$p=0.95$ 只有 14 步。</figcaption>
 </figure>
 
 这个公式给出四条工程原则：
@@ -276,8 +302,8 @@ Reflexion 的做法：任务失败后，让模型写一段"教训"，存进记�
 ### 5.1 三层结构
 
 <figure markdown="span">
-  ![图 L17-4](../assets/img/l17-memory-layers.svg){ width="100%" }
-  <figcaption>图 L17-4　三层记忆与上下文窗口的关系。工作记忆在窗口内，情节记忆是外部的轨迹日志，语义记忆是持久的知识库；三者通过"写入"与"检索"两条通路交换。</figcaption>
+  ![图 L17-5](../assets/img/l17-memory-layers.svg){ width="100%" }
+  <figcaption>图 L17-5　三层记忆与上下文窗口的关系。工作记忆在窗口内，情节记忆是外部的轨迹日志，语义记忆是持久的知识库；三者通过"写入"与"检索"两条通路交换。</figcaption>
 </figure>
 
 | 层 | 载体 | 容量 | 读写成本 | 典型内容 |
@@ -313,6 +339,28 @@ $$\text{score}(m)=\alpha\cdot\text{recency}(m)+\beta\cdot\text{importance}(m)+\g
 $$\text{MMR}=\arg\max_{m\in R\setminus S}\big[\lambda\,\text{sim}(m,q)-(1-\lambda)\max_{m'\in S}\text{sim}(m,m')\big]$$
 
 只保留"相关且互不重复"的条目。
+
+### 例 17.2　五条记忆的打分
+
+假设记忆库里躺着五条记录，当前任务是"帮我改一下这个项目的代码风格"。按 (L17.2) 打分，取 $\alpha=\beta=0.3,\ \gamma=0.4$：
+
+| 记忆 | recency | importance | relevance | 总分 |
+|---|---|---|---|---|
+| 用户偏好 4 空格缩进 | 0.90 | 0.8 | 0.7 | **0.79** |
+| 项目用 uv 管依赖 | 0.80 | 0.7 | 0.8 | **0.77** |
+| 教训：别直接改 main | 0.60 | 0.9 | 0.4 | 0.61 |
+| 上次改了 config.py | 0.95 | 0.5 | 0.3 | 0.55 |
+| 临时路径 /tmp/x | 0.99 | 0.2 | 0.2 | 0.44 |
+
+<figure markdown="span">
+  ![图 L17-6](../assets/img/l17-memory-scores.svg){ width="100%" }
+  <figcaption>图 L17-6　五条记忆的三个分量与加权总分。最"新"的"临时路径"排在最后，因为 importance 与 relevance 都低。</figcaption>
+</figure>
+
+**最"新"的那条排在最后。** "临时路径"的 recency 高达 0.99，全场第一，但另外两项都很低，加权后垫底。反过来，"教训：别直接改 main"已经有点旧（0.60），却靠 0.9 的 importance 排到第三。
+
+!!! tip "为什么不能只用向量相似度"
+    纯 relevance 排序会把"项目用 uv 管依赖"（0.8）排第一，但它对"改代码风格"这件事帮助有限。三个分量各管一件事：recency 防旧信息主导，importance 让关键事件长期可召回，relevance 保证切题。缺一个都会出问题。
 
 ### 5.4 上下文卸载：MemGPT 的分页类比
 
@@ -378,13 +426,39 @@ MemGPT 把上下文窗口当"内存"、外部存储当"磁盘"，用函数调用
 
 **关键细节**：错误信息要**结构化且可读**。返回 `{"error": "PATTERN_INVALID", "hint": "pattern 不能以 / 开头"}` 比返回一坨堆栈有用得多——模型能据此自我修复。
 
+### 例 17.3　一次工具调用失败与修复
+
+工具报错是常态。关键不在"不出错"，而在**错误信息模型能不能读懂**。对比两种返回。
+
+糟糕的返回，模型无从下手：
+
+```json
+{"error": "500 Internal Server Error"}
+```
+
+结构化的返回，模型能自己修：
+
+```json
+{
+  "error": "PATTERN_INVALID",
+  "message": "pattern 不能以 / 开头",
+  "hint": "去掉开头的斜杠，例如用 '**/*.py' 而不是 '/**/*.py'",
+  "retryable": true
+}
+```
+
+收到第二种，模型下一轮会把 pattern 改成 `**/*.py`，一次修复成功；收到第一种，它大概率原样重试，然后卡在同一个错误上——这正是 §4.4 里"单步成功率"被拉低的原因之一。
+
+!!! warning "一个反直觉的经验"
+    工具描述和错误信息是写给**模型**看的，不是写给人看的。人类能从堆栈里推断出问题，模型不能——它只看到你给的那几十个 token。
+
 ### 6.3 MCP：把工具接口标准化
 
 在 MCP 之前，每个框架都有自己的工具注册方式，换个宿主就要重写。MCP（Model Context Protocol）把这层抽象成 client–server：
 
 <figure markdown="span">
-  ![图 L17-5](../assets/img/l17-mcp.svg){ width="100%" }
-  <figcaption>图 L17-5　MCP 的 Host–Client–Server 结构。一个宿主可连接多个 server，每个连接由一个 client 维护；传输层支持本地 stdio 与远程 HTTP+SSE。</figcaption>
+  ![图 L17-7](../assets/img/l17-mcp.svg){ width="100%" }
+  <figcaption>图 L17-7　MCP 的 Host–Client–Server 结构。一个宿主可连接多个 server，每个连接由一个 client 维护；传输层支持本地 stdio 与远程 HTTP+SSE。</figcaption>
 </figure>
 
 

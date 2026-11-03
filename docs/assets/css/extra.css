@@ -305,3 +305,24 @@ body.sidebar-collapsed .md-content {
 .md-nav--secondary .md-nav .md-nav__link--active {
   color: var(--md-typeset-a-color);
 }
+
+/* ============ 打印：代码块 ============ */
+@media print {
+  .md-typeset pre {
+    background: #f7f8fa;
+    border: 1px solid #e4e7eb;
+  }
+
+  .md-typeset pre > code {
+    font-size: 7.8pt;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* 插图统一铺满正文列（矢量图，放大不损失清晰度） */
+.md-typeset figure img {
+  width: 100%;
+  height: auto;
+}

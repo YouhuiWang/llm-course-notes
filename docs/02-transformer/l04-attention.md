@@ -72,6 +72,67 @@ $$\attn = \softmax\!\left(\frac{\boldsymbol{X}\boldsymbol{X}^{\top}}{\sqrt{d}}\r
 
 ---
 
+### 例 4.1　三词句子的注意力手算
+
+公式看完还是虚的。我们用一个能算完的例子，把 (L4.1) 的三步走一遍。
+
+句子只有三个词：**我 / 爱 / 猫**。取 $d_k=2$，并假设投影后的查询、键、值恰好相同（只为手算方便，真实模型里三者由不同矩阵得到）：
+
+| token | $\boldsymbol{q}_i=\boldsymbol{k}_i=\boldsymbol{v}_i$ |
+|---|---|
+| 我 | $(1,\ 0)$ |
+| 爱 | $(0,\ 1)$ |
+| 猫 | $(1,\ 1)$ |
+
+**第一步：打分。** 先算点积，再除以 $\sqrt{2}\approx1.41$：
+
+| 查询 ＼ 键 | 我 | 爱 | 猫 |
+|---|---|---|---|
+| **我** | 0.71 | 0.00 | 0.71 |
+| **爱** | 0.00 | 0.71 | 0.71 |
+| **猫** | 0.71 | 0.71 | **1.41** |
+
+"猫"和自己的点积是 $1\times1+1\times1=2$，除以 1.41 得 1.41，是整张表里最大的分数。
+
+**第二步：softmax。** 每一行独立归一化。以第一行为例：
+
+$$
+\frac{e^{0.71}}{e^{0.71}+e^{0}+e^{0.71}}
+=\frac{2.03}{2.03+1+2.03}=0.40
+$$
+
+三行都算完：
+
+| 查询 ＼ 键 | 我 | 爱 | 猫 |
+|---|---|---|---|
+| **我** | 0.40 | 0.20 | 0.40 |
+| **爱** | 0.20 | 0.40 | 0.40 |
+| **猫** | 0.25 | 0.25 | **0.50** |
+
+**第三步：加权求和。** 还是看第一行：
+
+$$
+\boldsymbol{o}_1=0.40\cdot(1,0)+0.20\cdot(0,1)+0.40\cdot(1,1)=(0.80,\ 0.60)
+$$
+
+三行合起来就是输出矩阵：
+
+| | 维度 1 | 维度 2 |
+|---|---|---|
+| **我** | 0.80 | 0.60 |
+| **爱** | 0.60 | 0.80 |
+| **猫** | 0.75 | 0.75 |
+
+<figure markdown="span">
+  ![图 L4-1](../assets/img/l04-worked-example.svg){ width="100%" }
+  <figcaption>图 L4-1　同一个例子的三步：① 相似度打分 → ② 按行 softmax → ③ 用权重对值加权求和。格子里是实际数值。</figcaption>
+</figure>
+
+!!! tip "从这个例子里能读出三件事"
+    1. **每行加起来都是 1**：softmax 按行归一化，不是按列。所以每个查询"分配出去"的关注度总量固定。
+    2. **分数大不等于权重压倒性**：1.41 的最高分只换来 0.50 的权重，因为 softmax 会把差距压平——这正是 §2 讨论尺度问题的原因。
+    3. **输出是加权平均，不是选择**：$\boldsymbol{o}_1$ 同时混入了三个词的信息，没有任何一个权重等于 1。
+
 ## 2 缩放因子：一个方差论证
 
 公式 (L4.1) 里那个 $\sqrt{d_k}$ 不是装饰。它是这一节要证明的唯一结论。
@@ -111,8 +172,8 @@ $$\softmax(\boldsymbol{z}) \approx (1, 0, \dots, 0)$$
 除以 $\sqrt{d_k}$ 之后，由 (L4.2)，缩放后点积的方差为 $d_k/d_k=1$，与维度无关。softmax 始终工作在"温和"区间。
 
 <figure markdown="span">
-  ![图 L4-1](../assets/img/l04-softmax-scale.svg){ width="100%" }
-  <figcaption>图 L4-1　缩放对 softmax 的影响。(a) $d_k=512$ 时最大权重的分布：不缩放几乎必然饱和到 1；(b) 最大权重均值随 $d_k$ 的变化，缩放后稳定在低值区。</figcaption>
+  ![图 L4-2](../assets/img/l04-softmax-scale.svg){ width="100%" }
+  <figcaption>图 L4-2　缩放对 softmax 的影响。(a) $d_k=512$ 时最大权重的分布：不缩放几乎必然饱和到 1；(b) 最大权重均值随 $d_k$ 的变化，缩放后稳定在低值区。</figcaption>
 </figure>
 
 !!! warning "常见误解：$\sqrt{d_k}$ 是"温度"吗"
@@ -167,8 +228,8 @@ $$
 $\boldsymbol{W}_O$ 也不是可有可无的：它把各头输出混合回 $d$ 维。没有它，各头只能简单拼接，维度间无法交互。
 
 <figure markdown="span">
-  ![图 L4-2](../assets/img/l04-attention-patterns.svg){ width="100%" }
-  <figcaption>图 L4-2　注意力矩阵的四种典型形态（按模式手工构造的示意图）。(a) 均匀因果；(b) 位置头关注前一个 token；(c) 内容头让代词"它"回指"小猫"；(d) 注意力汇：大量权重堆在首 token 上。</figcaption>
+  ![图 L4-3](../assets/img/l04-attention-patterns.svg){ width="100%" }
+  <figcaption>图 L4-3　注意力矩阵的四种典型形态（按模式手工构造的示意图）。(a) 均匀因果；(b) 位置头关注前一个 token；(c) 内容头让代词"它"回指"小猫"；(d) 注意力汇：大量权重堆在首 token 上。</figcaption>
 </figure>
 
 ### 3.2 为什么有效：可解释性证据
@@ -181,7 +242,7 @@ Michel et al. (2019) 做了一个很说明问题的实验：训练后逐个头�
 - 中层出现**指代头**与**实体头**；
 - 深层趋向**语义聚合**，注意力分布变平。
 
-图 L4-2(d) 展示的"注意力汇"（attention sink）是另一个反复出现的现象：无论输入是什么，第一个 token 总会吸收大量注意力。StreamingLLM 正是利用这一点，保留首 token 的 KV 就能支持无限长流式输入。
+图 L4-3(d) 展示的"注意力汇"（attention sink）是另一个反复出现的现象：无论输入是什么，第一个 token 总会吸收大量注意力。StreamingLLM 正是利用这一点，保留首 token 的 KV 就能支持无限长流式输入。
 
 !!! tip "从多头到 GQA"
     既然键值可以共享，何必每个头都存一份？**多查询注意力**（MQA）让所有头共享一组 K/V，**分组查询注意力**（GQA）让每组头共享一组。这是第 13 讲推理优化的伏笔：GQA 把 KV cache 直接缩小 $h/h_{kv}$ 倍。
@@ -209,6 +270,28 @@ $$
 第二步用了 softmax 按行归一化的性质：同时置换行和列，等价于先算再置换。
 
 结论：输出只是跟着输入一起被置换。模型**无法区分**"狗咬人"和"人咬狗"。
+
+### 例 4.2　"狗咬人"与"人咬狗"
+
+把 3 个词的注意力权重矩阵画出来，交换首尾两个词，看矩阵怎么变。
+
+设原句"狗咬人"的权重矩阵为 $\boldsymbol{W}$。交换第 1、3 个词得到"人咬狗"，相当于左乘右乘同一个置换矩阵：
+
+$$
+\boldsymbol{W}'=\boldsymbol{P}\,\boldsymbol{W}\,\boldsymbol{P}^{\top}
+$$
+
+<figure markdown="span">
+  ![图 L4-4](../assets/img/l04-permutation.svg){ width="100%" }
+  <figcaption>图 L4-4　交换首尾两个词后，注意力权重矩阵只是行列重排：0.62 从左上角移到右下角，0.07 从右上角移到左下角，数值一个没变。</figcaption>
+</figure>
+
+逐格对照：0.62 从左上角跑到右下角，0.07 从右上角跑到左下角，**每个数字都没变，只是换了位置**。
+
+这正是 (L4.4) 的直观含义：输入变了，但模型"看到"的仍是同一张表，输出也只是跟着换位置。没有位置编码，它无从知道谁是主语、谁是宾语。
+
+!!! note "加了位置编码之后会怎样"
+    $\boldsymbol{q}_{\text{狗}}$ 与 $\boldsymbol{q}_{\text{人}}$ 的相位不同，两句话的权重矩阵不再互为置换。模型才第一次有了区分语序的依据。
 
 ### 4.2 四代方案
 
@@ -254,8 +337,8 @@ $$
 **内积只依赖 $n-m$**。这就是 RoPE 相对位置性质的完整证明——只有两行。
 
 <figure markdown="span">
-  ![图 L4-3](../assets/img/l04-rope.svg){ width="100%" }
-  <figcaption>图 L4-3　RoPE 的几何含义。(a) 位置 $m$、$n$ 的向量各自旋转 $m\theta$、$n\theta$，内积只由夹角差决定；(b) 固定 $\Delta=5$，RoPE 的内积不随绝对位置变化，而"正弦位置相加"会持续漂移。</figcaption>
+  ![图 L4-5](../assets/img/l04-rope.svg){ width="100%" }
+  <figcaption>图 L4-5　RoPE 的几何含义。(a) 位置 $m$、$n$ 的向量各自旋转 $m\theta$、$n\theta$，内积只由夹角差决定；(b) 固定 $\Delta=5$，RoPE 的内积不随绝对位置变化，而"正弦位置相加"会持续漂移。</figcaption>
 </figure>
 
 三个值得记住的推论：
@@ -311,8 +394,8 @@ $$\text{scores}_{ij}=\begin{cases}\boldsymbol{q}_i\cdot\boldsymbol{k}_j/\sqrt{d_
 ### 6.1 数据流
 
 <figure markdown="span">
-  ![图 L4-4](../assets/img/l04-block-flow.svg){ width="100%" }
-  <figcaption>图 L4-4　Pre-LN Transformer block 的数据流。两条残差通路分别绕过注意力和 FFN，保证梯度有直通路径。</figcaption>
+  ![图 L4-6](../assets/img/l04-block-flow.svg){ width="100%" }
+  <figcaption>图 L4-6　Pre-LN Transformer block 的数据流。两条残差通路分别绕过注意力和 FFN，保证梯度有直通路径。</figcaption>
 </figure>
 
 现代大模型普遍采用 **Pre-LN**：归一化放在子层输入端，残差通路保持"干净"。原版 Transformer 的 Post-LN 在深层会梯度爆炸，需要 warmup 才能训起来。

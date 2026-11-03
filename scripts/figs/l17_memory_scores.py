@@ -47,7 +47,14 @@ ax.set_yticks(y, names, fontsize=7.6)
 ax.set_xlim(0, 1.12)
 ax.set_xlabel("归一化分值", fontsize=8)
 ax.set_title("检索时，最新的不一定最相关", loc="left", fontsize=9.5)
-ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.22), fontsize=6.8, ncol=4, handlelength=1.2, columnspacing=1.2)
+ax.legend(
+    loc="upper center",
+    bbox_to_anchor=(0.5, -0.22),
+    fontsize=6.8,
+    ncol=4,
+    handlelength=1.2,
+    columnspacing=1.2,
+)
 clean_axes(ax, grid_axis="x")
 
 

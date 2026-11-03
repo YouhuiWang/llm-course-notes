@@ -41,8 +41,12 @@ def draw(ax, mat, tokens, title):
         for j in range(3):
             v = mat[i, j]
             ax.text(
-                j, i, f"{v:.2f}",
-                ha="center", va="center", fontsize=9,
+                j,
+                i,
+                f"{v:.2f}",
+                ha="center",
+                va="center",
+                fontsize=9,
                 color="white" if v > 0.45 else INK,
             )
     ax.set_xticks(range(3), tokens)
@@ -57,7 +61,6 @@ def draw(ax, mat, tokens, title):
 
 draw(axes[0], W, tokens_a, "(a) 狗 咬 人")
 draw(axes[1], W_perm, tokens_b, "(b) 人 咬 狗（交换首尾）")
-
 
 
 fig.suptitle("没有位置编码时：注意力对置换等变", fontsize=10.5)

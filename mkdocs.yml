@@ -3,6 +3,8 @@ site_name: 大模型发展与相关技术详解
 site_description: 从统计语言模型到智能体——原理、推导与工程实践的系统讲义
 site_author: wyh
 docs_dir: docs
+exclude_docs: |
+  _template.md
 site_dir: site
 use_directory_urls: true
 copyright: 讲义内容 CC BY-NC-SA 4.0 ｜ 代码 MIT

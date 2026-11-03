@@ -36,22 +36,39 @@ for i, (think, act, obs) in enumerate(steps):
         box(ax, x, y, w, H, text, color, fontsize=fs)
 
     # 行内：思考 → 动作 → 观测
-    arrow(ax, (COL["think"][0] + COL["think"][1], y + H / 2),
-          (COL["act"][0], y + H / 2), color=MUTED)
-    arrow(ax, (COL["act"][0] + COL["act"][1], y + H / 2),
-          (COL["obs"][0], y + H / 2), color=MUTED)
+    arrow(
+        ax, (COL["think"][0] + COL["think"][1], y + H / 2), (COL["act"][0], y + H / 2), color=MUTED
+    )
+    arrow(ax, (COL["act"][0] + COL["act"][1], y + H / 2), (COL["obs"][0], y + H / 2), color=MUTED)
 
 
 # 最终答案
-box(ax, 0.15, 0.75, 9.55, 0.9,
+box(
+    ax,
+    0.15,
+    0.75,
+    9.55,
+    0.9,
     "最终答案：23 个 Python 文件，共 4821 行；最大的是 train.py（812 行）",
-    PALETTE[3], fontsize=7.4, bold=False)
-arrow(ax, (COL["obs"][0] + COL["obs"][1] / 2, rows[-1]),
-      (COL["obs"][0] + COL["obs"][1] / 2, 1.65), color=PALETTE[3])
+    PALETTE[3],
+    fontsize=7.4,
+    bold=False,
+)
+arrow(
+    ax,
+    (COL["obs"][0] + COL["obs"][1] / 2, rows[-1]),
+    (COL["obs"][0] + COL["obs"][1] / 2, 1.65),
+    color=PALETTE[3],
+)
 
-note(ax, 5.0, 0.30,
-     "四步、三次工具调用；每一步都能被单独验证——这是 agent 相对「一次性生成」的核心优势",
-     MUTED, fontsize=6.8)
+note(
+    ax,
+    5.0,
+    0.30,
+    "四步、三次工具调用；每一步都能被单独验证——这是 agent 相对「一次性生成」的核心优势",
+    MUTED,
+    fontsize=6.8,
+)
 
 # 列标题
 for key, label in [("think", "思考 Thought"), ("act", "动作 Action"), ("obs", "观测 Observation")]:

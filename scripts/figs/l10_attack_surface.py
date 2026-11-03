@@ -26,8 +26,14 @@ for i, (title, body, tag, color) in enumerate(items):
     x = 0.25 + i * 2.45
     ax.add_patch(
         FancyBboxPatch(
-            (x, 1.45), W, H, boxstyle="round,pad=0.04,rounding_size=0.10",
-            edgecolor=color, facecolor=color, alpha=0.10, lw=1.1,
+            (x, 1.45),
+            W,
+            H,
+            boxstyle="round,pad=0.04,rounding_size=0.10",
+            edgecolor=color,
+            facecolor=color,
+            alpha=0.10,
+            lw=1.1,
         )
     )
     ax.text(x + W / 2, 2.72, title, ha="center", fontsize=8.2, color=color)

@@ -24,12 +24,18 @@ pts = [(0.78, "宽松\nβ=0.1"), (0.90, "平衡\nβ=0.5"), (0.97, "严格\nβ=2"
 for b, label in pts:
     u = 0.985 - 0.42 * (b - 0.60) ** 2.1
     ax.scatter([b], [u], s=36, color=PALETTE[1], zorder=5)
-    ax.annotate(label, xy=(b, u), xytext=(b - 0.02, u + 0.035), fontsize=7,
-                color=PALETTE[1], ha="center")
+    ax.annotate(
+        label, xy=(b, u), xytext=(b - 0.02, u + 0.035), fontsize=7, color=PALETTE[1], ha="center"
+    )
 
-ax.annotate("前沿之外不可达\n前沿之内是浪费",
-            xy=(0.70, 0.72), xytext=(0.62, 0.55), fontsize=7, color=MUTED,
-            arrowprops=dict(arrowstyle="->", color=MUTED, lw=0.8))
+ax.annotate(
+    "前沿之外不可达\n前沿之内是浪费",
+    xy=(0.70, 0.72),
+    xytext=(0.62, 0.55),
+    fontsize=7,
+    color=MUTED,
+    arrowprops=dict(arrowstyle="->", color=MUTED, lw=0.8),
+)
 
 ax.set_xlabel("攻击拦截率（安全）", fontsize=8)
 ax.set_ylabel("正常请求通过率（有用）", fontsize=8)
@@ -40,9 +46,12 @@ ax.legend(loc="lower left", fontsize=7.2)
 clean_axes(ax)
 
 fig.text(
-    0.5, -0.03,
+    0.5,
+    -0.03,
     "工作点由业务决定：医疗客服要严，创意写作要松",
-    ha="center", fontsize=7.2, color=INK,
+    ha="center",
+    fontsize=7.2,
+    color=INK,
 )
 
 save(fig, "l10-alignment-tax")

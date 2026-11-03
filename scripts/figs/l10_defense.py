@@ -33,7 +33,16 @@ for i, (name, how, miss) in enumerate(stages):
         arrow(ax, (x + W, 2.62), (x + W + 0.23, 2.62), color=MUTED)
 
 note(ax, 5.0, 1.45, "用户输入 → 五道关卡 → 输出", MUTED, fontsize=7)
-note(ax, 5.0, 0.95, "纵深的意义：不指望任何一层完美，只要漏网率相乘后足够低", PALETTE[0], fontsize=6.8)
-note(ax, 5.0, 0.50, "若每层漏 10%，五层串联后漏 10⁻⁵——但前提是各层「独立」", PALETTE[1], fontsize=6.8)
+note(
+    ax,
+    5.0,
+    0.95,
+    "纵深的意义：不指望任何一层完美，只要漏网率相乘后足够低",
+    PALETTE[0],
+    fontsize=6.8,
+)
+note(
+    ax, 5.0, 0.50, "若每层漏 10%，五层串联后漏 10⁻⁵——但前提是各层「独立」", PALETTE[1], fontsize=6.8
+)
 
 save(fig, "l10-defense")

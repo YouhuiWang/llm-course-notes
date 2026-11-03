@@ -22,12 +22,22 @@ ax.plot(N, 2 * N / 3.6, color=PALETTE[0], lw=2, ls="--", label="MoE（top-2/8）
 # Mixtral：总 46.7B，激活 12.9B
 ax.scatter([46.7e9], [2 * 46.7e9], s=40, color=PALETTE[1], zorder=5)
 ax.scatter([46.7e9], [2 * 12.9e9], s=40, color=PALETTE[0], zorder=5)
-ax.annotate("Mixtral 8×7B\n总 46.7B / 激活 12.9B", xy=(46.7e9, 2 * 12.9e9),
-            xytext=(3e9, 6e11), fontsize=7, color=PALETTE[0],
-            arrowprops=dict(arrowstyle="->", color=PALETTE[0], lw=0.8))
+ax.annotate(
+    "Mixtral 8×7B\n总 46.7B / 激活 12.9B",
+    xy=(46.7e9, 2 * 12.9e9),
+    xytext=(3e9, 6e11),
+    fontsize=7,
+    color=PALETTE[0],
+    arrowprops=dict(arrowstyle="->", color=PALETTE[0], lw=0.8),
+)
 
-ax.annotate("同样的 FLOPs\n多挂 3.6 倍参数", xy=(2e11, 2 * 2e11 / 3.6),
-            xytext=(2.2e11, 6e10), fontsize=7, color=MUTED)
+ax.annotate(
+    "同样的 FLOPs\n多挂 3.6 倍参数",
+    xy=(2e11, 2 * 2e11 / 3.6),
+    xytext=(2.2e11, 6e10),
+    fontsize=7,
+    color=MUTED,
+)
 
 ax.set_xscale("log")
 ax.set_yscale("log")
@@ -37,7 +47,13 @@ ax.set_title("MoE：显存按总参数，算力按激活参数", loc="left", fon
 ax.legend(loc="upper left", fontsize=7)
 clean_axes(ax, grid_axis=None)
 
-fig.text(0.5, -0.03, "代价是显存：46.7B 的权重必须全部驻留，哪怕只用 12.9B",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5,
+    -0.03,
+    "代价是显存：46.7B 的权重必须全部驻留，哪怕只用 12.9B",
+    ha="center",
+    fontsize=7.2,
+    color=INK,
+)
 
 save(fig, "l11-decoupling")

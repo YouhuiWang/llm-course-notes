@@ -30,9 +30,14 @@ for ax, data, title, color in [
     ax.set_ylabel("承接 token 的比例", fontsize=7.5)
     clean_axes(ax)
 
-axes[0].annotate("前两个专家吃掉 70%", xy=(1, 0.28), xytext=(2.4, 0.40),
-                 fontsize=7, color=PALETTE[1],
-                 arrowprops=dict(arrowstyle="->", color=PALETTE[1], lw=0.8))
+axes[0].annotate(
+    "前两个专家吃掉 70%",
+    xy=(1, 0.28),
+    xytext=(2.4, 0.40),
+    fontsize=7,
+    color=PALETTE[1],
+    arrowprops=dict(arrowstyle="->", color=PALETTE[1], lw=0.8),
+)
 
 fig.text(0.5, -0.04, "虚线是理想均匀值 1/8 = 12.5%", ha="center", fontsize=7.2, color=INK)
 

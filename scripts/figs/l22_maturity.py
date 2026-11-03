@@ -41,7 +41,13 @@ ax.set_ylabel("潜在影响", fontsize=8)
 ax.set_title("哪些值得现在投入", loc="left", fontsize=9.5)
 clean_axes(ax, grid_axis=None)
 
-fig.text(0.5, -0.03, "右上角（推理模型、多模态统一）已经能产生直接收益；左上角还要等",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5,
+    -0.03,
+    "右上角（推理模型、多模态统一）已经能产生直接收益；左上角还要等",
+    ha="center",
+    fontsize=7.2,
+    color=INK,
+)
 
 save(fig, "l22-maturity")

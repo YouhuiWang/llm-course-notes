@@ -24,8 +24,18 @@ levels = [
 W, H = 8.4, 0.62
 for i, (name, desc, color) in enumerate(levels):
     y = 3.45 - i * 0.78
-    ax.add_patch(FancyBboxPatch((0.75, y), W, H, boxstyle="round,pad=0.02,rounding_size=0.08",
-                                edgecolor=color, facecolor=color, alpha=0.10, lw=1.0))
+    ax.add_patch(
+        FancyBboxPatch(
+            (0.75, y),
+            W,
+            H,
+            boxstyle="round,pad=0.02,rounding_size=0.08",
+            edgecolor=color,
+            facecolor=color,
+            alpha=0.10,
+            lw=1.0,
+        )
+    )
     ax.text(0.95, y + H / 2, name, fontsize=7.4, color=color, va="center")
     ax.text(2.55, y + H / 2, desc, fontsize=6.4, color=INK, va="center")
 

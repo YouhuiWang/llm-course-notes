@@ -22,8 +22,14 @@ ax.loglog(n, 2 * n * d**2, color=PALETTE[0], lw=2, label="线性注意力 / SSM 
 
 cross = d
 ax.axvline(cross, color=MUTED, lw=0.8, ls=":")
-ax.annotate(f"$n=d={d}$ 处交叉", xy=(cross, 2 * cross * d**2), xytext=(2e3, 1e12),
-            fontsize=7, color=MUTED, arrowprops=dict(arrowstyle="->", color=MUTED, lw=0.8))
+ax.annotate(
+    f"$n=d={d}$ 处交叉",
+    xy=(cross, 2 * cross * d**2),
+    xytext=(2e3, 1e12),
+    fontsize=7,
+    color=MUTED,
+    arrowprops=dict(arrowstyle="->", color=MUTED, lw=0.8),
+)
 
 ax.set_xlabel("序列长度 $n$", fontsize=8)
 ax.set_ylabel("FLOPs", fontsize=8)
@@ -31,7 +37,13 @@ ax.set_title("短序列时全注意力更便宜，长序列时反过来", loc="l
 ax.legend(loc="upper left", fontsize=7.2)
 clean_axes(ax, grid_axis=None)
 
-fig.text(0.5, -0.03, "$n<d$ 时 $n^2d<nd^2$——这就是为什么短文本场景没必要换架构",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5,
+    -0.03,
+    "$n<d$ 时 $n^2d<nd^2$——这就是为什么短文本场景没必要换架构",
+    ha="center",
+    fontsize=7.2,
+    color=INK,
+)
 
 save(fig, "l22-complexity")

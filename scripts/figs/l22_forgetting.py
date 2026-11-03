@@ -28,10 +28,22 @@ ax.set_ylim(0.2, 1.0)
 ax.legend(loc="lower left", fontsize=7.2)
 clean_axes(ax)
 
-ax.annotate("掉 62 个点", xy=(3, 0.28), xytext=(1.7, 0.42), fontsize=7, color=PALETTE[1],
-            arrowprops=dict(arrowstyle="->", color=PALETTE[1], lw=0.8))
+ax.annotate(
+    "掉 62 个点",
+    xy=(3, 0.28),
+    xytext=(1.7, 0.42),
+    fontsize=7,
+    color=PALETTE[1],
+    arrowprops=dict(arrowstyle="->", color=PALETTE[1], lw=0.8),
+)
 
-fig.text(0.5, -0.04, "回放把遗忘从 62 点压到 16 点——代价是每步多训 10% 旧数据",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5,
+    -0.04,
+    "回放把遗忘从 62 点压到 16 点——代价是每步多训 10% 旧数据",
+    ha="center",
+    fontsize=7.2,
+    color=INK,
+)
 
 save(fig, "l22-forgetting")

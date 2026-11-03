@@ -31,7 +31,9 @@ for i, (title, color, steps) in enumerate(panels):
             arrow(ax, (x + w, y + 0.2), (x + w + 0.2, y + 0.2), color=MUTED)
         x += w + 0.2
 
-note(ax, 5.0, 0.55, "共同点：都把图像变成某种「token」；差别在「在哪一层融合」", MUTED, fontsize=6.8)
+note(
+    ax, 5.0, 0.55, "共同点：都把图像变成某种「token」；差别在「在哪一层融合」", MUTED, fontsize=6.8
+)
 note(ax, 5.0, 0.20, "融合越早，模型越统一，但训练成本越高", PALETTE[1], fontsize=6.6)
 
 save(fig, "l19-vlm-arch")

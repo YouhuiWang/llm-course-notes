@@ -15,11 +15,13 @@ from style import INK, MUTED, PALETTE, save, setup
 
 setup()
 
-sim = np.array([
-    [0.92, 0.31, 0.18],
-    [0.25, 0.88, 0.30],
-    [0.20, 0.28, 0.90],
-])
+sim = np.array(
+    [
+        [0.92, 0.31, 0.18],
+        [0.25, 0.88, 0.30],
+        [0.20, 0.28, 0.90],
+    ]
+)
 
 cmap = LinearSegmentedColormap.from_list("clip", ["#ffffff", "#cfe0ee", "#5d8fb5", "#1f4e6b"])
 
@@ -28,11 +30,19 @@ ax.imshow(sim, cmap=cmap, vmin=0, vmax=1)
 
 for i in range(3):
     for j in range(3):
-        ax.text(j, i, f"{sim[i, j]:.2f}", ha="center", va="center", fontsize=8,
-                color="white" if sim[i, j] > 0.6 else INK)
+        ax.text(
+            j,
+            i,
+            f"{sim[i, j]:.2f}",
+            ha="center",
+            va="center",
+            fontsize=8,
+            color="white" if sim[i, j] > 0.6 else INK,
+        )
         if i == j:
-            ax.add_patch(Rectangle((j - 0.5, i - 0.5), 1, 1, fill=False,
-                                       edgecolor=PALETTE[1], lw=2))
+            ax.add_patch(
+                Rectangle((j - 0.5, i - 0.5), 1, 1, fill=False, edgecolor=PALETTE[1], lw=2)
+            )
 
 ax.set_xticks(range(3), ["文本 1", "文本 2", "文本 3"], fontsize=7.5)
 ax.set_yticks(range(3), ["图像 1", "图像 2", "图像 3"], fontsize=7.5)
@@ -43,7 +53,13 @@ ax.tick_params(length=0)
 for s in ax.spines.values():
     s.set_visible(False)
 
-fig.text(0.5, -0.06, "每行 softmax 后，正样本概率越高越好；其余 N−1 个都是负样本",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5,
+    -0.06,
+    "每行 softmax 后，正样本概率越高越好；其余 N−1 个都是负样本",
+    ha="center",
+    fontsize=7.2,
+    color=INK,
+)
 
 save(fig, "l19-clip")

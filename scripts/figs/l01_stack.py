@@ -25,8 +25,9 @@ W, H = 9.2, 0.82
 for i, (name, examples, question, color) in enumerate(layers):
     y = 4.75 - i * 0.95
     box(ax, 0.35, y, W, H, "", color, fill_alpha=0.10)
-    ax.text(0.55, y + H / 2, name, ha="left", va="center", fontsize=8.6,
-            color=color, fontweight="bold")
+    ax.text(
+        0.55, y + H / 2, name, ha="left", va="center", fontsize=8.6, color=color, fontweight="bold"
+    )
     ax.text(2.35, y + H / 2, examples, ha="left", va="center", fontsize=7.2, color=INK)
     ax.text(9.4, y + H / 2, question, ha="right", va="center", fontsize=6.8, color=MUTED)
 

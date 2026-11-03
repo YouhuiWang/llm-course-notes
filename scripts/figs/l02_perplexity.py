@@ -39,9 +39,12 @@ ax.legend(fontsize=7.2)
 clean_axes(ax)
 
 fig.text(
-    0.5, -0.03,
+    0.5,
+    -0.03,
     "n 每加 1，参数表就膨胀一个数量级；语料里大多数 n-gram 只出现一次",
-    ha="center", fontsize=7.2, color=INK,
+    ha="center",
+    fontsize=7.2,
+    color=INK,
 )
 
 save(fig, "l02-perplexity")

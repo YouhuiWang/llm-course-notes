@@ -33,8 +33,13 @@ for i, w in enumerate(ctx):
     box(ax, 8.55, 2.75 - i * 0.95, 0.95, 0.6, w, PALETTE[0], fontsize=7.6)
     arrow(ax, (8.00, 2.30), (8.55, 3.05 - i * 0.95), color=MUTED)
 
-note(ax, 5.0, 0.45,
-     "CBOW 训练快、对高频词友好；Skip-gram 对低频词更好，是 word2vec 论文的默认选择",
-     MUTED, fontsize=6.9)
+note(
+    ax,
+    5.0,
+    0.45,
+    "CBOW 训练快、对高频词友好；Skip-gram 对低频词更好，是 word2vec 论文的默认选择",
+    MUTED,
+    fontsize=6.9,
+)
 
 save(fig, "l02-word2vec")

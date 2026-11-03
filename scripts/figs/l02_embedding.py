@@ -66,9 +66,12 @@ ax.set_yticks([])
 clean_axes(ax, grid_axis=None)
 
 fig.text(
-    0.5, -0.03,
+    0.5,
+    -0.03,
     "「性别」是同一方向，「王室」是另一方向——两个方向叠加就得到王后",
-    ha="center", fontsize=7.2, color=INK,
+    ha="center",
+    fontsize=7.2,
+    color=INK,
 )
 
 save(fig, "l02-embedding")

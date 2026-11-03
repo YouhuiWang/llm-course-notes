@@ -19,7 +19,12 @@ fig, ax = plt.subplots(figsize=(6.8, 3.8))
 D = np.logspace(9, 13, 200)
 
 # 等算力线
-for c, label in [(1e21, "$10^{21}$"), (1e22, "$10^{22}$"), (1e23, "$10^{23}$"), (1e24, "$10^{24}$")]:
+for c, label in [
+    (1e21, "$10^{21}$"),
+    (1e22, "$10^{22}$"),
+    (1e23, "$10^{23}$"),
+    (1e24, "$10^{24}$"),
+]:
     N = c / (6 * D)
     ax.plot(D, N, color=MUTED, lw=0.7, ls=":", alpha=0.8)
     # 在 D = 3e12 处标注，只标落在可视范围内的
@@ -47,9 +52,12 @@ ax.set_title("等算力线：$C\\approx 6ND$", loc="left", fontsize=9.5)
 clean_axes(ax, grid_axis=None)
 
 fig.text(
-    0.5, -0.03,
+    0.5,
+    -0.03,
     "同一条虚线上算力相同：往上走是「大模型少数据」，往右走是「小模型多数据」",
-    ha="center", fontsize=7.2, color=INK,
+    ha="center",
+    fontsize=7.2,
+    color=INK,
 )
 
 save(fig, "l01-three-axes")

@@ -38,11 +38,17 @@ for label, idxs, y, desc in rows:
     ax.text(0.02, y + 0.08, label, fontsize=7.6, color=INK, ha="left", va="center")
     ax.text(xe + 0.2, y + 0.08, desc, fontsize=6.8, color=MUTED, va="center")
 
-ax.text(x0 + 6 * STEP + W / 2, Y + H + 0.28, "要预测的词", fontsize=6.8,
-        color=PALETTE[1], ha="center")
+ax.text(
+    x0 + 6 * STEP + W / 2, Y + H + 0.28, "要预测的词", fontsize=6.8, color=PALETTE[1], ha="center"
+)
 
-note(ax, 5.0, 0.55,
-     "n 每加 1，可能的组合数乘上词表大小：|V|=5 万时，trigram 就有 1.25×10¹⁴ 种",
-     MUTED, fontsize=6.9)
+note(
+    ax,
+    5.0,
+    0.55,
+    "n 每加 1，可能的组合数乘上词表大小：|V|=5 万时，trigram 就有 1.25×10¹⁴ 种",
+    MUTED,
+    fontsize=6.9,
+)
 
 save(fig, "l02-ngram-window")

@@ -48,9 +48,12 @@ ax.legend(loc="upper left", fontsize=7.2)
 clean_axes(ax)
 
 fig.text(
-    0.5, -0.03,
+    0.5,
+    -0.03,
     "换成线性坐标、换更细的刻度、换更平滑的指标，阶跃往往会消失",
-    ha="center", fontsize=7.2, color=INK,
+    ha="center",
+    fontsize=7.2,
+    color=INK,
 )
 
 save(fig, "l01-emergence")

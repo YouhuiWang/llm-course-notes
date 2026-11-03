@@ -17,8 +17,8 @@ setup()
 N = np.logspace(8, 12, 300)
 T = 1e12  # 累计服务 1T token
 
-train = 6 * N * 20 * N      # 6ND，D = 20N
-infer = 2 * N * T           # 2NT
+train = 6 * N * 20 * N  # 6ND，D = 20N
+infer = 2 * N * T  # 2NT
 
 cross = 2 * T / 120  # 120N² = 2NT  =>  N = 2T/120
 
@@ -29,7 +29,7 @@ ax.plot(N, infer, color=PALETTE[1], lw=2, label="服务 $10^{12}$ token（$2NT$�
 ax.axvline(cross, color=MUTED, lw=0.8, ls=":")
 ax.scatter([cross], [6 * cross * 20 * cross], s=28, color=PALETTE[3], zorder=5)
 ax.annotate(
-    f"交叉点 ≈ {cross/1e9:.0f}B",
+    f"交叉点 ≈ {cross / 1e9:.0f}B",
     xy=(cross, 6 * cross * 20 * cross),
     xytext=(cross * 2.2, 6 * cross * 20 * cross * 0.25),
     fontsize=7.4,
@@ -46,9 +46,12 @@ ax.legend(loc="upper left", fontsize=7.2)
 clean_axes(ax, grid_axis=None)
 
 fig.text(
-    0.5, -0.03,
+    0.5,
+    -0.03,
     "这就是为什么推理优化（第 13 讲）在工程上比训练更值钱",
-    ha="center", fontsize=7.2, color=INK,
+    ha="center",
+    fontsize=7.2,
+    color=INK,
 )
 
 save(fig, "l01-cost")

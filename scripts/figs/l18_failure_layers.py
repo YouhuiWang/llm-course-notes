@@ -28,8 +28,14 @@ for i, (name, fail, color) in enumerate(layers):
     y = 3.55 - i * 0.75
     ax.add_patch(
         FancyBboxPatch(
-            (0.55, y), W, H, boxstyle="round,pad=0.02,rounding_size=0.08",
-            edgecolor=color, facecolor=color, alpha=0.10, lw=1.0,
+            (0.55, y),
+            W,
+            H,
+            boxstyle="round,pad=0.02,rounding_size=0.08",
+            edgecolor=color,
+            facecolor=color,
+            alpha=0.10,
+            lw=1.0,
         )
     )
     ax.text(0.75, y + H / 2, name, fontsize=7.6, color=color, va="center")

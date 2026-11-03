@@ -34,8 +34,21 @@ arrow(ax, (9.0, 1.35), (1.0, 1.35), color=PALETTE[3], lw=1.2)
 arrow(ax, (1.0, 1.35), (1.0, 2.15), color=PALETTE[3], lw=1.2)
 note(ax, 5.0, 1.12, "回到环境验证：训练与部署用同一套评测", PALETTE[3], fontsize=6.6)
 
-note(ax, 5.0, 0.55, "难点：一条 20 步轨迹只有最终对错——信用分配（credit assignment）", MUTED, fontsize=6.8)
-note(ax, 5.0, 0.20, "对策：过程奖励模型、拒绝采样、把长任务拆成可验证的子目标",
-     PALETTE[1], fontsize=6.6)
+note(
+    ax,
+    5.0,
+    0.55,
+    "难点：一条 20 步轨迹只有最终对错——信用分配（credit assignment）",
+    MUTED,
+    fontsize=6.8,
+)
+note(
+    ax,
+    5.0,
+    0.20,
+    "对策：过程奖励模型、拒绝采样、把长任务拆成可验证的子目标",
+    PALETTE[1],
+    fontsize=6.6,
+)
 
 save(fig, "l18-training")

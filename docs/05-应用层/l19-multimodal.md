@@ -1,20 +1,275 @@
 # 第 19 讲　多模态
 
-!!! info "状态"
-    本讲正在撰写中（计划于 M2–M6 阶段完成）。可以先读已完成的两篇样章：[第 4 讲 注意力机制](../02-transformer/l04-attention.md)、[第 17 讲 Agent](../05-应用层/l17-agent-1.md)。
+!!! abstract "本讲位置"
+    第五部分的收尾。前面所有讲次都在处理文本，本讲讲"图像怎么进来"——以及进来之后，为什么架构会和语言模型长得一样。
 
-## 本讲大纲（草案）
+!!! info "📅 事实核查至 2026-11"
+    ViT（Dosovitskiy et al., 2020）、CLIP（Radford et al., 2021）、LLaVA（2023）、DDPM（Ho et al., 2020）均已核对原文。
 
-- ViT：patch 化与位置编码
-- CLIP 对比学习目标推导
-- 视觉-语言对齐：projector 与交叉注意力
-- 扩散模型：DDPM 目标函数
-- 统一多模态架构的三种路线
+## 学习目标
 
-## 与其他讲的关系
+学完本讲，你应该能够：
 
-本讲属于课程地图的第 17 讲，前后衔接见[首页](../index.md)。
+1. 算出 ViT 把一张图切成多少 token，并说明代价；
+2. 写出 CLIP 的对比损失，手算一次 batch 内的正样本概率；
+3. 说出三种视觉-语言架构的融合位置差异；
+4. 解释扩散模型的前向与反向过程，以及为什么训练目标只是"预测噪声"。
 
-!!! note "撰写约定"
-    每讲统一采用十段式：学习目标 → 直觉 → 形式化 → 推导 + **算例** → **图解** → 代码 → 工程坑 → 论文 → 习题 → 速查卡。
-    硬性要求：每讲 ≥2 个算例（至少 1 个能手算）、≥4 张脚本生成的图。写作模板见 `docs/_template.md`。
+---
+
+## 0 直觉：图像怎么变成 token
+
+语言模型只认 token。要让图像进来，只有一条路：**把图像也变成一串 token**。
+
+三种做法：
+
+| 做法 | 代表 | 思路 |
+|---|---|---|
+| 切 patch | ViT | 图像切成小方块，每块当一个 token |
+| 对齐到文本空间 | CLIP | 图像编码成向量，与文本向量对齐 |
+| 统一 tokenizer | 原生多模态 | 图文共用一个离散词表 |
+
+第一种最通用，也是今天 VLM 的主流。
+
+!!! note "一句话总结"
+    多模态的关键不是"加一个视觉模块"，而是**让图像变成 Transformer 能吃的序列**。
+
+---
+
+## 1 ViT：把图像切成 patch
+
+<figure markdown="span">
+  ![图 L19-1](../assets/img/l19-vit.svg){ width="100%" }
+  <figcaption>图 L19-1　读图要点：$224\times224$ 的图切成 $16\times16$ 的 patch，得到 196 个 token，每个 patch 拉平后过线性层变成 $d$ 维向量。<b>之后就和文本 token 一样进 Transformer</b>。</figcaption>
+</figure>
+
+### 例 19.1　算一下 token 数
+
+$224\times224$ 的图，patch 边长 16：
+
+$$\frac{224}{16}=14,\qquad 14\times14=196\ \text{个 token}$$
+
+换成 patch 边长 14：
+
+$$\frac{224}{14}=16,\qquad 16\times16=256\ \text{个 token}$$
+
+**一张图就 196–256 个 token**，比一句话还长。4K 图像（$3840\times2160$）按 patch 16 切：
+
+$$\frac{3840\times2160}{16^2}=32{,}400\ \text{个 token}$$
+
+**这就是高分辨率图像贵的根本原因**——不是算不动，是 token 太多。
+
+!!! tip "从这个例子里能读出三件事"
+    1. **token 数随面积增长**：分辨率翻倍，token 数翻四倍；
+    2. **patch 越大越省**：但细节丢失，小字看不清；
+    3. **工业界做法**：先缩放到 $224$ 或 $336$，需要细节时再切子图（tiling）。
+
+---
+
+## 2 CLIP：图文对齐
+
+<figure markdown="span">
+  ![图 L19-2](../assets/img/l19-clip.svg){ width="100%" }
+  <figcaption>图 L19-2　读图要点：一个 batch 里 $N$ 对图文，算 $N\times N$ 的相似度矩阵，对角线是正样本、其余全是负样本。<b>一个 batch 提供 $N^2$ 个训练信号</b>，这是对比学习高效的原因。</figcaption>
+</figure>
+
+CLIP 用两个编码器（图像、文本）把样本映射到同一空间，然后做**对比学习**：
+
+$$
+\mathcal{L}=-\frac{1}{N}\sum_{i=1}^{N}\log
+\frac{\exp(\boldsymbol{u}_i^\top\boldsymbol{v}_i/\tau)}
+{\sum_{j=1}^{N}\exp(\boldsymbol{u}_i^\top\boldsymbol{v}_j/\tau)}
+\tag{19.1}
+$$
+
+其中 $\boldsymbol{u}_i$ 是图像向量、$\boldsymbol{v}_i$ 是文本向量、$\tau$ 是温度。
+
+### 例 19.2　手算一次对比损失
+
+batch 只有 3 对。第 1 张图与三条文本的相似度是 $[0.92,\ 0.31,\ 0.18]$。
+
+为便于手算，取 $\tau=0.5$（真实 CLIP 用 $0.07$，会更尖锐）：
+
+$$0.92/0.5=1.84,\quad 0.31/0.5=0.62,\quad 0.18/0.5=0.36$$
+
+取指数：
+
+$$e^{1.84}=6.30,\quad e^{0.62}=1.86,\quad e^{0.36}=1.43$$
+
+归一化，正样本概率：
+
+$$p_1=\frac{6.30}{6.30+1.86+1.43}=0.657$$
+
+损失：
+
+$$\mathcal{L}_1=-\log 0.657=0.42$$
+
+**怎么读这个数**：0.657 意味着模型只有 66% 的把握认出"这张图配这段文字"。训练就是把这个数推向 1。
+
+---
+
+## 3 三种架构
+
+<figure markdown="span">
+  ![图 L19-3](../assets/img/l19-vlm-arch.svg){ width="100%" }
+  <figcaption>图 L19-3　读图要点：三种架构的差别在"在哪一层融合"——projector 在输入层拼接，cross-attention 在每层注入，原生多模态从一开始就共用一个 Transformer。<b>融合越早越统一，但训练成本越高</b>。</figcaption>
+</figure>
+
+| 架构 | 代表 | 优点 | 缺点 |
+|---|---|---|---|
+| **Projector** | LLaVA | 实现简单，复用现成 LLM | 图像 token 挤占上下文 |
+| **Cross-attention** | Flamingo | 图像不占文本位置 | 结构复杂，训练难 |
+| **原生** | GPT-4o / Gemini | 真正的统一模型 | 需要从零训练 |
+
+**LLaVA 的做法最省**：冻结视觉编码器与 LLM，只训一个两层 MLP 把图像特征映射到词向量空间。几千条图文指令数据就能出效果。
+
+---
+
+## 4 扩散模型
+
+<figure markdown="span">
+  ![图 L19-4](../assets/img/l19-diffusion.svg){ width="100%" }
+  <figcaption>图 L19-4　读图要点：前向是固定的加噪过程（无需学习），反向是学习的去噪过程。<b>训练目标极简：让网络预测"这一步加了什么噪声"</b>，用均方误差即可。</figcaption>
+</figure>
+
+### 4.1 前向：加噪
+
+$$
+\boldsymbol{x}_t=\sqrt{\bar\alpha_t}\,\boldsymbol{x}_0+\sqrt{1-\bar\alpha_t}\,\boldsymbol{\epsilon},
+\qquad \boldsymbol{\epsilon}\sim\mathcal{N}(0,\boldsymbol{I})
+\tag{19.2}
+$$
+
+其中 $\bar\alpha_t=\prod_{s=1}^{t}(1-\beta_s)$，随 $t$ 递减。
+
+### 4.2 反向：学去噪
+
+网络 $\boldsymbol{\epsilon}_\theta(\boldsymbol{x}_t,t)$ 预测噪声，损失是
+
+$$
+\mathcal{L}=\mathbb{E}_{t,\boldsymbol{x}_0,\boldsymbol{\epsilon}}
+\big\|\boldsymbol{\epsilon}-\boldsymbol{\epsilon}_\theta(\boldsymbol{x}_t,t)\big\|^2
+\tag{19.3}
+$$
+
+### 例 19.3　信噪比怎么变
+
+信噪比（SNR）定义为
+
+$$\text{SNR}_t=\frac{\bar\alpha_t}{1-\bar\alpha_t}$$
+
+| $t$ | $\bar\alpha_t$ | SNR | 含义 |
+|---|---|---|---|
+| 0 | 1.00 | $\infty$ | 原图 |
+| 250 | 0.80 | 4.0 | 轻微噪声 |
+| 500 | 0.50 | 1.0 | 一半信号一半噪声 |
+| 750 | 0.10 | 0.11 | 基本看不清 |
+| 1000 | $10^{-5}$ | $10^{-5}$ | 纯噪声 |
+
+**结论**：前 250 步在加"细节噪声"，后 250 步在摧毁结构。所以生成时**早期的步最关键**——它决定整体构图。
+
+```python
+import torch
+
+
+def patchify(img: torch.Tensor, patch: int = 16) -> torch.Tensor:
+    """(B, 3, H, W) -> (B, N, 3*patch*patch)"""
+    b, c, h, w = img.shape
+    assert h % patch == 0 and w % patch == 0
+    x = img.reshape(b, c, h // patch, patch, w // patch, patch)
+    x = x.permute(0, 2, 4, 1, 3, 5)              # (B, H/p, W/p, C, p, p)
+    return x.reshape(b, -1, c * patch * patch)
+
+
+img = torch.randn(1, 3, 224, 224)
+tokens = patchify(img)
+print(tokens.shape)      # torch.Size([1, 196, 768])
+print(196 * 768)         # 150528 = 3*16*16*196，与输入像素数一致
+```
+
+---
+
+## 5 统一多模态的路线
+
+三条路线在竞争：
+
+1. **拼接派**（LLaVA）：视觉编码器 + projector + LLM，工程上最快；
+2. **交叉注意力派**（Flamingo）：保持 LLM 不变，靠新增层注入视觉；
+3. **原生派**（GPT-4o、Gemini）：图文音视频从预训练第一天就在一起。
+
+**趋势**：随着算力变便宜，原生派在变强——因为"对齐两个独立编码器"总会损失信息，而联合训练不会。
+
+---
+
+## 6 工程要点与坑
+
+1. **分辨率是成本**：4K 图 3 万 token，先缩放再处理。
+2. **图像 token 挤占上下文**：一张图 256 token，十张图就吃掉 2560。
+3. **CLIP 的零样本很强，但不是万能**：细粒度分类（如鸟类亚种）远不如专用模型。
+4. **扩散模型的步数是延迟**：50 步生成一张图，比一次前向慢两个数量级。
+5. **图文对齐有偏见**：CLIP 在性别、种族上都有可测量的偏差。
+6. **多模态评测要看任务**：VQA、OCR、图表理解，差别很大。
+
+---
+
+## 7 论文与延伸
+
+| 年份 | 论文 | 一句话贡献 |
+|---|---|---|
+| 2020 | [ViT](https://arxiv.org/abs/2010.11929) | 图像切 patch 进 Transformer |
+| 2020 | [DDPM](https://arxiv.org/abs/2006.11239) | 扩散模型 |
+| 2021 | [CLIP](https://arxiv.org/abs/2103.00020) | 图文对比学习 |
+| 2022 | [Flamingo](https://arxiv.org/abs/2204.14198) | 交叉注意力注入视觉 |
+| 2023 | [LLaVA](https://arxiv.org/abs/2304.08485) | projector + 视觉指令微调 |
+| 2024 | [Chameleon](https://arxiv.org/abs/2405.09818) | 原生混合模态 |
+
+---
+
+## 8 习题
+
+**🟢 概念题**
+
+1. 为什么说 ViT 让"图像和文本用同一个架构"成为可能？
+2. 扩散模型的前向过程为什么不需要学习？
+
+**🟡 推导题**
+
+3. 用 (19.2) 推导 $t$ 步后的信号方差与噪声方差，验证 SNR 的表达式。
+4. 用 (19.1) 算：batch=4、正样本相似度 0.8、三个负样本 0.2，$\tau=0.5$ 时的损失。
+
+**🔴 实现题**
+
+5. 跑通 `patchify`，验证输出 token 数与输入像素数的关系。
+6. 用 CLIP 类模型做一个零样本分类，统计 10 类的准确率。
+
+---
+
+## 9 本讲小结
+
+<div class="cheatsheet" markdown>
+
+**一个公式**
+
+$$\text{token 数}=\frac{H\times W}{p^2}$$
+
+**三个数字**
+
+- $224\times224$、patch 16 → 196 token
+- 4K 图 → 3.2 万 token
+- CLIP 的温度 $\tau=0.07$
+
+**三条路线**
+
+projector · cross-attention · 原生
+
+**一句话**
+
+> 多模态不是加模块，是让图像变成序列；融合得越早，模型越统一。
+
+</div>
+
+---
+
+## 来源
+
+- ViT、CLIP、LLaVA、DDPM 的公式与结论核对自原文，链接见 §7，核查日期 2026-11。

@@ -22,22 +22,36 @@ colors = [PALETTE[0], PALETTE[2], PALETTE[1]]
 for ang, lab, c in zip(angles, labels, colors):
     x, y = np.cos(ang), np.sin(ang)
     ax.scatter([x], [y], s=140, color=c, alpha=0.75, zorder=5)
-    ax.annotate(lab, xy=(x, y), xytext=(x * 1.35, y * 1.35), fontsize=7.2,
-                color=c, ha="center", va="center")
+    ax.annotate(
+        lab, xy=(x, y), xytext=(x * 1.35, y * 1.35), fontsize=7.2, color=c, ha="center", va="center"
+    )
 
-ax.plot([np.cos(angles[0]), np.cos(angles[1])], [np.sin(angles[0]), np.sin(angles[1])],
-        color=MUTED, lw=0.8)
-ax.plot([np.cos(angles[1]), np.cos(angles[2])], [np.sin(angles[1]), np.sin(angles[2])],
-        color=MUTED, lw=0.8)
-ax.plot([np.cos(angles[2]), np.cos(angles[0])], [np.sin(angles[2]), np.sin(angles[0])],
-        color=MUTED, lw=0.8)
+ax.plot(
+    [np.cos(angles[0]), np.cos(angles[1])],
+    [np.sin(angles[0]), np.sin(angles[1])],
+    color=MUTED,
+    lw=0.8,
+)
+ax.plot(
+    [np.cos(angles[1]), np.cos(angles[2])],
+    [np.sin(angles[1]), np.sin(angles[2])],
+    color=MUTED,
+    lw=0.8,
+)
+ax.plot(
+    [np.cos(angles[2]), np.cos(angles[0])],
+    [np.sin(angles[2]), np.sin(angles[0])],
+    color=MUTED,
+    lw=0.8,
+)
 
 ax.text(0, 0.15, "选两个\n放弃第三个", ha="center", fontsize=8, color=INK)
 ax.set_xlim(-1.6, 1.6)
 ax.set_ylim(-1.5, 1.6)
 ax.axis("off")
 
-fig.text(0.5, -0.02, "想三者兼得，通常意味着某一项被偷偷放松了",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5, -0.02, "想三者兼得，通常意味着某一项被偷偷放松了", ha="center", fontsize=7.2, color=INK
+)
 
 save(fig, "l23-triangle")

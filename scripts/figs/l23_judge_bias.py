@@ -27,7 +27,13 @@ ax.set_title("不校准的裁判，会把结论带偏 10–35 个点", loc="left
 ax.set_ylim(0, 0.45)
 clean_axes(ax)
 
-fig.text(0.5, -0.04, "对策：交换顺序取平均、控制长度、混入人类标注做校准",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5,
+    -0.04,
+    "对策：交换顺序取平均、控制长度、混入人类标注做校准",
+    ha="center",
+    fontsize=7.2,
+    color=INK,
+)
 
 save(fig, "l23-judge-bias")

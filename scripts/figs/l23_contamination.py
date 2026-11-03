@@ -30,7 +30,8 @@ ax.set_title("污染检测：双峰分布意味着测试集被泄漏", loc="left
 ax.legend(fontsize=7.2)
 clean_axes(ax)
 
-fig.text(0.5, -0.03, "阈值以上的样本要从评测里剔除，或单独报告",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5, -0.03, "阈值以上的样本要从评测里剔除，或单独报告", ha="center", fontsize=7.2, color=INK
+)
 
 save(fig, "l23-contamination")

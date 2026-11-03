@@ -22,9 +22,14 @@ ax.axhline(1.0, color=MUTED, lw=0.8, ls="--")
 ax.text(2020.1, 0.965, "天花板 100%", fontsize=6.8, color=MUTED)
 
 ax.fill_between(years, sota, 1.0, color=PALETTE[1], alpha=0.08)
-ax.annotate("剩余空间 7 个点\n区分度已经很差", xy=(2026, 0.965), xytext=(2022.2, 0.72),
-            fontsize=7, color=PALETTE[1],
-            arrowprops=dict(arrowstyle="->", color=PALETTE[1], lw=0.8))
+ax.annotate(
+    "剩余空间 7 个点\n区分度已经很差",
+    xy=(2026, 0.965),
+    xytext=(2022.2, 0.72),
+    fontsize=7,
+    color=PALETTE[1],
+    arrowprops=dict(arrowstyle="->", color=PALETTE[1], lw=0.8),
+)
 
 ax.set_xlabel("年份", fontsize=8)
 ax.set_ylabel("SOTA 准确率", fontsize=8)
@@ -32,7 +37,13 @@ ax.set_title("基准会饱和：越接近上限，越测不出差异", loc="left
 ax.set_ylim(0.3, 1.02)
 clean_axes(ax)
 
-fig.text(0.5, -0.03, "饱和之后，同样的 1 个点提升，需要的模型能力差距被放大了数倍",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5,
+    -0.03,
+    "饱和之后，同样的 1 个点提升，需要的模型能力差距被放大了数倍",
+    ha="center",
+    fontsize=7.2,
+    color=INK,
+)
 
 save(fig, "l23-saturation")

@@ -29,12 +29,22 @@ note(ax, 1.55, 2.15, "系统提示", MUTED, fontsize=6.8)
 note(ax, 4.70, 2.15, "示例（可 0 个、1 个或多个）", MUTED, fontsize=6.8)
 note(ax, 8.10, 2.15, "待补全", MUTED, fontsize=6.8)
 
-note(ax, 5.0, 1.30,
-     "$k=0$：零样本；$k=1$：单样本；$k\\geq 2$：少样本——参数始终冻结",
-     PALETTE[0], fontsize=7.2)
+note(
+    ax,
+    5.0,
+    1.30,
+    "$k=0$：零样本；$k=1$：单样本；$k\\geq 2$：少样本——参数始终冻结",
+    PALETTE[0],
+    fontsize=7.2,
+)
 
-note(ax, 5.0, 0.55,
-     "整个「学习」发生在这一次前向的上下文里，没有梯度、没有参数更新",
-     MUTED, fontsize=6.8)
+note(
+    ax,
+    5.0,
+    0.55,
+    "整个「学习」发生在这一次前向的上下文里，没有梯度、没有参数更新",
+    MUTED,
+    fontsize=6.8,
+)
 
 save(fig, "l07-prompt-structure")

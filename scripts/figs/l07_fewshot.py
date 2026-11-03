@@ -25,10 +25,14 @@ ax.plot(xs, task_b, "s-", color=PALETTE[2], lw=1.8, ms=4, label="任务 B（格�
 ax.plot(xs, shuffled, "^--", color=PALETTE[1], lw=1.5, ms=4, label="任务 A（示例乱序）")
 
 ax.axvline(3, color=MUTED, lw=0.8, ls=":")
-ax.annotate("4 个示例之后\n收益迅速递减",
-            xy=(3, 0.78), xytext=(3.6, 0.50),
-            fontsize=7, color=MUTED,
-            arrowprops=dict(arrowstyle="->", color=MUTED, lw=0.8))
+ax.annotate(
+    "4 个示例之后\n收益迅速递减",
+    xy=(3, 0.78),
+    xytext=(3.6, 0.50),
+    fontsize=7,
+    color=MUTED,
+    arrowprops=dict(arrowstyle="->", color=MUTED, lw=0.8),
+)
 
 ax.set_xticks(xs, [str(v) for v in k])
 ax.set_xlabel("示例个数 $k$", fontsize=8)
@@ -39,9 +43,12 @@ ax.legend(loc="lower right", fontsize=7)
 clean_axes(ax)
 
 fig.text(
-    0.5, -0.03,
+    0.5,
+    -0.03,
     "同样的示例数量，乱序后掉 10–15 个点——ICL 对「格式」极其敏感",
-    ha="center", fontsize=7.2, color=INK,
+    ha="center",
+    fontsize=7.2,
+    color=INK,
 )
 
 save(fig, "l07-fewshot")

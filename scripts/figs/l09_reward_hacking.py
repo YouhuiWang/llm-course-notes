@@ -20,28 +20,30 @@ true = 1.0 * (1 - np.exp(-x / 18)) - 0.00012 * np.clip(x - 30, 0, None) ** 2
 peak = int(np.argmax(true))
 # 只在"质量开始下滑之后"找交叉点
 tail = np.where(x > 45)[0]
-cross = tail[np.argmin(np.abs(proxy[tail] - true[tail]))]
+cross = int(tail[np.argmin(np.abs(proxy[tail] - true[tail]))])
+cross_x, cross_y = float(x[cross]), float(proxy[cross])
 
 fig, ax = plt.subplots(figsize=(6.8, 3.3))
 ax.plot(x, proxy, color=PALETTE[1], lw=2, ls="--", label="代理奖励（奖励模型打分）")
 ax.plot(x, true, color=PALETTE[0], lw=2, label="真实质量（人类评审）")
 
-ax.axvspan(x[cross], 100, color=PALETTE[1], alpha=0.07)
-ax.axvline(x[cross], color=MUTED, lw=0.8, ls=":")
+ax.axvspan(cross_x, 100.0, color=PALETTE[1], alpha=0.07)
+ax.axvline(cross_x, color=MUTED, lw=0.8, ls=":")
 ax.annotate(
     "交叉点之后：分数还在涨，质量在跌",
-    xy=(x[cross], proxy[cross]),
-    xytext=(x[cross] - 30, 0.30),
+    xy=(cross_x, cross_y),
+    xytext=(cross_x - 30, 0.30),
     fontsize=7.4,
     color=INK,
     arrowprops=dict(arrowstyle="->", color=MUTED, lw=0.8),
 )
 
-ax.scatter([x[peak]], [true[peak]], s=26, color=PALETTE[2], zorder=5)
+peak_x, peak_y = float(x[peak]), float(true[peak])
+ax.scatter([peak_x], [peak_y], s=26, color=PALETTE[2], zorder=5)
 ax.annotate(
     "早停点",
-    xy=(x[peak], true[peak]),
-    xytext=(x[peak] + 3, true[peak] + 0.06),
+    xy=(peak_x, peak_y),
+    xytext=(peak_x + 3, peak_y + 0.06),
     fontsize=7.4,
     color=PALETTE[2],
 )

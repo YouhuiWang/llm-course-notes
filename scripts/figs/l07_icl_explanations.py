@@ -26,12 +26,25 @@ for i, (title, body, color) in enumerate(items):
     x = 0.35 + i * 3.25
     box(ax, x, 1.55, W, H, "", color, fill_alpha=0.10)
     ax.text(x + W / 2, 2.95, title, ha="center", va="center", fontsize=8.4, color=color)
-    ax.text(x + W / 2, 2.15, body, ha="center", va="center", fontsize=6.8, color=INK,
-            linespacing=1.6)
+    ax.text(
+        x + W / 2, 2.15, body, ha="center", va="center", fontsize=6.8, color=INK, linespacing=1.6
+    )
 
-note(ax, 5.0, 0.75, "三者不互斥：检索解释「为什么能」，贝叶斯解释「怎么权衡」，梯度下降解释「为何几步就够」",
-     MUTED, fontsize=6.8)
-note(ax, 5.0, 0.35, "共同的反证：ICL 对示例顺序、标签是否正确都敏感——说明它不是真正的「学习」",
-     PALETTE[1], fontsize=6.6)
+note(
+    ax,
+    5.0,
+    0.75,
+    "三者不互斥：检索解释「为什么能」，贝叶斯解释「怎么权衡」，梯度下降解释「为何几步就够」",
+    MUTED,
+    fontsize=6.8,
+)
+note(
+    ax,
+    5.0,
+    0.35,
+    "共同的反证：ICL 对示例顺序、标签是否正确都敏感——说明它不是真正的「学习」",
+    PALETTE[1],
+    fontsize=6.6,
+)
 
 save(fig, "l07-icl-explanations")

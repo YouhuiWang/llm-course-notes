@@ -23,12 +23,14 @@ ax.plot(n, curated, color=PALETTE[0], lw=2, label="精选数据（人工校验�
 ax.plot(n, random_, color=PALETTE[1], lw=2, ls="--", label="随机抓取（未过滤）")
 
 ax.axhline(0.9, color=MUTED, lw=0.7, ls=":")
-ax.annotate("精选 1000 条 ≈ 随机 3 万条",
-            xy=(1000, 0.82 * (1 - np.exp(-1000 / 900)) + 0.12),
-            xytext=(2600, 0.45),
-            fontsize=7,
-            color=PALETTE[0],
-            arrowprops=dict(arrowstyle="->", color=PALETTE[0], lw=0.8))
+ax.annotate(
+    "精选 1000 条 ≈ 随机 3 万条",
+    xy=(1000, 0.82 * (1 - np.exp(-1000 / 900)) + 0.12),
+    xytext=(2600, 0.45),
+    fontsize=7,
+    color=PALETTE[0],
+    arrowprops=dict(arrowstyle="->", color=PALETTE[0], lw=0.8),
+)
 
 ax.set_xscale("log")
 ax.set_xlabel("训练样本数", fontsize=8)
@@ -39,9 +41,12 @@ ax.legend(loc="lower right", fontsize=7.2)
 clean_axes(ax)
 
 fig.text(
-    0.5, -0.03,
+    0.5,
+    -0.03,
     "数据清洗的边际收益，远高于多标几千条脏数据",
-    ha="center", fontsize=7.2, color=INK,
+    ha="center",
+    fontsize=7.2,
+    color=INK,
 )
 
 save(fig, "l08-quality-quantity")

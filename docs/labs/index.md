@@ -21,14 +21,14 @@ uv pip install --python .venv/bin/python -r requirements-lab.txt
 
 | Lab | 名称 | 对应讲次 | 核心产出 | 预估耗时 |
 |---|---|---|---|---|
-| [1](lab1-attention.md) | 手写注意力 | L4 | 与 PyTorch 对齐到 $10^{-6}$，RoPE 性质验证 | 30 min |
-| [2](lab2-minigpt.md) | 迷你 GPT | L5–L7 | loss 曲线收敛，生成通顺短句 | 60 min |
-| [3](lab3-bpe.md) | 手写 BPE | L2 | 词表训练 + 与 tiktoken 对比报告 | 40 min |
-| [4](lab4-lora.md) | LoRA 微调 | L8/L15 | 可训练参数占比、显存/时间对比 | 45 min |
-| [5](lab5-inference.md) | 推理加速 | L13 | 量化/KV cache/投机解码三组加速比 | 60 min |
-| [6](lab6-rag.md) | 最小 RAG | L16 | 四指标基线 + 消融 | 60 min |
-| [7](lab7-agent.md) | Agent 与消融 | L17 | 四组消融的成功率与成本表 | 90 min |
-| [8](lab8-test-time.md) | 测试时计算 | L20 | 采样/投票/搜索的收益曲线 | 60 min |
+| ✅ [1](lab1-attention.md) | 手写注意力 | L4 | 与 PyTorch 对齐到 $10^{-6}$，RoPE 性质验证 | 30 min |
+| ⬜ [2](lab2-minigpt.md) | 迷你 GPT | L5–L7 | loss 曲线收敛，生成通顺短句 | 60 min |
+| ⬜ [3](lab3-bpe.md) | 手写 BPE | L2 | 词表训练 + 与 tiktoken 对比报告 | 40 min |
+| ⬜ [4](lab4-lora.md) | LoRA 微调 | L8/L15 | 可训练参数占比、显存/时间对比 | 45 min |
+| ⬜ [5](lab5-inference.md) | 推理加速 | L13 | 量化/KV cache/投机解码三组加速比 | 60 min |
+| ⬜ [6](lab6-rag.md) | 最小 RAG | L16 | 四指标基线 + 消融 | 60 min |
+| ⬜ [7](lab7-agent.md) | Agent 与消融 | L17 | 四组消融的成功率与成本表 | 90 min |
+| ⬜ [8](lab8-test-time.md) | 测试时计算 | L20 | 采样/投票/搜索的收益曲线 | 60 min |
 
 ## 实验设计原则
 

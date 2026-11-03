@@ -35,8 +35,15 @@ for text, mask, _ in segs:
     ax.add_patch(Rectangle((x, y), w, h, facecolor=color, alpha=0.16, edgecolor=color, lw=1.1))
     ax.text(x + w / 2, y + h / 2, text, ha="center", va="center", fontsize=6.6, color=INK)
     if mask:
-        ax.text(x + w / 2, y - 0.22, "$\\checkmark$", ha="center", va="center",
-                fontsize=7, color=PALETTE[1])
+        ax.text(
+            x + w / 2,
+            y - 0.22,
+            "$\\checkmark$",
+            ha="center",
+            va="center",
+            fontsize=7,
+            color=PALETTE[1],
+        )
     x += w + 0.08
 
 note(ax, 2.0, 3.55, "条件部分：不计算损失", PALETTE[4], fontsize=7)
@@ -44,7 +51,21 @@ note(ax, 7.2, 3.55, "回答部分：计算损失", PALETTE[1], fontsize=7)
 
 ax.plot([0.35, 9.65], [1.95, 1.95], color=MUTED, lw=0.8, ls=":")
 note(ax, 5.0, 1.62, "同一条序列，两种角色：loss mask 决定哪些位置贡献梯度", MUTED, fontsize=6.8)
-note(ax, 5.0, 1.15, "若整条都算损失，模型会把「用户说了什么」也当成要学的内容", PALETTE[1], fontsize=6.6)
-note(ax, 5.0, 0.70, "有效监督比例 = 回答 token 数 / 总 token 数，通常只有 30%–50%", MUTED, fontsize=6.6)
+note(
+    ax,
+    5.0,
+    1.15,
+    "若整条都算损失，模型会把「用户说了什么」也当成要学的内容",
+    PALETTE[1],
+    fontsize=6.6,
+)
+note(
+    ax,
+    5.0,
+    0.70,
+    "有效监督比例 = 回答 token 数 / 总 token 数，通常只有 30%–50%",
+    MUTED,
+    fontsize=6.6,
+)
 
 save(fig, "l08-loss-mask")

@@ -28,6 +28,9 @@ figures:
 pdf: build
 	@bash scripts/build_pdf.sh
 
+lab1:
+	$(PY) labs/lab1_attention/main.py
+
 check:
 	$(PY) scripts/check_links.py
 	$(PY) scripts/check_terms.py

@@ -27,7 +27,13 @@ def row(y, title, steps, color, desc):
 
 
 row(4.05, "① 人工标注", ["种子指令", "人工写回答", "质检"], PALETTE[0], "贵，但质量最高")
-row(2.85, "② Self-Instruct", ["种子指令", "模型生成", "过滤去重", "扩充"], PALETTE[2], "便宜，需强过滤")
+row(
+    2.85,
+    "② Self-Instruct",
+    ["种子指令", "模型生成", "过滤去重", "扩充"],
+    PALETTE[2],
+    "便宜，需强过滤",
+)
 row(1.65, "③ Evol-Instruct", ["简单指令", "改写变难", "生成回答"], PALETTE[3], "提升复杂度")
 
 note(ax, 5.0, 0.55, "三者常混用：人工做种子与质检，模型做规模，进化做难度", MUTED, fontsize=6.8)

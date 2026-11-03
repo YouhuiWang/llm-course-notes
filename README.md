@@ -2,6 +2,9 @@
 
 > 从统计语言模型到智能体：原理、推导与工程实践的系统讲义。
 > **24 讲 · 8 个可复现实验 · 网页与 PDF 双交付**
+>
+> 🌐 在线阅读：<https://youhuiwang.github.io/llm-course-notes/>
+> 📦 仓库：<https://github.com/YouhuiWang/llm-course-notes>
 
 本项目是一份可直接用于研究生课程的教学讲义。与常见综述不同，它坚持三件事：
 

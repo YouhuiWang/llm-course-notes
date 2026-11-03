@@ -30,10 +30,10 @@ FIGDIR = ROOT / "docs" / "assets" / "img"
 FIGDIR.mkdir(parents=True, exist_ok=True)
 
 # ---- 配色：低饱和、色盲友好、黑白打印仍可区分 ----
-INK = "#1f2933"      # 正文黑
-MUTED = "#7b8794"    # 次要信息
-GRID = "#e4e7eb"     # 网格
-LIGHT = "#f5f7fa"    # 背景块
+INK = "#1f2933"  # 正文黑
+MUTED = "#7b8794"  # 次要信息
+GRID = "#e4e7eb"  # 网格
+LIGHT = "#f5f7fa"  # 背景块
 PALETTE = [
     "#2f6f9f",  # 蓝
     "#c8553d",  # 砖红

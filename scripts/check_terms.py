@@ -49,9 +49,7 @@ def main() -> None:
             problems.append(f"术语「{term}」的首讲 {ref} 不存在")
 
     # 统计未在正文出现的术语（只提示）
-    body = "\n".join(
-        p.read_text(encoding="utf-8") for p in DOCS.rglob("*.md") if p != GLOSSARY
-    )
+    body = "\n".join(p.read_text(encoding="utf-8") for p in DOCS.rglob("*.md") if p != GLOSSARY)
     missing = [t for t in terms if t not in body]
 
     if problems:

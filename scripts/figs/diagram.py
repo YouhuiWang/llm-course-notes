@@ -117,5 +117,7 @@ def tag(ax, x: float, y: float, text: str, color: str = MUTED, fontsize: float =
     )
 
 
-def note(ax, x: float, y: float, text: str, color: str = MUTED, fontsize: float = 7.4, ha: str = "center"):
+def note(
+    ax, x: float, y: float, text: str, color: str = MUTED, fontsize: float = 7.4, ha: str = "center"
+):
     ax.text(x, y, text, fontsize=fontsize, color=color, ha=ha, va="center", linespacing=1.4)

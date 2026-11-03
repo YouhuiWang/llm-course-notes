@@ -32,8 +32,12 @@ box(ax, ax_plus1 - 0.22, y1 + H / 2 - 0.22, 0.44, 0.44, "$\\oplus$", PALETTE[0],
 arrow(ax, (xs[4] + W, y1 + H / 2), (ax_plus1 - 0.24, y1 + H / 2), color=MUTED)
 arrow(ax, (xs[0] + W / 2, y1), (xs[0] + W / 2, 2.42), color=PALETTE[0], dashed=True, style="-")
 arrow(
-    ax, (xs[0] + W / 2, 2.42), (ax_plus1, 2.42),
-    color=PALETTE[0], dashed=True, style="-",
+    ax,
+    (xs[0] + W / 2, 2.42),
+    (ax_plus1, 2.42),
+    color=PALETTE[0],
+    dashed=True,
+    style="-",
 )
 arrow(ax, (ax_plus1, 2.42), (ax_plus1, y1 + H / 2 - 0.22), color=PALETTE[0], dashed=True)
 note(ax, 4.7, 2.62, "残差通路：恒等映射，梯度直通", PALETTE[0], fontsize=7)

@@ -79,7 +79,9 @@ def sinusoidal_pe(pos: int | float) -> np.ndarray:
 delta = 5
 positions = np.arange(0, 60)
 rope_dot = np.array([rope(q, float(m)) @ rope(k, float(m + delta)) for m in positions])
-sin_dot = np.array([(q + sinusoidal_pe(float(m))) @ (k + sinusoidal_pe(float(m + delta))) for m in positions])
+sin_dot = np.array(
+    [(q + sinusoidal_pe(float(m))) @ (k + sinusoidal_pe(float(m + delta))) for m in positions]
+)
 
 ax = axes[1]
 ax.plot(positions, rope_dot, color=PALETTE[0], lw=2, label="RoPE（平移不变）")

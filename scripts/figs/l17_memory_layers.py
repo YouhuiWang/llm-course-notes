@@ -92,7 +92,9 @@ for i, txt in enumerate(["step 1  thought/action/obs", "step 2  thought/action/o
 
 # ---- 语义记忆 ----
 box(6.9, 1.6, 2.7, 2.8, PALETTE[2], "语义记忆", "向量库 / 知识图谱（持久）")
-for i, txt in enumerate(["· 事实：项目使用 uv 管理", "· 偏好：代码用 4 空格缩进", "· 教训：别直接改 main 分支"]):
+for i, txt in enumerate(
+    ["· 事实：项目使用 uv 管理", "· 偏好：代码用 4 空格缩进", "· 教训：别直接改 main 分支"]
+):
     ax.text(7.05, 3.0 - i * 0.36, txt, fontsize=6.4, color=MUTED)
 
 # ---- 写入 ----

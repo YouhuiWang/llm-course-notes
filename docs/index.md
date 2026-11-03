@@ -2,37 +2,37 @@
 
 <div class="grid cards" markdown>
 
--   :material-book-open-variant:{ .lg .middle } **24 讲系统讲义**
+-   **📖 24 讲系统讲义**
 
     ---
 
     从 n-gram 到智能体，每条技术路线都回答同一个问题：**上一代为什么不够用**。
 
-    [:octicons-arrow-right-24: 从第 1 讲开始](00-导论/l01-what-is-llm.md)
+    [→ 从第 1 讲开始](00-导论/l01-what-is-llm.md)
 
--   :material-flask-outline:{ .lg .middle } **8 个可复现实验**
+-   **🧪 8 个可复现实验**
 
     ---
 
     全部 CPU 可跑。手写注意力、迷你 GPT、BPE、LoRA、量化、RAG、Agent、测试时计算。
 
-    [:octicons-arrow-right-24: 实验总览](labs/index.md)
+    [→ 实验总览](labs/index.md)
 
--   :material-chart-timeline-variant:{ .lg .middle } **发展时间线**
+-   **🗓️ 发展时间线**
 
     ---
 
     80 年关键节点，数据驱动、可检索、附论文链接。
 
-    [:octicons-arrow-right-24: 时间线](appendix/timeline.md)
+    [→ 时间线](appendix/timeline.md)
 
--   :material-file-pdf-box:{ .lg .middle } **网页 + PDF 双交付**
+-   **📄 网页 + PDF 双交付**
 
     ---
 
     同一份 Markdown，两条构建链：站点用于检索，PDF 用于通读与打印。
 
-    [:octicons-arrow-right-24: 全书打印版](/print_page/)
+    [→ 全书打印版](/print_page/)
 
 </div>
 
@@ -62,19 +62,19 @@
 
 <div class="grid cards" markdown>
 
--   :material-speedometer-slow:{ .lg .middle } **🟢 入门线**
+-   **🟢 入门线**
 
     ---
 
     读「直觉」「图解」「工程要点」，跳过 🔴 折叠的推导。约 8 小时通读，建立完整心智模型。
 
--   :material-school:{ .lg .middle } **🟡 标准线**
+-   **🟡 标准线**
 
     ---
 
     全部正文 + 前两档习题。适合研究生课程一学期使用，约 40 学时。
 
--   :material-brain:{ .lg .middle } **🔴 深入线**
+-   **🔴 深入线**
 
     ---
 

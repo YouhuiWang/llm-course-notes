@@ -83,7 +83,7 @@ def multi_head_attention(
 ) -> torch.Tensor:
     """与 nn.MultiheadAttention 相同的权重布局，便于逐项对齐。"""
     b, n, d = x.shape
-    qkv = x @ w_qkv.t() + b_qkv                      # (B, N, 3d)
+    qkv = x @ w_qkv.t() + b_qkv  # (B, N, 3d)
     q, k, v = qkv.chunk(3, dim=-1)
 
     def split(t: torch.Tensor) -> torch.Tensor:
@@ -103,8 +103,8 @@ def rope(x: torch.Tensor, positions: torch.Tensor, base: float = 10000.0) -> tor
     x: (..., N, D)，positions: (N,)
     """
     d = x.shape[-1]
-    omega = base ** (-torch.arange(0, d, 2, dtype=x.dtype) / d)   # (D/2,)
-    ang = positions[:, None].to(x.dtype) * omega[None, :]          # (N, D/2)
+    omega = base ** (-torch.arange(0, d, 2, dtype=x.dtype) / d)  # (D/2,)
+    ang = positions[:, None].to(x.dtype) * omega[None, :]  # (N, D/2)
     cos, sin = ang.cos(), ang.sin()
 
     x1, x2 = x[..., 0::2], x[..., 1::2]
@@ -129,14 +129,21 @@ def main() -> int:
 
     print("\n[1] softmax：稳定性与对齐")
     logits = torch.tensor([[1.0, 2.0, 3.0], [0.0, 0.0, 0.0]], dtype=torch.float64)
-    results.append(check("稳定版 vs torch.softmax", (softmax_stable(logits) - logits.softmax(-1)).abs().max().item()))
+    results.append(
+        check(
+            "稳定版 vs torch.softmax",
+            (softmax_stable(logits) - logits.softmax(-1)).abs().max().item(),
+        )
+    )
 
     big = torch.tensor([[1000.0, 999.0, 998.0]], dtype=torch.float64)
     naive_big = softmax_naive(big)
     stable_big = softmax_stable(big)
     print(f"    x=1000 时朴素版输出: {naive_big.flatten().tolist()}")
     print(f"    x=1000 时稳定版输出: {[round(v, 4) for v in stable_big.flatten().tolist()]}")
-    results.append(check("稳定版在 x=1000 时仍正确", (stable_big - big.softmax(-1)).abs().max().item()))
+    results.append(
+        check("稳定版在 x=1000 时仍正确", (stable_big - big.softmax(-1)).abs().max().item())
+    )
 
     print("\n[2] 缩放点积注意力：与 F.scaled_dot_product_attention 对齐")
     q, k, v = (torch.randn(2, 4, 16, 32, dtype=torch.float64) for _ in range(3))
@@ -150,8 +157,16 @@ def main() -> int:
     d, h, n = 64, 8, 12
     mha = torch.nn.MultiheadAttention(d, h, batch_first=True, dtype=torch.float64)
     x = torch.randn(2, n, d, dtype=torch.float64)
-    ref, _ = mha(x, x, x, need_weights=False, attn_mask=torch.triu(torch.ones(n, n, dtype=torch.bool), diagonal=1))
-    mine = multi_head_attention(x, mha.in_proj_weight, mha.in_proj_bias, mha.out_proj.weight, mha.out_proj.bias, h)
+    ref, _ = mha(
+        x,
+        x,
+        x,
+        need_weights=False,
+        attn_mask=torch.triu(torch.ones(n, n, dtype=torch.bool), diagonal=1),
+    )
+    mine = multi_head_attention(
+        x, mha.in_proj_weight, mha.in_proj_bias, mha.out_proj.weight, mha.out_proj.bias, h
+    )
     results.append(check("多头输出（含因果掩码）", (mine - ref).abs().max().item()))
 
     print("\n[4] RoPE：内积只依赖相对位置")
@@ -163,18 +178,31 @@ def main() -> int:
     print(f"    固定 Δ=5，改变绝对位置 m∈[0,39]，内积跨度 {spread:.2e}")
     results.append(check("内积与绝对位置无关", spread))
 
-    d1, d2 = rope(q1, torch.tensor([3])) @ rope(k1, torch.tensor([8])), rope(q1, torch.tensor([10])) @ rope(k1, torch.tensor([15]))
+    d1, d2 = (
+        rope(q1, torch.tensor([3])) @ rope(k1, torch.tensor([8])),
+        rope(q1, torch.tensor([10])) @ rope(k1, torch.tensor([15])),
+    )
     results.append(check("(3,8) 与 (10,15) 的内积相同", (d1 - d2).abs().item()))
 
-    sinpe = lambda p: torch.cat([torch.sin(p * 10000 ** (-torch.arange(0, 64, 2) / 64)),
-                                 torch.cos(p * 10000 ** (-torch.arange(0, 64, 2) / 64))]).sort().values
+    sinpe = lambda p: (
+        torch.cat(
+            [
+                torch.sin(p * 10000 ** (-torch.arange(0, 64, 2) / 64)),
+                torch.cos(p * 10000 ** (-torch.arange(0, 64, 2) / 64)),
+            ]
+        )
+        .sort()
+        .values
+    )
     sin_dots = torch.stack([(q1 + sinpe(float(m))) @ (k1 + sinpe(float(m + 5))) for m in pos])
-    print(f"    对照：正弦绝对位置的内积跨度 {(sin_dots.max() - sin_dots.min()).item():.2f}（随 m 漂移）")
+    print(
+        f"    对照：正弦绝对位置的内积跨度 {(sin_dots.max() - sin_dots.min()).item():.2f}（随 m 漂移）"
+    )
 
     print("\n[5] 因果掩码：可见比例")
     for n_ in (4, 16, 64):
         visible = n_ * (n_ + 1) // 2
-        print(f"    n={n_:>2}: 可见 {visible:>5} / {n_ ** 2:>5} = {visible / n_ ** 2:.1%}")
+        print(f"    n={n_:>2}: 可见 {visible:>5} / {n_**2:>5} = {visible / n_**2:.1%}")
     results.append(check("n=4 的可见比例为 62.5%", abs(4 * 5 / 2 / 16 - 0.625)))
 
     print(f"\n{'=' * 60}")

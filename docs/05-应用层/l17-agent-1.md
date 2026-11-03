@@ -60,8 +60,8 @@ agent 的每一个组件，都对应消除其中一条限制。反过来说：**
 这是工程上最重要的一次选择，却经常被跳过。二者的根本区别是：**谁决定控制流**。
 
 <figure markdown="span">
-  ![图 L17-2](../assets/img/l17-decision-tree.svg){ width="100%" }
-  <figcaption>图 L17-2　Agent 还是 Workflow 的判定树。核心判据是"谁决定控制流"：步骤已知就用 workflow，需要动态决策才用 agent。</figcaption>
+  ![图 L17-1](../assets/img/l17-decision-tree.svg){ width="100%" }
+  <figcaption>图 L17-1　读图要点：Agent 还是 Workflow 的判定树。核心判据是"谁决定控制流"：步骤已知就用 workflow，需要动态决策才用 agent。</figcaption>
 </figure>
 
 
@@ -185,8 +185,8 @@ def run_agent(task, tools, max_steps=15, max_tokens=100_000):
 任务："统计这个仓库里 Python 代码的总行数，并找出最大的文件。"
 
 <figure markdown="span">
-  ![图 L17-1](../assets/img/l17-trace.svg){ width="100%" }
-  <figcaption>图 L17-1　四步 ReAct 轨迹。每轮"思考 → 动作 → 观测"只推进一小步，观测结果进入下一轮上下文。</figcaption>
+  ![图 L17-2](../assets/img/l17-trace.svg){ width="100%" }
+  <figcaption>图 L17-2　读图要点：四步 ReAct 轨迹。每轮"思考 → 动作 → 观测"只推进一小步，观测结果进入下一轮上下文。</figcaption>
 </figure>
 
 | 步 | 思考 | 动作 | 观测 | 累计 token |
@@ -242,7 +242,7 @@ Manager–Worker 结构把"分解"与"执行"分开：
 
 <figure markdown="span">
   ![图 L17-3](../assets/img/l17-manager-worker.svg){ width="100%" }
-  <figcaption>图 L17-3　Manager–Worker 层级规划。Manager 负责分解、分配与验收，Worker 负责执行；分解与执行分离使计划可审查、子任务可并行。</figcaption>
+  <figcaption>图 L17-3　读图要点：Manager–Worker 层级规划。Manager 负责分解、分配与验收，Worker 负责执行；分解与执行分离使计划可审查、子任务可并行。</figcaption>
 </figure>
 
 
@@ -269,7 +269,7 @@ $p=0.95$、$n=20$ 时，$P=0.95^{20}\approx 0.358$。**单步 95% 的可靠性�
 
 <figure markdown="span">
   ![图 L17-4](../assets/img/l17-error-accumulation.svg){ width="100%" }
-  <figcaption>图 L17-4　误差累积。(a) 整体成功率随步数指数衰减；(b) 整体成功率跌到 50% 所允许的最长链路：$p=0.99$ 可撑 69 步，$p=0.95$ 只有 14 步。</figcaption>
+  <figcaption>图 L17-4　读图要点：误差累积。(a) 整体成功率随步数指数衰减；(b) 整体成功率跌到 50% 所允许的最长链路：$p=0.99$ 可撑 69 步，$p=0.95$ 只有 14 步。</figcaption>
 </figure>
 
 这个公式给出四条工程原则：
@@ -303,7 +303,7 @@ Reflexion 的做法：任务失败后，让模型写一段"教训"，存进记�
 
 <figure markdown="span">
   ![图 L17-5](../assets/img/l17-memory-layers.svg){ width="100%" }
-  <figcaption>图 L17-5　三层记忆与上下文窗口的关系。工作记忆在窗口内，情节记忆是外部的轨迹日志，语义记忆是持久的知识库；三者通过"写入"与"检索"两条通路交换。</figcaption>
+  <figcaption>图 L17-5　读图要点：三层记忆与上下文窗口的关系。工作记忆在窗口内，情节记忆是外部的轨迹日志，语义记忆是持久的知识库；三者通过"写入"与"检索"两条通路交换。</figcaption>
 </figure>
 
 | 层 | 载体 | 容量 | 读写成本 | 典型内容 |
@@ -354,7 +354,7 @@ $$\text{MMR}=\arg\max_{m\in R\setminus S}\big[\lambda\,\text{sim}(m,q)-(1-\lambd
 
 <figure markdown="span">
   ![图 L17-6](../assets/img/l17-memory-scores.svg){ width="100%" }
-  <figcaption>图 L17-6　五条记忆的三个分量与加权总分。最"新"的"临时路径"排在最后，因为 importance 与 relevance 都低。</figcaption>
+  <figcaption>图 L17-6　读图要点：五条记忆的三个分量与加权总分。最"新"的"临时路径"排在最后，因为 importance 与 relevance 都低。</figcaption>
 </figure>
 
 **最"新"的那条排在最后。** "临时路径"的 recency 高达 0.99，全场第一，但另外两项都很低，加权后垫底。反过来，"教训：别直接改 main"已经有点旧（0.60），却靠 0.9 的 importance 排到第三。
@@ -458,7 +458,7 @@ MemGPT 把上下文窗口当"内存"、外部存储当"磁盘"，用函数调用
 
 <figure markdown="span">
   ![图 L17-7](../assets/img/l17-mcp.svg){ width="100%" }
-  <figcaption>图 L17-7　MCP 的 Host–Client–Server 结构。一个宿主可连接多个 server，每个连接由一个 client 维护；传输层支持本地 stdio 与远程 HTTP+SSE。</figcaption>
+  <figcaption>图 L17-7　读图要点：MCP 的 Host–Client–Server 结构。一个宿主可连接多个 server，每个连接由一个 client 维护；传输层支持本地 stdio 与远程 HTTP+SSE。</figcaption>
 </figure>
 
 

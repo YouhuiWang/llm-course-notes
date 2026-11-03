@@ -125,7 +125,7 @@ $$
 
 <figure markdown="span">
   ![图 L4-1](../assets/img/l04-worked-example.svg){ width="100%" }
-  <figcaption>图 L4-1　同一个例子的三步：① 相似度打分 → ② 按行 softmax → ③ 用权重对值加权求和。格子里是实际数值。</figcaption>
+  <figcaption>图 L4-1　读图要点：同一个例子的三步：① 相似度打分 → ② 按行 softmax → ③ 用权重对值加权求和。格子里是实际数值。</figcaption>
 </figure>
 
 !!! tip "从这个例子里能读出三件事"
@@ -173,7 +173,7 @@ $$\softmax(\boldsymbol{z}) \approx (1, 0, \dots, 0)$$
 
 <figure markdown="span">
   ![图 L4-2](../assets/img/l04-softmax-scale.svg){ width="100%" }
-  <figcaption>图 L4-2　缩放对 softmax 的影响。(a) $d_k=512$ 时最大权重的分布：不缩放几乎必然饱和到 1；(b) 最大权重均值随 $d_k$ 的变化，缩放后稳定在低值区。</figcaption>
+  <figcaption>图 L4-2　读图要点：缩放对 softmax 的影响。(a) $d_k=512$ 时最大权重的分布：不缩放几乎必然饱和到 1；(b) 最大权重均值随 $d_k$ 的变化，缩放后稳定在低值区。</figcaption>
 </figure>
 
 !!! warning "常见误解：$\sqrt{d_k}$ 是"温度"吗"
@@ -229,7 +229,7 @@ $\boldsymbol{W}_O$ 也不是可有可无的：它把各头输出混合回 $d$ �
 
 <figure markdown="span">
   ![图 L4-3](../assets/img/l04-attention-patterns.svg){ width="100%" }
-  <figcaption>图 L4-3　注意力矩阵的四种典型形态（按模式手工构造的示意图）。(a) 均匀因果；(b) 位置头关注前一个 token；(c) 内容头让代词"它"回指"小猫"；(d) 注意力汇：大量权重堆在首 token 上。</figcaption>
+  <figcaption>图 L4-3　读图要点：注意力矩阵的四种典型形态（按模式手工构造的示意图）。(a) 均匀因果；(b) 位置头关注前一个 token；(c) 内容头让代词"它"回指"小猫"；(d) 注意力汇：大量权重堆在首 token 上。</figcaption>
 </figure>
 
 ### 3.2 为什么有效：可解释性证据
@@ -283,7 +283,7 @@ $$
 
 <figure markdown="span">
   ![图 L4-4](../assets/img/l04-permutation.svg){ width="100%" }
-  <figcaption>图 L4-4　交换首尾两个词后，注意力权重矩阵只是行列重排：0.62 从左上角移到右下角，0.07 从右上角移到左下角，数值一个没变。</figcaption>
+  <figcaption>图 L4-4　读图要点：交换首尾两个词后，注意力权重矩阵只是行列重排：0.62 从左上角移到右下角，0.07 从右上角移到左下角，数值一个没变。</figcaption>
 </figure>
 
 逐格对照：0.62 从左上角跑到右下角，0.07 从右上角跑到左下角，**每个数字都没变，只是换了位置**。
@@ -338,7 +338,7 @@ $$
 
 <figure markdown="span">
   ![图 L4-5](../assets/img/l04-rope.svg){ width="100%" }
-  <figcaption>图 L4-5　RoPE 的几何含义。(a) 位置 $m$、$n$ 的向量各自旋转 $m\theta$、$n\theta$，内积只由夹角差决定；(b) 固定 $\Delta=5$，RoPE 的内积不随绝对位置变化，而"正弦位置相加"会持续漂移。</figcaption>
+  <figcaption>图 L4-5　读图要点：RoPE 的几何含义。(a) 位置 $m$、$n$ 的向量各自旋转 $m\theta$、$n\theta$，内积只由夹角差决定；(b) 固定 $\Delta=5$，RoPE 的内积不随绝对位置变化，而"正弦位置相加"会持续漂移。</figcaption>
 </figure>
 
 三个值得记住的推论：
@@ -395,7 +395,7 @@ $$\text{scores}_{ij}=\begin{cases}\boldsymbol{q}_i\cdot\boldsymbol{k}_j/\sqrt{d_
 
 <figure markdown="span">
   ![图 L4-6](../assets/img/l04-block-flow.svg){ width="100%" }
-  <figcaption>图 L4-6　Pre-LN Transformer block 的数据流。两条残差通路分别绕过注意力和 FFN，保证梯度有直通路径。</figcaption>
+  <figcaption>图 L4-6　读图要点：Pre-LN Transformer block 的数据流。两条残差通路分别绕过注意力和 FFN，保证梯度有直通路径。</figcaption>
 </figure>
 
 现代大模型普遍采用 **Pre-LN**：归一化放在子层输入端，残差通路保持"干净"。原版 Transformer 的 Post-LN 在深层会梯度爆炸，需要 warmup 才能训起来。

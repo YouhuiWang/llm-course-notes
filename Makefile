@@ -34,6 +34,7 @@ lab1:
 check:
 	$(PY) scripts/check_links.py
 	$(PY) scripts/check_terms.py
+	$(PY) scripts/audit.py
 
 all: figures build pdf
 

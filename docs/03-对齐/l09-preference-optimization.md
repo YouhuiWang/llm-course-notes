@@ -322,6 +322,29 @@ $$
     2. **学反了的情况（C）权重最大**（0.525），但损失也最大（0.744），模型会被重点纠正。
     3. **$\beta$ 直接缩放 $\Delta$**：同样的对数比之差，$\beta$ 从 0.1 调到 1.0，$\beta\Delta$ 放大十倍，损失曲线立刻变陡。
 
+```python
+import torch
+import torch.nn.functional as F
+
+
+def dpo_loss(logp_w, logp_l, ref_logp_w, ref_logp_l, beta: float = 0.1):
+    """四个参数都是「整条回答」的对数概率之和，形状 (batch,)。
+
+    返回 (损失, 梯度权重)。权重 = sigma(-beta * delta)，
+    已经学好的样本权重趋近 0，这就是 DPO 自带的难度感知。
+    """
+    delta = (logp_w - ref_logp_w) - (logp_l - ref_logp_l)
+    loss = -F.logsigmoid(beta * delta)
+    weight = torch.sigmoid(-beta * delta)
+    return loss.mean(), weight.mean()
+
+
+# 复现例 9.3 的 A 行：Delta = 1.0, beta = 0.1
+loss, w = dpo_loss(torch.tensor([-0.5]), torch.tensor([-1.5]),
+                   torch.tensor([0.0]), torch.tensor([0.0]), beta=0.1)
+print(f"loss={loss:.3f}, weight={w:.3f}")   # loss=0.644, weight=0.475
+```
+
 ### 4.4 DPO 的隐含假设与失败模式
 
 DPO 不是"免费午餐"，它做了三个假设：

@@ -69,8 +69,8 @@ $$
 门控分支 $\operatorname{SiLU}(\cdot)$ 起到"软开关"的作用：它决定每个维度放行多少信息。
 
 <figure markdown="span">
-  ![图 L5-4](../assets/img/l05-activations.svg){ width="100%" }
-  <figcaption>图 L5-4　读图要点：SiLU 在负区仍有小输出，梯度不会完全断掉；ReLU 在负区直接归零。<b>门控需要这种"软"的激活</b>，否则退化成硬开关。</figcaption>
+  ![图 L5-2](../assets/img/l05-activations.svg){ width="100%" }
+  <figcaption>图 L5-2　读图要点：SiLU 在负区仍有小输出，梯度不会完全断掉；ReLU 在负区直接归零。<b>门控需要这种"软"的激活</b>，否则退化成硬开关。</figcaption>
 </figure>
 
 **参数怎么配平**：SwiGLU 有三个矩阵，若保持与标准 FFN（$4d^2$）相同的参数量，需要
@@ -125,8 +125,8 @@ $$32\times2048\times2048\times2\ \text{B}=268\ \text{MB}$$
 ### 2.1 一张图看懂
 
 <figure markdown="span">
-  ![图 L5-2](../assets/img/l05-masks.svg){ width="100%" }
-  <figcaption>图 L5-2　读图要点：颜色越深表示"能看见"。encoder 全可见；decoder 只能看左下三角；prefix-LM 的前缀部分双向、后缀部分因果。<b>架构的差别，本质就是 mask 的差别</b>。</figcaption>
+  ![图 L5-3](../assets/img/l05-masks.svg){ width="100%" }
+  <figcaption>图 L5-3　读图要点：颜色越深表示"能看见"。encoder 全可见；decoder 只能看左下三角；prefix-LM 的前缀部分双向、后缀部分因果。<b>架构的差别，本质就是 mask 的差别</b>。</figcaption>
 </figure>
 
 ### 例 5.2　手算因果掩码的可见比例
@@ -162,8 +162,8 @@ $$\frac{2048\times2049/2}{2048^2}=\frac{2\,098\,176}{4\,194\,304}\approx50.02\%$
 ### 3.1 四种目标
 
 <figure markdown="span">
-  ![图 L5-3](../assets/img/l05-objectives.svg){ width="100%" }
-  <figcaption>图 L5-3　读图要点：同一串 token，换一种"遮法"就是另一种预训练目标。CLM 全因果；MLM 随机遮点；span corruption 遮连续段；prefix-LM 前双向后因果。</figcaption>
+  ![图 L5-4](../assets/img/l05-objectives.svg){ width="100%" }
+  <figcaption>图 L5-4　读图要点：同一串 token，换一种"遮法"就是另一种预训练目标。CLM 全因果；MLM 随机遮点；span corruption 遮连续段；prefix-LM 前双向后因果。</figcaption>
 </figure>
 
 | 目标 | 遮什么 | 可见性 | 代表 |

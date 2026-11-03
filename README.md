@@ -71,12 +71,15 @@ dist/            PDF 产物
 |---|---|---|
 | M0 | 骨架与构建链 | ✅ 已完成 |
 | M1 | 样章 L4（注意力）、L17（Agent） | ✅ 已完成 |
-| M2–M6 | L1–L24 成文 | ⬜ 待开始 |
-| M7 | PDF 精排与校对 | ✅ 已完成 |
+| M2 | L1–L9 成文 | ✅ 已完成 |
+| M3 | L10–L16 + Lab1–3 | ✅ 已完成 |
+| M4 | L17–L19 + Lab7 | ✅ 已完成 |
+| M5 | L20–L22 + Lab8 | ✅ 已完成 |
+| M6 | L23–L25 + 附录 | ✅ 已完成 |
+| M7 | PDF 精排、校对、发布上线 | ✅ 已完成 |
 
-当前可读：[第 4 讲 注意力机制](docs/02-transformer/l04-attention.md)、
-[第 9 讲 偏好优化](docs/03-对齐/l09-preference-optimization.md)、
-[第 17 讲 Agent（一）](docs/05-应用层/l17-agent-1.md)。其余讲次为带大纲的占位页。
+**全部完成**：25 讲正文、8 个实验、106 张插图、7.7 万字，PDF 482 页。
+在线版：<https://youhuiwang.github.io/llm-course-notes/>
 
 详见 [PLAN.md](PLAN.md)。
 

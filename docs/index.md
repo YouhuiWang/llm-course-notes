@@ -2,7 +2,7 @@
 
 <div class="grid cards" markdown>
 
--   **📖 24 讲系统讲义**
+-   **📖 25 讲系统讲义**
 
     ---
 
@@ -101,27 +101,34 @@
 | 里程碑 | 内容 | 状态 |
 |---|---|---|
 | M0 | 骨架、构建链、术语表、时间线数据 | ✅ 完成 |
-| M1 | 样章：L4 注意力、L17 Agent | 🚧 进行中 |
-| M2 | L1–L9 成文 | ⬜ 待开始 |
-| M3 | L10–L16 + Lab1–3 | ⬜ 待开始 |
-| M4 | L17–L19 + Lab7 | ⬜ 待开始 |
-| M5 | L20–L22 + Lab8 | ⬜ 待开始 |
-| M6 | L23–L24 + 附录 | ⬜ 待开始 |
-| M7 | PDF 双线、全站校对 | ⬜ 待开始 |
+| M1 | 样章：L4 注意力、L17 Agent | ✅ 完成 |
+| M2 | L1–L9 成文 | ✅ 完成 |
+| M3 | L10–L16 + Lab1–3 | ✅ 完成 |
+| M4 | L17–L19 + Lab7 | ✅ 完成 |
+| M5 | L20–L22 + Lab8 | ✅ 完成 |
+| M6 | L23–L25 + 附录 | ✅ 完成 |
+| M7 | PDF 精排、全站校对、发布上线 | ✅ 完成 |
+
+**当前规模**：25 讲 · 8 个实验 · 106 张插图 · 7.7 万字 · PDF 482 页。
+在线版：<https://youhuiwang.github.io/llm-course-notes/>
 
 ## 本地构建
 
+**最简单**：双击 `启动讲义.command`，会自动构建并在浏览器打开；看完双击 `关闭讲义.command`。
+
+手动方式：
+
 ```bash
-# 文档站
+# 首次准备
 uv venv --python 3.12 .venv
 uv pip install --python .venv/bin/python -r requirements.txt
-make serve          # http://127.0.0.1:8000
 
-# 图表（全部脚本生成）
-make figures
+./scripts/serve.sh start    # 启动（默认 8123，PORT=9000 可换）
+./scripts/serve.sh stop     # 停止
 
-# PDF（Chrome headless 打印打印版页面）
-make pdf
+make figures                # 重新生成全部插图
+make pdf                    # 生成 PDF（482 页）
+make check                  # 死链 + 术语 + 结构审计 + 文本 lint
 ```
 
 ## 约定

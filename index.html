@@ -2380,7 +2380,7 @@
 <div class="grid cards">
 <ul>
 <li>
-<p><strong>📖 24 讲系统讲义</strong></p>
+<p><strong>📖 25 讲系统讲义</strong></p>
 <hr />
 <p>从 n-gram 到智能体，每条技术路线都回答同一个问题：<strong>上一代为什么不够用</strong>。</p>
 <p><a href="00-%E5%AF%BC%E8%AE%BA/l01-what-is-llm/">→ 从第 1 讲开始</a></p>
@@ -2537,51 +2537,55 @@
 <tr>
 <td>M1</td>
 <td>样章：L4 注意力、L17 Agent</td>
-<td>🚧 进行中</td>
+<td>✅ 完成</td>
 </tr>
 <tr>
 <td>M2</td>
 <td>L1–L9 成文</td>
-<td>⬜ 待开始</td>
+<td>✅ 完成</td>
 </tr>
 <tr>
 <td>M3</td>
 <td>L10–L16 + Lab1–3</td>
-<td>⬜ 待开始</td>
+<td>✅ 完成</td>
 </tr>
 <tr>
 <td>M4</td>
 <td>L17–L19 + Lab7</td>
-<td>⬜ 待开始</td>
+<td>✅ 完成</td>
 </tr>
 <tr>
 <td>M5</td>
 <td>L20–L22 + Lab8</td>
-<td>⬜ 待开始</td>
+<td>✅ 完成</td>
 </tr>
 <tr>
 <td>M6</td>
-<td>L23–L24 + 附录</td>
-<td>⬜ 待开始</td>
+<td>L23–L25 + 附录</td>
+<td>✅ 完成</td>
 </tr>
 <tr>
 <td>M7</td>
-<td>PDF 双线、全站校对</td>
-<td>⬜ 待开始</td>
+<td>PDF 精排、全站校对、发布上线</td>
+<td>✅ 完成</td>
 </tr>
 </tbody>
 </table>
+<p><strong>当前规模</strong>：25 讲 · 8 个实验 · 106 张插图 · 7.7 万字 · PDF 482 页。
+在线版：<a href="https://youhuiwang.github.io/llm-course-notes/">https://youhuiwang.github.io/llm-course-notes/</a></p>
 <h2 id="_7">本地构建<a class="headerlink" href="#_7" title="Permanent link">¶</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 文档站</span>
+<p><strong>最简单</strong>：双击 <code>启动讲义.command</code>，会自动构建并在浏览器打开；看完双击 <code>关闭讲义.command</code>。</p>
+<p>手动方式：</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 首次准备</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>uv<span class="w"> </span>venv<span class="w"> </span>--python<span class="w"> </span><span class="m">3</span>.12<span class="w"> </span>.venv
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--python<span class="w"> </span>.venv/bin/python<span class="w"> </span>-r<span class="w"> </span>requirements.txt
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>make<span class="w"> </span>serve<span class="w">          </span><span class="c1"># http://127.0.0.1:8000</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># 图表（全部脚本生成）</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>make<span class="w"> </span>figures
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1"># PDF（Chrome headless 打印打印版页面）</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>make<span class="w"> </span>pdf
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>./scripts/serve.sh<span class="w"> </span>start<span class="w">    </span><span class="c1"># 启动（默认 8123，PORT=9000 可换）</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>./scripts/serve.sh<span class="w"> </span>stop<span class="w">     </span><span class="c1"># 停止</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>make<span class="w"> </span>figures<span class="w">                </span><span class="c1"># 重新生成全部插图</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>make<span class="w"> </span>pdf<span class="w">                    </span><span class="c1"># 生成 PDF（482 页）</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>make<span class="w"> </span>check<span class="w">                  </span><span class="c1"># 死链 + 术语 + 结构审计 + 文本 lint</span>
 </span></code></pre></div>
 <h2 id="_8">约定<a class="headerlink" href="#_8" title="Permanent link">¶</a></h2>
 <ul>

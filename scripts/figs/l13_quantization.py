@@ -18,8 +18,9 @@ mem = 70e9 * bits / 8 / 1e9
 drop = np.array([0.0, 0.05, 0.30, 1.20])
 
 fig, ax = plt.subplots(figsize=(6.6, 3.3))
-bars = ax.bar([str(b) for b in bits], mem, color=[PALETTE[2], PALETTE[0], PALETTE[1], PALETTE[3]],
-              width=0.55)
+bars = ax.bar(
+    [str(b) for b in bits], mem, color=[PALETTE[2], PALETTE[0], PALETTE[1], PALETTE[3]], width=0.55
+)
 for bar, m in zip(bars, mem):
     ax.text(bar.get_x() + bar.get_width() / 2, m + 3, f"{m:.0f} GB", ha="center", fontsize=7.5)
 
@@ -39,7 +40,13 @@ ax2.tick_params(axis="y", colors=PALETTE[3])
 ax2.set_ylim(0, 1.5)
 ax2.spines["top"].set_visible(False)
 
-fig.text(0.5, -0.04, "8 bit 几乎无损；4 bit 需分组量化（group=128）；3 bit 以下要谨慎",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5,
+    -0.04,
+    "8 bit 几乎无损；4 bit 需分组量化（group=128）；3 bit 以下要谨慎",
+    ha="center",
+    fontsize=7.2,
+    color=INK,
+)
 
 save(fig, "l13-quantization")

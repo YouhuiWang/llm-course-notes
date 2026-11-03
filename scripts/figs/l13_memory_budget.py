@@ -15,8 +15,8 @@ setup()
 
 lengths = ["4K", "32K", "128K"]
 tokens = np.array([4096, 32768, 131072])
-weights = 14.0                                   # 7B × 2 B
-kv = 2 * 32 * 4096 * tokens * 2 / 1e9            # 2·L·d·n·2B
+weights = 14.0  # 7B × 2 B
+kv = 2 * 32 * 4096 * tokens * 2 / 1e9  # 2·L·d·n·2B
 
 fig, ax = plt.subplots(figsize=(6.6, 3.4))
 x = np.arange(len(lengths))
@@ -41,7 +41,13 @@ ax.set_ylim(0, 105)
 ax.legend(loc="upper left", fontsize=7.2)
 clean_axes(ax)
 
-fig.text(0.5, -0.03, "7B 模型、32 层、d=4096、bf16；KV 每 token 512 KB",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5,
+    -0.03,
+    "7B 模型、32 层、d=4096、bf16；KV 每 token 512 KB",
+    ha="center",
+    fontsize=7.2,
+    color=INK,
+)
 
 save(fig, "l13-memory-budget")

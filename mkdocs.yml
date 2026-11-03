@@ -11,13 +11,10 @@ theme:
   name: material
   language: zh
   features:
-    - navigation.tabs
-    - navigation.sections
     - navigation.top
     - navigation.indexes
     - navigation.footer
     - toc.follow
-    - toc.integrate
     - content.code.copy
     - content.code.annotate
     - content.tabs.link
@@ -100,6 +97,7 @@ extra_javascript:
   - assets/vendor/katex/katex.min.js
   - assets/vendor/katex/auto-render.min.js
   - assets/js/katex-init.js
+  - assets/js/sidebar-toggle.js
 
 nav:
   - 首页: index.md

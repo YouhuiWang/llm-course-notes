@@ -194,8 +194,9 @@
   height: auto;
 }
 
-/* ============ 布局：目录并入左侧栏 ============ */
-/* 整体栅格稍宽，但正文列限制在舒适阅读宽度内（中文约 40–45 字/行） */
+
+/* ============ 布局 ============ */
+/* 整体栅格稍宽，正文列限制在舒适阅读宽度内（中文约 45–50 字/行） */
 .md-grid {
   max-width: 80rem;
 }
@@ -205,70 +206,73 @@
   margin-inline: auto;
 }
 
-/* 宽表格与代码块可以突破正文列，避免被挤成多行 */
-.md-typeset table:not([class]),
-.md-typeset .highlight {
-  max-width: 100%;
-}
-
-/* 左侧栏整体稍宽，容纳长中文标题 */
+/* 左侧栏稍宽，容纳长中文标题 */
 @media screen and (min-width: 76.25em) {
   .md-sidebar--primary {
     width: 14.5rem;
   }
 }
 
-/* 并入左栏的"目录"块：与导航之间加分隔，层级更清晰 */
-.md-nav--secondary {
-  margin-top: 1.4rem;
-  padding-top: 0.6rem;
+/* 导航树：分节之间用细分隔线，层级用左侧竖线表达 */
+.md-nav--primary > .md-nav__list > .md-nav__item--nested {
+  margin-top: 0.35rem;
+  padding-top: 0.35rem;
   border-top: 1px solid var(--md-default-fg-color--lightest);
 }
 
-.md-nav--secondary .md-nav__title {
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: none;
-  color: var(--md-default-fg-color--light);
-  padding: 0 0 0.3rem 0;
-  background: none;
-  box-shadow: none;
-}
-
-.md-nav--secondary .md-nav__list {
-  font-size: 0.7rem;
-  line-height: 1.55;
-}
-
-.md-nav--secondary .md-nav__link {
-  margin-top: 0.05rem;
-  padding-top: 0.18rem;
-  padding-bottom: 0.18rem;
-}
-
-/* 当前小节高亮更克制 */
-.md-nav--secondary .md-nav__link--active {
-  font-weight: 600;
-}
-
-/* 三级目录再缩进一级，避免长标题折行后看不出层级 */
-.md-nav--secondary .md-nav .md-nav__list {
-  margin-left: 0.5rem;
+.md-nav--primary .md-nav__item--nested > .md-nav > .md-nav__list {
+  margin-left: 0.45rem;
+  padding-left: 0.45rem;
   border-left: 1px solid var(--md-default-fg-color--lightest);
-  padding-left: 0.4rem;
 }
 
-/* 并入左栏的目录：补一个明确的"本页目录"标题 */
-.md-nav--secondary::before {
-  content: "本页目录";
-  display: block;
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: var(--md-default-fg-color--light);
-  margin-bottom: 0.35rem;
+/* ============ 侧栏折叠 ============ */
+.sidebar-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 0;
+  border-radius: 0.2rem;
+  color: var(--md-primary-bg-color);
+  cursor: pointer;
+  padding: 0.35rem;
+  opacity: 0.75;
+  transition: opacity 0.15s, background-color 0.15s;
 }
 
-/* 说明：不要给目录内部列表加 max-height/overflow，
-   否则内容会溢出容器并与下方讲次重叠；整栏滚动交给 .md-sidebar__scrollwrap */
+.sidebar-toggle:hover {
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.sidebar-toggle svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: currentColor;
+}
+
+@media screen and (min-width: 76.25em) {
+  .sidebar-toggle {
+    display: inline-flex;
+  }
+}
+
+/* 收起状态：整栏隐藏，正文自动占满 */
+body.sidebar-collapsed .md-sidebar--primary {
+  display: none;
+}
+
+body.sidebar-collapsed .md-main__inner {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* 收起侧栏后，正文可用更宽的版心 */
+body.sidebar-collapsed .md-content {
+  max-width: 56rem;
+}
+
+/* 顶栏按钮与配色切换之间留一点间距 */
+.sidebar-toggle {
+  margin-right: 0.15rem;
+}

@@ -84,6 +84,17 @@ dist/            PDF 产物
 
 新建一讲：复制 `docs/_template.md` → 改名 `l{NN}-{slug}.md` → 填写。
 
+## 三种打开方式
+
+| 方式 | 命令 / 文件 | 适合 |
+|---|---|---|
+| **双击打开** | `dist/大模型发展与相关技术详解-单页版.html` | 不需要任何服务，离线可读 |
+| 本地站点 | `make serve` | 有搜索、导航、侧栏 |
+| 在线 | <https://youhuiwang.github.io/llm-course-notes/> | 手机/分享 |
+
+单页版由 `make single` 生成：把 CSS、JS、字体、149 张插图全部内联成一个
+约 15 MB 的 HTML，双击即可阅读，公式与图都能正常显示。
+
 ## 部署
 
 ```bash

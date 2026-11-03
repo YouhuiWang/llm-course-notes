@@ -28,8 +28,13 @@ ax.plot([10, 1200], [10, 1200], color=MUTED, lw=0.8, ls=":", label="稠密（激
 
 for name, total, active, color, fx, fy in models:
     ax.scatter([total], [active], s=70, color=color, alpha=0.8, zorder=5)
-    ax.annotate(f"{name}\n{active / total:.1%}", xy=(total, active),
-                xytext=(total * fx, active * fy), fontsize=6.2, color=color)
+    ax.annotate(
+        f"{name}\n{active / total:.1%}",
+        xy=(total, active),
+        xytext=(total * fx, active * fy),
+        fontsize=6.2,
+        color=color,
+    )
 
 ax.set_xscale("log")
 ax.set_yscale("log")
@@ -41,7 +46,13 @@ ax.set_title("MoE 的本质：参数很贵，计算很便宜", loc="left", fonts
 ax.legend(loc="lower right", fontsize=7)
 clean_axes(ax, grid_axis=None)
 
-fig.text(0.5, -0.03, "激活占比越低，同样算力下能挂的「知识」越多——代价是显存",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5,
+    -0.03,
+    "激活占比越低，同样算力下能挂的「知识」越多——代价是显存",
+    ha="center",
+    fontsize=7.2,
+    color=INK,
+)
 
 save(fig, "l25-params")

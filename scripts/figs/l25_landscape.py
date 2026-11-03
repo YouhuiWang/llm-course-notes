@@ -40,7 +40,8 @@ ax.set_ylabel("推理与 agent 能力 →", fontsize=8)
 ax.set_title("两条路线，同一目标", loc="left", fontsize=9.5)
 clean_axes(ax, grid_axis=None)
 
-fig.text(0.5, -0.03, "开源阵营的追赶速度，是 2023 年以来最大的变量",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5, -0.03, "开源阵营的追赶速度，是 2023 年以来最大的变量", ha="center", fontsize=7.2, color=INK
+)
 
 save(fig, "l25-landscape")

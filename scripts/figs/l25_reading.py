@@ -25,8 +25,18 @@ items = [
 W, H = 2.2, 1.7
 for i, (name, body, check, color) in enumerate(items):
     x = 0.25 + i * 2.42
-    ax.add_patch(FancyBboxPatch((x, 1.45), W, H, boxstyle="round,pad=0.04,rounding_size=0.10",
-                                edgecolor=color, facecolor=color, alpha=0.10, lw=1.1))
+    ax.add_patch(
+        FancyBboxPatch(
+            (x, 1.45),
+            W,
+            H,
+            boxstyle="round,pad=0.04,rounding_size=0.10",
+            edgecolor=color,
+            facecolor=color,
+            alpha=0.10,
+            lw=1.1,
+        )
+    )
     ax.text(x + W / 2, 2.85, name, ha="center", fontsize=8.0, color=color)
     ax.text(x + W / 2, 2.20, body, ha="center", fontsize=6.2, color=INK, linespacing=1.5)
     ax.text(x + W / 2, 1.62, check, ha="center", fontsize=5.8, color=MUTED)

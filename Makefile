@@ -38,6 +38,7 @@ check:
 	$(PY) scripts/check_links.py
 	$(PY) scripts/check_terms.py
 	$(PY) scripts/audit.py
+	$(PY) scripts/lint_prose.py
 
 all: figures build pdf
 

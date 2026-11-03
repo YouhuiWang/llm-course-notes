@@ -1884,6 +1884,8 @@
       
         
       
+        
+      
     
     
     
@@ -2079,6 +2081,34 @@
     
   
     习题答案要点
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendix/report-template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    技术报告阅读模板
   
 
     
@@ -2849,10 +2879,21 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#appendix-report-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.7 技术报告阅读模板
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#appendix-faq" class="md-nav__link">
     <span class="md-ellipsis">
       
-        12.7 常见问题
+        12.8 常见问题
       
     </span>
   </a>
@@ -2863,7 +2904,7 @@
   <a href="#appendix-env" class="md-nav__link">
     <span class="md-ellipsis">
       
-        12.8 环境手册
+        12.9 环境手册
       
     </span>
   </a>
@@ -13446,6 +13487,7 @@ A_{\text{错}}=\frac{0-0.375}{0.484}=-0.77\]</div>
 </tr>
 </tbody>
 </table>
+<p>可直接复制的填写模板见<a href="#appendix-report-template">技术报告阅读模板</a>。</p>
 <div class="admonition note">
 <p class="admonition-title">一句话总结</p>
 <p>模型之间的差别，<strong>九成落在"架构改了什么"和"数据怎么配"这两件事上</strong>，剩下的才是规模。</p>
@@ -13679,6 +13721,11 @@ A_{\text{错}}=\frac{0-0.375}{0.484}=-0.77\]</div>
 </tbody>
 </table>
 <p><strong>读这张表的正确方式</strong>：不要比"谁最强"，要比"谁在你的场景里性价比最高"。</p>
+<figure>
+  <img alt="图 L25-5" src="../assets/img/l25-price.svg" width="100%" />
+<br />
+<figcaption>图 L25-5　读图要点：纵轴是对数刻度。GPT-4 到 DeepSeek-V3 两年降了约 100 倍，之后价格带分成两层——<b>闭源在 $1–3，开源在 $0.3 以下</b>。</figcaption>
+</figure>
 <h3 id="08-%e6%a8%a1%e5%9e%8b%e8%a7%a3%e5%89%96-l25-model-anatomy-61">6.1 怎么选：三个问题<a class="headerlink" href="#08-%e6%a8%a1%e5%9e%8b%e8%a7%a3%e5%89%96-l25-model-anatomy-61" title="Permanent link">¶</a></h3>
 <ol>
 <li><strong>数据能不能出内网？</strong> 不能 → 只能自部署开源模型（Qwen / DeepSeek / Llama）。</li>
@@ -17393,7 +17440,126 @@ A_{\text{错}}=\frac{0-0.375}{0.484}=-0.77\]</div>
 <li>宽了做不完；MVP 只做一类问题、一个数据源、一个模型。</li>
 <li>500 ms：网络 50 + 首 token 150 + 生成 10 token×30 = 500，检索要靠缓存。</li>
 <li>项目 B 总分约 0.77；最该补"工程完整"（权重 0.25、得分最低）。</li>
-</ol></section><section class="print-page" id="appendix-faq" heading-number="12.7"><h1 id="appendix-faq-_1">常见问题<a class="headerlink" href="#appendix-faq-_1" title="Permanent link">¶</a></h1>
+</ol></section><section class="print-page" id="appendix-report-template" heading-number="12.7"><h1 id="appendix-report-template-_1">技术报告阅读模板<a class="headerlink" href="#appendix-report-template-_1" title="Permanent link">¶</a></h1>
+<blockquote>
+<p>配套：<a href="#08-%e6%a8%a1%e5%9e%8b%e8%a7%a3%e5%89%96-l25-model-anatomy">第 25 讲　热门模型解剖</a>
+用法：复制下面这段 Markdown，边读边填。填不出来的那一项，就是报告在回避的地方。</p>
+</blockquote>
+<h2 id="appendix-report-template-_2">一、模板（可直接复制）<a class="headerlink" href="#appendix-report-template-_2" title="Permanent link">¶</a></h2>
+<div class="language-markdown highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#appendix-report-template-__codelineno-0-1"></a><span class="gh"># 报告阅读笔记：&lt;模型名&gt;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#appendix-report-template-__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#appendix-report-template-__codelineno-0-3"></a><span class="gu">## 0 基本信息</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#appendix-report-template-__codelineno-0-4"></a><span class="k">-</span><span class="w"> </span>发布方 / 日期：
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#appendix-report-template-__codelineno-0-5"></a><span class="k">-</span><span class="w"> </span>是否开放权重：是 / 否
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#appendix-report-template-__codelineno-0-6"></a><span class="k">-</span><span class="w"> </span>许可：MIT / Apache 2.0 / 自定义 / 仅 API
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#appendix-report-template-__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#appendix-report-template-__codelineno-0-8"></a><span class="gu">## 1 规模</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#appendix-report-template-__codelineno-0-9"></a><span class="k">-</span><span class="w"> </span>总参数 N：
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#appendix-report-template-__codelineno-0-10"></a><span class="k">-</span><span class="w"> </span>每 token 激活参数：
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#appendix-report-template-__codelineno-0-11"></a><span class="k">-</span><span class="w"> </span>训练 token 数 D：
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#appendix-report-template-__codelineno-0-12"></a><span class="k">-</span><span class="w"> </span>算力 C = 6ND ≈
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#appendix-report-template-__codelineno-0-13"></a><span class="k">-</span><span class="w"> </span>配比 D/N =（与 Chinchilla 的 20 对比）
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#appendix-report-template-__codelineno-0-14"></a>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#appendix-report-template-__codelineno-0-15"></a><span class="gu">## 2 架构（相对标准 Transformer 改了什么）</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#appendix-report-template-__codelineno-0-16"></a>| 组件 | 标准做法 | 本报告 | 解决什么 |
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#appendix-report-template-__codelineno-0-17"></a>|---|---|---|---|
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#appendix-report-template-__codelineno-0-18"></a>| 注意力 | MHA | | |
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#appendix-report-template-__codelineno-0-19"></a>| 位置编码 | RoPE | | |
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#appendix-report-template-__codelineno-0-20"></a>| 归一化 | RMSNorm | | |
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#appendix-report-template-__codelineno-0-21"></a>| FFN | SwiGLU | | |
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#appendix-report-template-__codelineno-0-22"></a>| 稀疏化 | 无 | | |
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#appendix-report-template-__codelineno-0-23"></a>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#appendix-report-template-__codelineno-0-24"></a><span class="gu">## 3 训练</span>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#appendix-report-template-__codelineno-0-25"></a><span class="k">-</span><span class="w"> </span>数据来源与清洗：
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#appendix-report-template-__codelineno-0-26"></a><span class="k">-</span><span class="w"> </span>并行策略（DP/TP/PP/EP）：
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#appendix-report-template-__codelineno-0-27"></a><span class="k">-</span><span class="w"> </span>精度（bf16/FP8）：
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#appendix-report-template-__codelineno-0-28"></a><span class="k">-</span><span class="w"> </span>稳定性处理（loss spike、路由均衡）：
+</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29" href="#appendix-report-template-__codelineno-0-29"></a><span class="k">-</span><span class="w"> </span>总卡时 / 成本：
+</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#appendix-report-template-__codelineno-0-30"></a>
+</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31" href="#appendix-report-template-__codelineno-0-31"></a><span class="gu">## 4 评测</span>
+</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32" href="#appendix-report-template-__codelineno-0-32"></a><span class="k">-</span><span class="w"> </span>主基准与分数：
+</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33" href="#appendix-report-template-__codelineno-0-33"></a><span class="k">-</span><span class="w"> </span>是否有去污染处理：
+</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34" href="#appendix-report-template-__codelineno-0-34"></a><span class="k">-</span><span class="w"> </span>基线是否公平（同参数量 / 同算力）：
+</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35" href="#appendix-report-template-__codelineno-0-35"></a><span class="k">-</span><span class="w"> </span>自建评测集：
+</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36" href="#appendix-report-template-__codelineno-0-36"></a>
+</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37" href="#appendix-report-template-__codelineno-0-37"></a><span class="gu">## 5 结论</span>
+</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38" href="#appendix-report-template-__codelineno-0-38"></a><span class="k">-</span><span class="w"> </span>最值得学的一点：
+</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39" href="#appendix-report-template-__codelineno-0-39"></a><span class="k">-</span><span class="w"> </span>最可疑的一点：
+</span><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40" href="#appendix-report-template-__codelineno-0-40"></a><span class="k">-</span><span class="w"> </span>对我的项目意味着什么：
+</span></code></pre></div>
+<h2 id="appendix-report-template-deepseek-v3">二、示例：DeepSeek-V3 填好的样子<a class="headerlink" href="#appendix-report-template-deepseek-v3" title="Permanent link">¶</a></h2>
+<div class="language-markdown highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#appendix-report-template-__codelineno-1-1"></a><span class="gh"># 报告阅读笔记：DeepSeek-V3</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#appendix-report-template-__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#appendix-report-template-__codelineno-1-3"></a><span class="gu">## 1 规模</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#appendix-report-template-__codelineno-1-4"></a><span class="k">-</span><span class="w"> </span>总参数：671B（MoE）
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#appendix-report-template-__codelineno-1-5"></a><span class="k">-</span><span class="w"> </span>每 token 激活：37B（5.5%）
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#appendix-report-template-__codelineno-1-6"></a><span class="k">-</span><span class="w"> </span>训练 token：14.8T
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#appendix-report-template-__codelineno-1-7"></a><span class="k">-</span><span class="w"> </span>算力：6 × 671e9 × 14.8e12 ≈ 6.0e25 FLOPs
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#appendix-report-template-__codelineno-1-8"></a><span class="k">-</span><span class="w"> </span>配比：14.8e12 / 671e9 ≈ 22 token/参数（接近 Chinchilla 的 20）
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#appendix-report-template-__codelineno-1-9"></a>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#appendix-report-template-__codelineno-1-10"></a><span class="gu">## 2 架构</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#appendix-report-template-__codelineno-1-11"></a>| 组件 | 标准 | 本报告 | 解决什么 |
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#appendix-report-template-__codelineno-1-12"></a>|---|---|---|---|
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#appendix-report-template-__codelineno-1-13"></a>| 注意力 | MHA | MLA（低维潜向量） | KV cache 降约 10 倍 |
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#appendix-report-template-__codelineno-1-14"></a>| FFN | 稠密 | 1 共享 + 256 细粒度专家，top-8 | 同算力下参数更多 |
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#appendix-report-template-__codelineno-1-15"></a>| 归一化 | RMSNorm | RMSNorm | — |
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#appendix-report-template-__codelineno-1-16"></a>| 位置编码 | RoPE | RoPE | — |
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#appendix-report-template-__codelineno-1-17"></a>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#appendix-report-template-__codelineno-1-18"></a><span class="gu">## 3 训练</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#appendix-report-template-__codelineno-1-19"></a><span class="k">-</span><span class="w"> </span>精度：FP8（权重、激活、梯度）
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#appendix-report-template-__codelineno-1-20"></a><span class="k">-</span><span class="w"> </span>并行：16 路流水 + 64 路专家 + ZeRO-1
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#appendix-report-template-__codelineno-1-21"></a><span class="k">-</span><span class="w"> </span>稳定性：无辅助损失的负载均衡（用可学 bias 调路由）
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#appendix-report-template-__codelineno-1-22"></a><span class="k">-</span><span class="w"> </span>成本：约 278 万 H800 卡时
+</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#appendix-report-template-__codelineno-1-23"></a>
+</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#appendix-report-template-__codelineno-1-24"></a><span class="gu">## 4 评测</span>
+</span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25" href="#appendix-report-template-__codelineno-1-25"></a><span class="k">-</span><span class="w"> </span>主基准：MMLU、GSM8K、HumanEval 等
+</span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26" href="#appendix-report-template-__codelineno-1-26"></a><span class="k">-</span><span class="w"> </span>去污染：报告未详述 ⚠️
+</span><span id="__span-1-27"><a id="__codelineno-1-27" name="__codelineno-1-27" href="#appendix-report-template-__codelineno-1-27"></a><span class="k">-</span><span class="w"> </span>基线：与同规模开源模型对比，公平性尚可
+</span><span id="__span-1-28"><a id="__codelineno-1-28" name="__codelineno-1-28" href="#appendix-report-template-__codelineno-1-28"></a>
+</span><span id="__span-1-29"><a id="__codelineno-1-29" name="__codelineno-1-29" href="#appendix-report-template-__codelineno-1-29"></a><span class="gu">## 5 结论</span>
+</span><span id="__span-1-30"><a id="__codelineno-1-30" name="__codelineno-1-30" href="#appendix-report-template-__codelineno-1-30"></a><span class="k">-</span><span class="w"> </span>最值得学：MLA + 细粒度 MoE 的组合，把推理成本压到极致
+</span><span id="__span-1-31"><a id="__codelineno-1-31" name="__codelineno-1-31" href="#appendix-report-template-__codelineno-1-31"></a><span class="k">-</span><span class="w"> </span>最可疑：训练数据的来源与配比披露较少
+</span><span id="__span-1-32"><a id="__codelineno-1-32" name="__codelineno-1-32" href="#appendix-report-template-__codelineno-1-32"></a><span class="k">-</span><span class="w"> </span>对项目：如果需要自部署且显存充足，MoE 路线性价比最高
+</span></code></pre></div>
+<h2 id="appendix-report-template-_3">三、三个常见坑<a class="headerlink" href="#appendix-report-template-_3" title="Permanent link">¶</a></h2>
+<h3 id="appendix-report-template-1">1 把总参数当成本<a class="headerlink" href="#appendix-report-template-1" title="Permanent link">¶</a></h3>
+<p>671B 是显存账，37B 是算力账。看报价时按激活参数算，看硬件需求时按总参数算。</p>
+<h3 id="appendix-report-template-2-100">2 相信"支持 100 万上下文"<a class="headerlink" href="#appendix-report-template-2-100" title="Permanent link">¶</a></h3>
+<p>"能装"是显存问题，"能用"是能力问题。至少要跑 needle + 多跳聚合两类测试，才敢说"支持"。</p>
+<happendix-report-template-3 id="appendix-report-template-3">3 拿不同算力的模型比分数<a class="headerlink" href="#appendix-report-template-3" title="Permanent link">¶</a></h3>
+<p>同分数下，参数量小、激活少、训练 token 少的那一方，工程价值更高。报告很少主动说这一点，要自己算。</p>
+<hr />
+<h2 id="appendix-report-template-_4">四、一分钟速查<a class="headerlink" href="#appendix-report-template-_4" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>看到什么</th>
+<th>该问什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"SOTA on 12 benchmarks"</td>
+<td>基线是谁？同算力吗？去污染了吗？</td>
+</tr>
+<tr>
+<td>"1M context"</td>
+<td>needle 通过率？多跳任务？</td>
+</tr>
+<tr>
+<td>"671B parameters"</td>
+<td>激活多少？显存要多少？</td>
+</tr>
+<tr>
+<td>"trained on 15T tokens"</td>
+<td>清洗流程？重复率？合成数据占比？</td>
+</tr>
+<tr>
+<td>"3× faster"</td>
+<td>对比对象是什么配置？batch 多大？</td>
+</tr>
+</tbody>
+</table></section><section class="print-page" id="appendix-faq" heading-number="12.8"><h1 id="appendix-faq-_1">常见问题<a class="headerlink" href="#appendix-faq-_1" title="Permanent link">¶</a></h1>
 <h2 id="appendix-faq-_2">环境与构建<a class="headerlink" href="#appendix-faq-_2" title="Permanent link">¶</a></h2>
 <h3 id="appendix-faq-q1-python-312">Q1　必须用 Python 3.12 吗？<a class="headerlink" href="#appendix-faq-q1-python-312" title="Permanent link">¶</a></h3>
 <p>是。PyTorch 对 3.14 的轮子尚不完整，<code>pip install torch</code> 可能退化为源码编译。
@@ -17466,7 +17632,7 @@ Lab2/Lab4 是从零搭的小模型。全部离线可跑。</p>
 <h3 id="appendix-faq-q18">Q18　时间线和论文清单怎么更新？<a class="headerlink" href="#appendix-faq-q18" title="Permanent link">¶</a></h3>
 <p>时间线改 <code>refs/timeline.yaml</code>，然后跑 <code>python scripts/gen_timeline.py</code>；
 论文清单直接改 <code>docs/appendix/papers.md</code>。两者都是单一数据源，
-不要在生成的页面里手工改。</p></section><section class="print-page" id="appendix-env" heading-number="12.8"><h1 id="appendix-env-_1">环境手册<a class="headerlink" href="#appendix-env-_1" title="Permanent link">¶</a></h1>
+不要在生成的页面里手工改。</p></section><section class="print-page" id="appendix-env" heading-number="12.9"><h1 id="appendix-env-_1">环境手册<a class="headerlink" href="#appendix-env-_1" title="Permanent link">¶</a></h1>
 <blockquote>
 <p>目标：从零到能跑通全书代码，不超过 10 分钟。</p>
 </blockquote>
@@ -17889,14 +18055,19 @@ Lab2/Lab4 是从零搭的小模型。全部离线可跑。</p>
                 .print-site-enumerate-headings #appendix-answers h2:before { content: '12.6.' counter(counter-appendix-answers-2) ' ' }
                 .print-site-enumerate-headings #appendix-answers h2 {  counter-increment: counter-appendix-answers-2 }
             
-.print-site-enumerate-headings #appendix-faq > h1:before { content: '12.7 ' }
+.print-site-enumerate-headings #appendix-report-template > h1:before { content: '12.7 ' }
 
-                .print-site-enumerate-headings #appendix-faq h2:before { content: '12.7.' counter(counter-appendix-faq-2) ' ' }
+                .print-site-enumerate-headings #appendix-report-template h2:before { content: '12.7.' counter(counter-appendix-report-template-2) ' ' }
+                .print-site-enumerate-headings #appendix-report-template h2 {  counter-increment: counter-appendix-report-template-2 }
+            
+.print-site-enumerate-headings #appendix-faq > h1:before { content: '12.8 ' }
+
+                .print-site-enumerate-headings #appendix-faq h2:before { content: '12.8.' counter(counter-appendix-faq-2) ' ' }
                 .print-site-enumerate-headings #appendix-faq h2 {  counter-increment: counter-appendix-faq-2 }
             
-.print-site-enumerate-headings #appendix-env > h1:before { content: '12.8 ' }
+.print-site-enumerate-headings #appendix-env > h1:before { content: '12.9 ' }
 
-                .print-site-enumerate-headings #appendix-env h2:before { content: '12.8.' counter(counter-appendix-env-2) ' ' }
+                .print-site-enumerate-headings #appendix-env h2:before { content: '12.9.' counter(counter-appendix-env-2) ' ' }
                 .print-site-enumerate-headings #appendix-env h2 {  counter-increment: counter-appendix-env-2 }
             </style>
 

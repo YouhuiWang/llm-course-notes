@@ -39,6 +39,7 @@ check:
 	$(PY) scripts/check_terms.py
 	$(PY) scripts/audit.py
 	$(PY) scripts/lint_prose.py
+	$(PY) scripts/check_status.py
 
 all: figures build pdf
 

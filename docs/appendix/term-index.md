@@ -3,7 +3,7 @@
 > 本页由 `scripts/gen_term_index.py` 从[术语表](glossary.md)生成，请勿手工编辑。
 > 用途：按学习进度回查——读到第 N 讲时，本讲引入了哪些新词。
 
-共 **113** 条术语，分布在 23 个讲次。
+共 **109** 条术语，分布在 23 个讲次。
 
 ## 第 1 讲
 
@@ -92,10 +92,8 @@
 |---|---|---|
 | 对抗后缀 | Adversarial Suffix | 用梯度搜出的一串字符，诱导模型违规 |
 | 对齐税 | Alignment Tax | 对齐训练带来的通用能力下降 |
-| 对齐税 | Alignment Tax | 安全对齐带来的通用能力下降 |
 | 红队测试 | Red Teaming | 主动构造攻击以发现模型的安全边界 |
 | 越狱 | Jailbreak | 通过构造输入绕过模型的安全拒答 |
-| 越狱 | Jailbreak | 构造输入绕过模型的安全拒答 |
 | 间接注入 | Indirect Prompt Injection | 把恶意指令藏在检索内容或工具返回里 |
 
 ## 第 11 讲
@@ -122,7 +120,6 @@
 | 术语 | English | 定义 |
 |---|---|---|
 | 分页注意力 | PagedAttention | 用分页表管理 KV cache，消除显存碎片 |
-| 分页注意力 | PagedAttention | 把 KV cache 切成固定块按需分配 |
 | 投机解码 | Speculative Decoding | 小模型草稿 + 大模型校验，无损加速生成 |
 | 显存带宽瓶颈 | Memory-bound | 推理时瓶颈在读权重而非算力 |
 | 蒸馏 | Distillation | 用大模型输出训练小模型，迁移能力 |
@@ -211,7 +208,6 @@
 | 术语 | English | 定义 |
 |---|---|---|
 | 可验证奖励 | RLVR | 用规则或测试用例判对错，为推理任务提供可靠奖励 |
-| 可验证奖励 | RLVR | 用规则或测试判定对错，替代人类偏好 |
 | 拒绝采样 | Rejection Sampling | 同题多次采样，只保留成功轨迹 |
 | 推理模型 | Reasoning Model | 经 RL 训练、会生成长思维链再作答的模型 |
 | 组内相对优势 | Group Relative Advantage | GRPO 用组内均值作基线算优势 |

@@ -36,7 +36,13 @@ ax.set_title("奖励不是单一数字，而是几项的加权和", loc="left", 
 ax.legend(loc="upper right", fontsize=6.8)
 clean_axes(ax)
 
-fig.text(0.5, -0.05, "正确性必须占绝对主导，否则模型会学会「格式漂亮但答错」",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5,
+    -0.05,
+    "正确性必须占绝对主导，否则模型会学会「格式漂亮但答错」",
+    ha="center",
+    fontsize=7.2,
+    color=INK,
+)
 
 save(fig, "l21-reward")

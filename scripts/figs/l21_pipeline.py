@@ -34,7 +34,13 @@ arrow(ax, (3.62, 1.55), (3.62, 2.25), color=PALETTE[1], lw=1.1, dashed=True)
 note(ax, 2.40, 1.28, "R1-Zero：跳过冷启动，纯 RL", PALETTE[1], fontsize=6.4)
 
 note(ax, 5.0, 0.85, "四步里最贵的是 RL：每个问题要采多次、跑验证器", MUTED, fontsize=6.8)
-note(ax, 5.0, 0.45, "蒸馏是性价比最高的一步：小模型学大模型的推理链，成本低一个数量级",
-     PALETTE[3], fontsize=6.6)
+note(
+    ax,
+    5.0,
+    0.45,
+    "蒸馏是性价比最高的一步：小模型学大模型的推理链，成本低一个数量级",
+    PALETTE[3],
+    fontsize=6.6,
+)
 
 save(fig, "l21-pipeline")

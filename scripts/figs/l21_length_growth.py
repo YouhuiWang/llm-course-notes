@@ -32,8 +32,13 @@ ax2.spines["top"].set_visible(False)
 ax.set_title("没人教它写长，它自己学会了", loc="left", fontsize=9.5)
 clean_axes(ax, grid_axis=None)
 
-fig.text(0.5, -0.03,
-         "长度涨 7.6 倍，准确率涨 2.5 倍——「想得久」与「想得对」是同时出现的",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5,
+    -0.03,
+    "长度涨 7.6 倍，准确率涨 2.5 倍——「想得久」与「想得对」是同时出现的",
+    ha="center",
+    fontsize=7.2,
+    color=INK,
+)
 
 save(fig, "l21-length-growth")

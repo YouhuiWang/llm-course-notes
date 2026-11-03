@@ -42,8 +42,13 @@ ax.set_title("(b) 组内归一化得到优势", loc="left", fontsize=9)
 ax.set_ylim(-1.4, 1.8)
 clean_axes(ax)
 
-fig.text(0.5, -0.06,
-         f"均值 {mean:.3f}、标准差 {std:.3f}；优势 = (奖励 − 均值) / 标准差",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5,
+    -0.06,
+    f"均值 {mean:.3f}、标准差 {std:.3f}；优势 = (奖励 − 均值) / 标准差",
+    ha="center",
+    fontsize=7.2,
+    color=INK,
+)
 
 save(fig, "l21-grpo")

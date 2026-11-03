@@ -22,11 +22,11 @@ for i, x in enumerate(xs):
     if i == 4:
         break
     # 输入
-    box(ax, x, 0.55, W, H, f"$x_{i+1}$", PALETTE[2], fontsize=7.4, fill_alpha=0.12)
+    box(ax, x, 0.55, W, H, f"$x_{i + 1}$", PALETTE[2], fontsize=7.4, fill_alpha=0.12)
     # 隐状态
-    box(ax, x, ys, W, H, f"$h_{i+1}$", PALETTE[0], fontsize=7.4, fill_alpha=0.14)
+    box(ax, x, ys, W, H, f"$h_{i + 1}$", PALETTE[0], fontsize=7.4, fill_alpha=0.14)
     # 输出
-    box(ax, x, 3.55, W, H, f"$y_{i+1}$", PALETTE[1], fontsize=7.4, fill_alpha=0.12)
+    box(ax, x, 3.55, W, H, f"$y_{i + 1}$", PALETTE[1], fontsize=7.4, fill_alpha=0.12)
 
     arrow(ax, (x + W / 2, 1.17), (x + W / 2, ys), color=MUTED)
     arrow(ax, (x + W / 2, ys + H), (x + W / 2, 3.55), color=MUTED)

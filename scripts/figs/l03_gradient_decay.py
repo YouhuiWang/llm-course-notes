@@ -38,9 +38,12 @@ ax.annotate(
 )
 
 fig.text(
-    0.5, -0.03,
+    0.5,
+    -0.03,
     "只有 ρ≈1 才留得住长程信号，但稍大就爆炸——这是 RNN 难训的根本原因",
-    ha="center", fontsize=7.2, color=INK,
+    ha="center",
+    fontsize=7.2,
+    color=INK,
 )
 
 save(fig, "l03-gradient-decay")

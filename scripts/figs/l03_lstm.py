@@ -57,8 +57,13 @@ for gx in (1.02, 2.72, 4.52, 6.62):
     arrow(ax, (gx, BUS), (gx, 3.05), color=MUTED, lw=0.9)
 
 note(ax, 4.10, 0.55, "四个门都读同一份输入 $[h_{t-1};\\,x_t]$", MUTED, fontsize=6.8)
-note(ax, 4.10, 0.20,
-     "细胞状态只做加法与逐元素乘法，梯度不必穿过 $\\sigma$——这是 LSTM 能记长的原因",
-     PALETTE[1], fontsize=6.6)
+note(
+    ax,
+    4.10,
+    0.20,
+    "细胞状态只做加法与逐元素乘法，梯度不必穿过 $\\sigma$——这是 LSTM 能记长的原因",
+    PALETTE[1],
+    fontsize=6.6,
+)
 
 save(fig, "l03-lstm")

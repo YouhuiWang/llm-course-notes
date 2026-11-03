@@ -76,9 +76,10 @@ for ax, (mat, title) in zip(axes.ravel(), panels):
     ax.set_xlabel("键（被关注的 token）", fontsize=7, color=MUTED)
     ax.set_ylabel("查询（当前 token）", fontsize=7, color=MUTED)
 
-cbar = fig.colorbar(im, ax=axes, fraction=0.02, pad=0.02)
-cbar.set_label("注意力权重", fontsize=8, color=INK)
-cbar.ax.tick_params(labelsize=7)
+if im is not None:
+    cbar = fig.colorbar(im, ax=axes, fraction=0.02, pad=0.02)
+    cbar.set_label("注意力权重", fontsize=8, color=INK)
+    cbar.ax.tick_params(labelsize=7)
 
 fig.suptitle("注意力矩阵的四种典型形态（示意图）", fontsize=11)
 save(fig, "l04-attention-patterns")

@@ -36,8 +36,15 @@ ax.imshow(w, cmap=cmap, vmin=0, vmax=0.8)
 for i in range(w.shape[0]):
     for j in range(w.shape[1]):
         v = w[i, j]
-        ax.text(j, i, f"{v:.2f}", ha="center", va="center", fontsize=7.2,
-                color="white" if v > 0.5 else INK)
+        ax.text(
+            j,
+            i,
+            f"{v:.2f}",
+            ha="center",
+            va="center",
+            fontsize=7.2,
+            color="white" if v > 0.5 else INK,
+        )
 
 ax.set_xticks(range(len(src)), src, fontsize=8)
 ax.set_yticks(range(len(tgt)), tgt, fontsize=8)
@@ -49,9 +56,12 @@ for s in ax.spines.values():
     s.set_visible(False)
 
 fig.text(
-    0.5, -0.02,
+    0.5,
+    -0.02,
     "每行和为 1：解码一个词时，把注意力按权重分配给所有源词",
-    ha="center", fontsize=7.2, color=INK,
+    ha="center",
+    fontsize=7.2,
+    color=INK,
 )
 
 save(fig, "l03-attention-align")

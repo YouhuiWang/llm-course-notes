@@ -133,8 +133,19 @@ def step_commit(key: str, enabled: bool) -> None:
         print("    跳过（加 --commit 启用）")
         return
     run(["git", "add", "-A"])
-    run(["git", "-c", "user.name=wyh", "-c", "user.email=wyh@local",
-         "commit", "-q", "-m", f"pipeline: {key} 交付"])
+    run(
+        [
+            "git",
+            "-c",
+            "user.name=wyh",
+            "-c",
+            "user.email=wyh@local",
+            "commit",
+            "-q",
+            "-m",
+            f"pipeline: {key} 交付",
+        ]
+    )
     out = run(["git", "log", "--oneline", "-1"])
     print(f"    {out.strip()}")
 

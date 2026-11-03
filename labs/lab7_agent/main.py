@@ -115,7 +115,7 @@ class Policy:
         if self.rng.random() < self.cfg.error_rate:
             pool = [Action("read", "src/missing.py"), Action("run_python", "print(1)")]
             if read:
-                pool.append(Action("read", sorted(read)[0]))   # 重复读
+                pool.append(Action("read", sorted(read)[0]))  # 重复读
             return [self.rng.choice(pool)]
 
         if remaining:
@@ -147,7 +147,7 @@ def run_agent(kind: str, cfg: Config, seed: int, max_steps: int = 20) -> dict:
         searched = any(a.tool == "search" and ok for a, ok in visible)
 
         actions = policy.act(kind, read, searched, step)
-        tokens += 200 + 45 * len(log)        # 粗略模拟上下文增长
+        tokens += 200 + 45 * len(log)  # 粗略模拟上下文增长
 
         for act in actions:
             if act.tool == "search":
@@ -156,7 +156,7 @@ def run_agent(kind: str, cfg: Config, seed: int, max_steps: int = 20) -> dict:
                 r = sandbox.read_file(act.arg)
             elif act.tool == "run_python":
                 r = sandbox.run_python(act.arg)
-            else:                            # finish
+            else:  # finish
                 all_read = len({a.arg for a, ok in log if a.tool == "read" and ok}) == len(REPO)
                 r = ToolResult(all_read, "done" if all_read else "NOT_ENOUGH_INFO")
 
@@ -171,11 +171,21 @@ def run_agent(kind: str, cfg: Config, seed: int, max_steps: int = 20) -> dict:
         stuck = stuck + 1 if n_read == last_read else 0
         last_read = n_read
         if stuck >= 4:
-            return {"ok": False, "steps": step, "tokens": tokens,
-                    "calls": sandbox.calls, "reason": "no_progress"}
+            return {
+                "ok": False,
+                "steps": step,
+                "tokens": tokens,
+                "calls": sandbox.calls,
+                "reason": "no_progress",
+            }
 
-    return {"ok": False, "steps": max_steps, "tokens": tokens,
-            "calls": sandbox.calls, "reason": "max_steps"}
+    return {
+        "ok": False,
+        "steps": max_steps,
+        "tokens": tokens,
+        "calls": sandbox.calls,
+        "reason": "max_steps",
+    }
 
 
 # ---------------------------------------------------------------- 主流程
@@ -207,8 +217,10 @@ def main() -> None:
             steps += r["steps"]
             toks += r["tokens"]
             calls += r["calls"]
-        print(f"{cfg.name:<22}{ok / RUNS:>8.0%}{steps / RUNS:>10.1f}"
-              f"{toks / RUNS:>12.0f}{calls / RUNS:>10.1f}")
+        print(
+            f"{cfg.name:<22}{ok / RUNS:>8.0%}{steps / RUNS:>10.1f}"
+            f"{toks / RUNS:>12.0f}{calls / RUNS:>10.1f}"
+        )
 
     print("\n注：去并行/小模型的步数与 token 明显更高；去反思在遇到错误时容易卡住。")
 

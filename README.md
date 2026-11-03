@@ -14,6 +14,12 @@
 
 ## 快速开始
 
+**最简单：双击 `启动讲义.command`**（macOS），会自动构建并在浏览器打开；
+看完双击 `关闭讲义.command` 停掉后台服务。
+
+手动方式：
+
+
 ```bash
 # 1. 文档站（Python 3.12）
 uv venv --python 3.12 .venv
@@ -84,16 +90,21 @@ dist/            PDF 产物
 
 新建一讲：复制 `docs/_template.md` → 改名 `l{NN}-{slug}.md` → 填写。
 
-## 三种打开方式
+## 打开方式
 
-| 方式 | 命令 / 文件 | 适合 |
-|---|---|---|
-| **双击打开** | `dist/大模型发展与相关技术详解-单页版.html` | 不需要任何服务，离线可读 |
-| 本地站点 | `make serve` | 有搜索、导航、侧栏 |
-| 在线 | <https://youhuiwang.github.io/llm-course-notes/> | 手机/分享 |
+**双击 `启动讲义.command`** —— 自动构建、后台起服务、打开浏览器；
+**双击 `关闭讲义.command`** —— 停止服务。
 
-单页版由 `make single` 生成：把 CSS、JS、字体、149 张插图全部内联成一个
-约 15 MB 的 HTML，双击即可阅读，公式与图都能正常显示。
+也可以手动：
+
+```bash
+./scripts/serve.sh start    # 启动（默认端口 8123）
+./scripts/serve.sh stop     # 停止
+./scripts/serve.sh status   # 查看状态
+PORT=9000 ./scripts/serve.sh start   # 换端口
+```
+
+在线版本：<https://youhuiwang.github.io/llm-course-notes/>
 
 ## 部署
 

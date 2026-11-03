@@ -1,4 +1,4 @@
-.PHONY: help serve build figures pdf single check clean all
+.PHONY: help serve build figures pdf check clean all
 
 PY := .venv/bin/python
 MKD := .venv/bin/mkdocs
@@ -8,7 +8,6 @@ help:
 	@echo "make build     构建静态站点到 site/"
 	@echo "make figures   重新生成全部插图（scripts/figs/*.py）"
 	@echo "make pdf       生成 dist/大模型发展与相关技术详解.pdf"
-	@echo "make single    生成可双击打开的单文件 HTML"
 	@echo "make check     检查死链、术语一致性、公式编号"
 	@echo "make all       figures + build + pdf"
 	@echo "make clean     清理构建产物"
@@ -28,9 +27,6 @@ figures:
 
 pdf: build
 	@bash scripts/build_pdf.sh
-
-single: build
-	@$(PY) scripts/build_single_html.py
 
 pipeline:
 	$(PY) scripts/pipeline.py $(L) $(ARGS)

@@ -28,7 +28,7 @@ data = [
 ]
 
 dates = [datetime.strptime(d, "%Y-%m") for d, _, _, _ in data]
-x = mdates.date2num(dates)          # 转成 matplotlib 的日期数值，便于类型检查
+x = mdates.date2num(dates)  # 转成 matplotlib 的日期数值，便于类型检查
 prices = [p for _, _, p, _ in data]
 
 fig, ax = plt.subplots(figsize=(6.9, 3.4))
@@ -36,8 +36,15 @@ ax.plot(x, prices, color=MUTED, lw=1.2, ls="--", zorder=1)
 
 for (d, name, p, color), xi in zip(data, x):
     ax.scatter([xi], [p], s=55, color=color, zorder=5)
-    ax.annotate(name, xy=(xi, p), xytext=(0, 8), textcoords="offset points",
-                fontsize=6.2, color=color, ha="center")
+    ax.annotate(
+        name,
+        xy=(xi, p),
+        xytext=(0, 8),
+        textcoords="offset points",
+        fontsize=6.2,
+        color=color,
+        ha="center",
+    )
 
 ax.set_yscale("log")
 ax.set_ylim(0.15, 60)
@@ -54,7 +61,13 @@ ax.text(x[1], 0.19, "开源/低价区间", fontsize=6.6, color=PALETTE[1])
 
 clean_axes(ax, grid_axis="y")
 
-fig.text(0.5, -0.04, "价格为各模型发布时的官方标价，未考虑缓存、批处理等折扣",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5,
+    -0.04,
+    "价格为各模型发布时的官方标价，未考虑缓存、批处理等折扣",
+    ha="center",
+    fontsize=7.2,
+    color=INK,
+)
 
 save(fig, "l25-price")

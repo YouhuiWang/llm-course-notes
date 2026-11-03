@@ -108,9 +108,11 @@ def main() -> None:
 
         lossless = joined == "".join(pretokenize(CORPUS))
         chars = len("".join(pretokenize(CORPUS)))
-        print(f"词表 {len(symbols):>4}｜合并 {len(merges):>4} 次｜"
-              f"token 数 {len(toks):>5}｜每 token {chars / len(toks):.2f} 字符｜"
-              f"无损 {'✓' if lossless else '✗'}")
+        print(
+            f"词表 {len(symbols):>4}｜合并 {len(merges):>4} 次｜"
+            f"token 数 {len(toks):>5}｜每 token {chars / len(toks):.2f} 字符｜"
+            f"无损 {'✓' if lossless else '✗'}"
+        )
 
     merges, _ = train_bpe(CORPUS, 300)
     print("\n前 10 条合并规则：")
@@ -126,8 +128,7 @@ def main() -> None:
 
         enc = tiktoken.get_encoding("cl100k_base")
         n = len(enc.encode(CORPUS))
-        print(f"\n对照 tiktoken（cl100k）：{n} token，"
-              f"本实现 {len(encode(CORPUS, merges))} token")
+        print(f"\n对照 tiktoken（cl100k）：{n} token，本实现 {len(encode(CORPUS, merges))} token")
     except Exception:
         print("\n（未安装 tiktoken，跳过对照）")
 

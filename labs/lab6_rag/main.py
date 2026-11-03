@@ -24,54 +24,86 @@ import numpy as np
 # ---------------------------------------------------------------- 语料
 
 DOCS = [
-    ("attention", "注意力机制", """
+    (
+        "attention",
+        "注意力机制",
+        """
 注意力用查询与键的相似度对值加权求和。点积的方差随维度线性增长，
 所以必须除以维度的平方根，否则 softmax 会饱和到 one-hot，梯度消失。
 多头注意力把表示空间切成若干子空间，每个头学一种关系模式。
 因果掩码把上三角置为负无穷，保证位置 t 只能看到 t 之前的内容。
-"""),
-    ("rope", "旋转位置编码", """
+""",
+    ),
+    (
+        "rope",
+        "旋转位置编码",
+        """
 RoPE 把位置写进向量的相位，旋转矩阵是正交的，因此内积只依赖相对位移。
 高频维度在训练长度内会转很多圈，外推到更长序列时相位混叠，性能下降。
 位置插值把长序列的位置压缩回训练范围，代价是分辨率整体下降。
 NTK-aware 缩放只放大低频维度的波长，保留高频的局部区分能力。
-"""),
-    ("moe", "混合专家", """
+""",
+    ),
+    (
+        "moe",
+        "混合专家",
+        """
 MoE 让每个 token 只激活少数专家，参数量按总参数算，计算量按激活参数算。
 路由容易塌缩：某个专家被选得越多学得越快，形成正反馈。
 负载均衡损失等于专家数乘以分配比例与平均路由概率的乘积之和，均匀时取最小值。
 容量因子限制每个专家能接收的 token 数，超出部分会被丢弃。
-"""),
-    ("kv", "KV cache 与推理显存", """
+""",
+    ),
+    (
+        "kv",
+        "KV cache 与推理显存",
+        """
 推理显存由三部分组成：权重、KV cache、激活。权重是常数，KV cache 随上下文线性增长。
 每个 token 的 KV 大小等于 2 乘以层数乘以隐藏维度乘以字节数。
 7B 模型每 token 约 512 KB，128K 上下文就是 69 GB，比权重还大。
 分页注意力把 KV cache 切成固定大小的块，碎片率从 60% 降到 4%。
-"""),
-    ("quant", "量化", """
+""",
+    ),
+    (
+        "quant",
+        "量化",
+        """
 量化用低比特表示权重，把 70B 模型从 140 GB 压到 35 GB，从两张卡变成一张卡。
 INT8 几乎无损，INT4 需要分组量化才能把困惑度上升控制在 0.3 以内。
 GPTQ 用 Hessian 近似逐层量化，AWQ 按激活重要性保护少数通道。
 KV cache 量化到 INT8 通常安全，INT4 会明显掉点。
-"""),
-    ("rag", "检索增强生成", """
+""",
+    ),
+    (
+        "rag",
+        "检索增强生成",
+        """
 RAG 先用检索找到证据，再基于证据生成答案。切分决定召回上限，
 块太小语义不完整，块太大噪声多，甜点区在 256 到 512 token。
 混合检索用 RRF 融合稀疏与稠密两路排名，k 取 60 时头部差距被压平。
 重排用交叉编码器对召回结果精排，通常带来 5 到 15 个点的精度提升。
-"""),
-    ("agent", "Agent 与误差累积", """
+""",
+    ),
+    (
+        "agent",
+        "Agent 与误差累积",
+        """
 Agent 由模型策略、工具、记忆和循环控制组成。单步成功率 0.95 时，
 20 步任务的整体成功率只有 0.95 的 20 次方，约 36%。
 所以工程上要缩短链路、加检查点、允许重试。
 反思机制在没有外部验证器时会让性能下降，因为模型无法可靠判断自己错在哪。
-"""),
-    ("scaling", "缩放定律", """
+""",
+    ),
+    (
+        "scaling",
+        "缩放定律",
+        """
 损失随参数量与数据量呈幂律下降。给定算力时，参数与数据应同比增加，
 计算最优配比约为每参数 20 个 token。Chinchilla 之前所有模型都训练不足。
 总成本最优则不同：推理量大时，小模型多喂数据更划算，
 临界点由训练多花的算力除以每 token 省下的算力决定。
-"""),
+""",
+    ),
 ]
 
 # 查询 → 金标文档
@@ -105,14 +137,16 @@ def chunk_docs(size: int = 60, overlap: int = 10) -> list[dict]:
         toks = tokenize(body)
         step = size - overlap
         for start in range(0, max(1, len(toks) - overlap), step):
-            piece = toks[start: start + size]
+            piece = toks[start : start + size]
             if len(piece) < 8:
                 continue
             chunks.append({"doc": doc_id, "title": title, "tokens": piece})
     return chunks
 
 
-def bm25(query: list[str], chunks: list[dict], k1: float = 1.5, b: float = 0.75) -> list[tuple[int, float]]:
+def bm25(
+    query: list[str], chunks: list[dict], k1: float = 1.5, b: float = 0.75
+) -> list[tuple[int, float]]:
     """标准 BM25"""
     n = len(chunks)
     avg_len = sum(len(c["tokens"]) for c in chunks) / n
@@ -182,8 +216,13 @@ def rrf(rankings: list[list[int]], k: int = 60) -> list[tuple[int, float]]:
     return sorted(scores.items(), key=lambda kv: kv[1], reverse=True)
 
 
-def rerank(query: list[str], chunks: list[dict], candidates: list[int],
-           dense_map: dict[int, float], top_k: int = 5) -> list[int]:
+def rerank(
+    query: list[str],
+    chunks: list[dict],
+    candidates: list[int],
+    dense_map: dict[int, float],
+    top_k: int = 5,
+) -> list[int]:
     """极简重排：稠密相似度 + 词面覆盖 + 标题命中（模拟交叉编码器的作用）"""
     q = set(query)
     scored = []
@@ -196,8 +235,7 @@ def rerank(query: list[str], chunks: list[dict], candidates: list[int],
     return [i for i, _ in scored[:top_k]]
 
 
-def generate(query: list[str], chunks: list[dict], picked: list[int],
-             confident: bool) -> str:
+def generate(query: list[str], chunks: list[dict], picked: list[int], confident: bool) -> str:
     """抽取式生成。
 
     检索置信时只复述上下文；不置信时"补"一句上下文里没有的话——
@@ -299,8 +337,10 @@ def main() -> None:
     print("-" * 62)
     for name, mode, rr in configs:
         m = run(mode, rr)
-        print(f"{name:<14}{m['ctx_precision']:>10.3f}{m['ctx_recall']:>10.3f}"
-              f"{m['faithfulness']:>10.3f}{m['answer_relevance']:>10.3f}")
+        print(
+            f"{name:<14}{m['ctx_precision']:>10.3f}{m['ctx_recall']:>10.3f}"
+            f"{m['faithfulness']:>10.3f}{m['answer_relevance']:>10.3f}"
+        )
 
     print("\n注：检索不置信时会混入一句上下文没有的话，忠实度随之下降。")
 
@@ -308,8 +348,12 @@ def main() -> None:
     lsa = LSA(chunks)
     for query_text, gold in QUERIES:
         q = tokenize(query_text)
-        fused = [i for i, _ in rrf([[i for i, _ in bm25(q, chunks)[:20]],
-                                    [i for i, _ in lsa.score(q)[:20]]])][:3]
+        fused = [
+            i
+            for i, _ in rrf(
+                [[i for i, _ in bm25(q, chunks)[:20]], [i for i, _ in lsa.score(q)[:20]]]
+            )
+        ][:3]
         hit = sum(1 for i in fused if chunks[i]["doc"] in gold)
         print(f"  {query_text:<22} 命中 {hit}/3   金标 {gold[0]}")
 

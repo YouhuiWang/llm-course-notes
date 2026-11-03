@@ -23,9 +23,14 @@ ax.plot(size, precision, "s-", color=PALETTE[1], lw=1.8, ms=4, label="精度（�
 
 best = 512
 ax.axvline(best, color=MUTED, lw=0.8, ls=":")
-ax.annotate("甜点区 256–512", xy=(best, 0.86), xytext=(700, 0.90),
-            fontsize=7.2, color=MUTED,
-            arrowprops=dict(arrowstyle="->", color=MUTED, lw=0.8))
+ax.annotate(
+    "甜点区 256–512",
+    xy=(best, 0.86),
+    xytext=(700, 0.90),
+    fontsize=7.2,
+    color=MUTED,
+    arrowprops=dict(arrowstyle="->", color=MUTED, lw=0.8),
+)
 
 ax.set_xscale("log", base=2)
 ax.set_xticks(size, [str(s) for s in size])
@@ -36,7 +41,13 @@ ax.set_ylim(0.4, 1.0)
 ax.legend(loc="lower left", fontsize=7.2)
 clean_axes(ax)
 
-fig.text(0.5, -0.03, "重叠 10%–20% 能缓解边界切断，但会放大索引体积",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5,
+    -0.03,
+    "重叠 10%–20% 能缓解边界切断，但会放大索引体积",
+    ha="center",
+    fontsize=7.2,
+    color=INK,
+)
 
 save(fig, "l16-chunking")

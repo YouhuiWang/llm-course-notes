@@ -37,7 +37,13 @@ ax.set_title("没有一种检索能通吃", loc="left", fontsize=9.5)
 ax.legend(loc="lower right", fontsize=7)
 clean_axes(ax)
 
-fig.text(0.5, -0.05, "混合检索用 RRF 融合两路排名，代价是多一次检索与融合计算",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5,
+    -0.05,
+    "混合检索用 RRF 融合两路排名，代价是多一次检索与融合计算",
+    ha="center",
+    fontsize=7.2,
+    color=INK,
+)
 
 save(fig, "l16-hybrid")

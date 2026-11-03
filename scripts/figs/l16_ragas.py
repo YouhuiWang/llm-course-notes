@@ -26,8 +26,14 @@ W, H = 3.85, 1.15
 for name, body, stage, color, x, y in items:
     ax.add_patch(
         FancyBboxPatch(
-            (x, y), W, H, boxstyle="round,pad=0.04,rounding_size=0.10",
-            edgecolor=color, facecolor=color, alpha=0.10, lw=1.1,
+            (x, y),
+            W,
+            H,
+            boxstyle="round,pad=0.04,rounding_size=0.10",
+            edgecolor=color,
+            facecolor=color,
+            alpha=0.10,
+            lw=1.1,
         )
     )
     ax.text(x + 0.2, y + H - 0.28, name, fontsize=8.0, color=color, ha="left")
@@ -35,7 +41,13 @@ for name, body, stage, color, x, y in items:
     ax.text(x + W - 0.2, y + H - 0.28, stage, fontsize=6.2, color=MUTED, ha="right")
 
 note(ax, 5.0, 3.85, "检索指标决定上限，生成指标决定兑现", MUTED, fontsize=7.2)
-note(ax, 5.0, 0.65, "排查顺序：先看上下文召回（找不到就一定答错），再看忠实度（找到却编了）",
-     PALETTE[1], fontsize=6.8)
+note(
+    ax,
+    5.0,
+    0.65,
+    "排查顺序：先看上下文召回（找不到就一定答错），再看忠实度（找到却编了）",
+    PALETTE[1],
+    fontsize=6.8,
+)
 
 save(fig, "l16-ragas")

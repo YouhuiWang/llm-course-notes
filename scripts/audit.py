@@ -57,8 +57,7 @@ def audit(path: Path) -> dict:
     codes = len(re.findall(r"^```python", text, flags=re.M))
     eqs = [int(x) for x in re.findall(r"\\tag\{(\d+)\.(\d+)\}", text) for x in [x[1]]]
 
-    missing = [name for name, pat in SECTIONS.items()
-               if not re.search(pat, text, flags=re.M)]
+    missing = [name for name, pat in SECTIONS.items() if not re.search(pat, text, flags=re.M)]
 
     # 图号连续性
     nums = [int(f.split("-")[1]) for f in figs]
@@ -111,14 +110,23 @@ def main() -> None:
     for r in rows:
         print("  ".join(str(r[c]).ljust(widths[c]) for c in cols))
 
-    bad = [r for r in rows
-           if r["缺段"] != "—" or r["图号"] == "✗" or r["图注"] == "✗"
-           or r["未引用"] or r["公式"] == "✗" or r["死链"]]
+    bad = [
+        r
+        for r in rows
+        if r["缺段"] != "—"
+        or r["图号"] == "✗"
+        or r["图注"] == "✗"
+        or r["未引用"]
+        or r["公式"] == "✗"
+        or r["死链"]
+    ]
     print()
     print(f"共 {len(rows)} 讲；有问题 {len(bad)} 讲")
     for r in bad:
-        print(f"  ✗ {r['讲']}: 缺段={r['缺段']} 图号={r['图号']} 图注={r['图注']} "
-              f"未引用={r['未引用']} 公式={r['公式']} 死链={r['死链']}")
+        print(
+            f"  ✗ {r['讲']}: 缺段={r['缺段']} 图号={r['图号']} 图注={r['图注']} "
+            f"未引用={r['未引用']} 公式={r['公式']} 死链={r['死链']}"
+        )
 
     sys.exit(1 if bad else 0)
 

@@ -38,7 +38,13 @@ ax.set_title("ZeRO：把三份状态逐层切开（8 卡）", loc="left", fontsi
 ax.set_ylim(0, 130)
 clean_axes(ax)
 
-fig.text(0.5, -0.03, "7B 模型：参数 14 GB + 梯度 14 GB + 优化器状态 56 GB = 84 GB",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5,
+    -0.03,
+    "7B 模型：参数 14 GB + 梯度 14 GB + 优化器状态 56 GB = 84 GB",
+    ha="center",
+    fontsize=7.2,
+    color=INK,
+)
 
 save(fig, "l14-zero")

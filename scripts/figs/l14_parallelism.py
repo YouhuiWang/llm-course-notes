@@ -29,7 +29,13 @@ for i, (name, what, comm, color) in enumerate(panels):
     ax.text(x + W / 2, y + 0.62, what, ha="center", fontsize=6.2, color=INK, linespacing=1.5)
     ax.text(x + W / 2, y + 0.18, comm, ha="center", fontsize=5.8, color=MUTED)
 
-note(ax, 5.0, 0.35, "切得越细，通信越频繁：TP 每层通信，PP 每段通信，DP 每步通信",
-     MUTED, fontsize=6.8)
+note(
+    ax,
+    5.0,
+    0.35,
+    "切得越细，通信越频繁：TP 每层通信，PP 每段通信，DP 每步通信",
+    MUTED,
+    fontsize=6.8,
+)
 
 save(fig, "l14-parallelism")

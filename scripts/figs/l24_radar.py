@@ -22,8 +22,10 @@ project_b = [0.9, 0.6, 0.7, 0.7, 0.9]
 
 fig, ax = plt.subplots(figsize=(5.4, 4.2), subplot_kw=dict(polar=True))
 
-for data, name, color in [(project_a, "项目 A（偏工程）", PALETTE[0]),
-                          (project_b, "项目 B（偏探索）", PALETTE[2])]:
+for data, name, color in [
+    (project_a, "项目 A（偏工程）", PALETTE[0]),
+    (project_b, "项目 B（偏探索）", PALETTE[2]),
+]:
     vals = data + data[:1]
     ax.plot(angles, vals, color=color, lw=1.8, label=name)
     ax.fill(angles, vals, color=color, alpha=0.10)

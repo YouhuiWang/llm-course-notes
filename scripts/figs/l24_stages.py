@@ -26,8 +26,16 @@ gates = ["效果达标", "满意度 > 70%", "错误率 < 1%"]
 W = 1.95
 for i, (name, body, color) in enumerate(stages):
     x = 0.2 + i * 2.42
-    ax.add_patch(Polygon([[x, 1.35], [x + W, 1.35], [x + W, 2.25], [x, 2.25]],
-                         closed=True, facecolor=color, alpha=0.10, edgecolor=color, lw=1.0))
+    ax.add_patch(
+        Polygon(
+            [[x, 1.35], [x + W, 1.35], [x + W, 2.25], [x, 2.25]],
+            closed=True,
+            facecolor=color,
+            alpha=0.10,
+            edgecolor=color,
+            lw=1.0,
+        )
+    )
     ax.text(x + W / 2, 1.95, name, ha="center", fontsize=7.8, color=color)
     ax.text(x + W / 2, 1.58, body, ha="center", fontsize=6.4, color=INK)
 

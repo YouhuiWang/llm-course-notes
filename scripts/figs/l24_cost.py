@@ -35,7 +35,13 @@ ax.set_ylim(0, 23)
 ax.legend(loc="upper left", fontsize=7.2)
 clean_axes(ax)
 
-fig.text(0.5, -0.03, "选型的关键不是「哪个最好」，而是「哪个够用且付得起」",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5,
+    -0.03,
+    "选型的关键不是「哪个最好」，而是「哪个够用且付得起」",
+    ha="center",
+    fontsize=7.2,
+    color=INK,
+)
 
 save(fig, "l24-cost")

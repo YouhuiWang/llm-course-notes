@@ -149,7 +149,10 @@ nav:
       - Lab 8 测试时计算: labs/lab8-test-time.md
   - 附录:
       - 术语表: appendix/glossary.md
+      - 术语索引（按讲次）: appendix/term-index.md
       - 论文清单: appendix/papers.md
       - 大模型时间线: appendix/timeline.md
       - 数学基础: appendix/math.md
+      - 习题答案要点: appendix/answers.md
+      - 常见问题: appendix/faq.md
       - 环境手册: appendix/env.md

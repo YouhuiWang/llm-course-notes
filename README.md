@@ -1,7 +1,7 @@
 # 大模型发展与相关技术详解
 
 > 从统计语言模型到智能体：原理、推导与工程实践的系统讲义。
-> **24 讲 · 8 个可复现实验 · 网页与 PDF 双交付**
+> **25 讲 · 8 个可复现实验 · 网页与 PDF 双交付**
 >
 > 🌐 在线阅读：<https://youhuiwang.github.io/llm-course-notes/>
 > 📦 仓库：<https://github.com/YouhuiWang/llm-course-notes>
@@ -56,6 +56,8 @@ dist/            PDF 产物
 | 🔴 深入 | 推导 + 论文 + 实验复现 | 视方向而定 |
 
 从 [第 1 讲](docs/00-导论/l01-what-is-llm.md) 开始，或直接看 [课程地图](docs/index.md)。
+
+九部分 25 讲：导论 → 前史 → Transformer → 对齐 → 架构与系统 → 应用层 → 推理与前沿 → 治理与实践 → **模型解剖**。
 
 ## 进度
 

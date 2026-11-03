@@ -421,7 +421,7 @@ $$3\times 4096\times 11008 \approx 135.3\text{M}$$
 $$2\times L\times d\times n\times 2\text{ bytes}
 =2\times32\times4096\times4096\times2 \approx 2.1\text{ GB}$$
 
-注意这一项随上下文长度**线性**增长，与参数量无关。一个 7B 模型跑 128K 上下文，仅 KV cache 就要 67GB——比模型本身大一个数量级。这是第 13 讲所有优化的起点。
+注意这一项随上下文长度**线性**增长，与参数量无关。一个 7B 模型跑 128K 上下文，仅 KV cache 就要 69GB——比模型本身大一个数量级。这是第 13 讲所有优化的起点。
 
 ### 6.3 复杂度
 

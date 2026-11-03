@@ -64,8 +64,6 @@ def check(path: Path) -> list[str]:
         if PLACEHOLDER.search(line):
             issues.append(f"{path.name}:{i} 占位符残留")
 
-
-
     return issues
 
 

@@ -1,4 +1,7 @@
 ---
+repo_url: https://github.com/YouhuiWang/llm-course-notes
+repo_name: llm-course-notes
+edit_uri: edit/main/docs/
 site_url: https://youhuiwang.github.io/llm-course-notes/
 site_name: 大模型发展与相关技术详解
 site_description: 从统计语言模型到智能体——原理、推导与工程实践的系统讲义
@@ -19,6 +22,8 @@ theme:
     - navigation.footer
     - toc.follow
     - toc.integrate
+    - content.action.edit
+    - navigation.path
     - content.code.copy
     - content.code.annotate
     - content.tabs.link
@@ -138,6 +143,8 @@ nav:
   - 第八部分 治理与实践:
       - 第 23 讲 评测与治理: 07-治理与实践/l23-evaluation-governance.md
       - 第 24 讲 综合实践: 07-治理与实践/l24-capstone.md
+  - 第九部分 模型解剖:
+      - 第 25 讲 热门模型解剖: 08-模型解剖/l25-model-anatomy.md
   - 实验:
       - 实验总览: labs/index.md
       - Lab 1 手写注意力: labs/lab1-attention.md

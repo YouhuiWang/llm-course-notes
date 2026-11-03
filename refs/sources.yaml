@@ -87,3 +87,64 @@ retracted: []
     quote: >-
       Major LLM Model Release Timeline [2025-2026]
     used_in: ["appendix/timeline.md"]
+
+  - id: src-2026-eagle
+    claim: >-
+      EAGLE-3（2025）把投机解码的草稿放到目标模型的特征层，
+      在 70B 级模型上实测 3–4 倍加速；vLLM 的 EAGLE 3.1（2026）
+      增加 FC 归一化与后归一化隐状态反馈。
+    url: https://arxiv.org/abs/2503.01840
+    site: arXiv / vLLM blog
+    fetched_at: 2026-11-03
+    quote: >-
+      Methods like EAGLE perform autoregression at the feature level,
+      reusing top-layer features from the target model.
+    used_in: ["L13 §5"]
+
+  - id: src-2026-quant-formats
+    claim: >-
+      2025 年后推理量化从整数转向浮点：FP8（E4M3）几乎无损并被 Hopper 原生加速，
+      NVFP4（16 元素共享 FP8 缩放）成为 4 bit 的新默认。
+    url: https://nvidia.github.io/TensorRT-LLM/features/quantization.html
+    site: NVIDIA TensorRT-LLM Docs
+    fetched_at: 2026-11-03
+    quote: >-
+      Quantization converts weights and/or activations from higher-precision
+      floating point to INT8, FP8, or FP4.
+    used_in: ["L13 §4"]
+
+  - id: src-2026-longrope
+    claim: >-
+      LongRoPE 用逐层逐头的非均匀缩放把 RoPE 外推推到 100 万 token 以上；
+      2026 年的 Jet-Long 用动态双焦 RoPE 处理远超预训练窗口的输入。
+    url: https://arxiv.org/abs/2607.07740
+    site: arXiv
+    fetched_at: 2026-11-03
+    quote: >-
+      zero-shot context extension is the dominant deployment path for
+      open-weight checkpoints.
+    used_in: ["L12 §2"]
+
+  - id: src-2026-grpo-family
+    claim: >-
+      GRPO 之后出现改进家族：DAPO 用 Clip-Higher 与动态采样稳定长 CoT 训练，
+      GSPO/CISPO 调整重要性比率的粒度。
+    url: https://llm-stats.com/blog/research/post-training-techniques-2026
+    site: LLM Stats
+    fetched_at: 2026-11-03
+    quote: >-
+      DAPO introduces Clip-Higher, dynamic sampling and related fixes to
+      stabilise long chain-of-thought RL.
+    used_in: ["L21 §3"]
+
+  - id: src-2026-a2a
+    claim: >-
+      A2A 已捐给 Linux Foundation（AAIF）；MCP 2026 路线图聚焦传输可扩展性、
+      agent 间通信与治理。
+    url: https://a2a-protocol.org/latest/blog/archive/2026/
+    site: A2A Protocol (Linux Foundation)
+    fetched_at: 2026-11-03
+    quote: >-
+      The A2A protocol is an open standard that allows different AI agents
+      to securely communicate, collaborate.
+    used_in: ["L18 §2"]

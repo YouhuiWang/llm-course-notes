@@ -75,6 +75,8 @@ $n$ 个 agent 的消息通道数：
 | **MCP** | agent ↔ 工具/数据 | tools / resources / prompts，stdio 或 HTTP+SSE |
 | **A2A** | agent ↔ agent | Agent Card（能力描述）、任务委派、结果回传 |
 
+**2026 年的状态**：A2A 已捐给 Linux Foundation（AAIF），成为跨厂商的中立标准；MCP 的路线图聚焦传输可扩展性（远程 server 的规模化）、agent 间通信与治理。两者从"厂商提案"变成了"基础设施"。
+
 **MCP 的价值在生态**：工具方写一次 server，所有支持 MCP 的宿主都能用。
 
 **A2A 的价值在跨组织**：不同公司、不同框架的 agent 能互相调用，靠 Agent Card 描述"我能做什么"。

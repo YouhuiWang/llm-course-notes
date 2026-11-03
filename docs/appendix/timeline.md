@@ -55,9 +55,9 @@
 | 时间 | 事件 | 类别 | 一句话 |
 |---|---|---|---|
 | 2020-01 | [缩放定律](https://arxiv.org/abs/2001.08361)<br><small>Scaling Laws for Neural Language Models</small> | 📈 规模 | 损失随参数量、数据量、算力呈幂律下降，为"堆规模"提供定量依据。 |
-| 2020-01 | [Switch Transformer](https://arxiv.org/abs/2101.03961)<br><small>Switch Transformers</small> | 🏗️ 架构 | 万亿参数稀疏 MoE，验证"参数量与计算量解耦"的可行性。 |
 | 2020-05 | [GPT-3](https://arxiv.org/abs/2005.14165)<br><small>Language Models are Few-Shot Learners</small> | 📈 规模 | 1750 亿参数，少样本上下文学习成为新范式。 |
 | 2020-10 | [ViT](https://arxiv.org/abs/2010.11929)<br><small>An Image is Worth 16x16 Words</small> | 🏗️ 架构 | 图像切 patch 直接送进 Transformer，视觉与语言架构开始统一。 |
+| 2021-01 | [Switch Transformer](https://arxiv.org/abs/2101.03961)<br><small>Switch Transformers</small> | 🏗️ 架构 | 万亿参数稀疏 MoE，验证"参数量与计算量解耦"的可行性。 |
 | 2021-01 | [CLIP](https://arxiv.org/abs/2103.00020)<br><small>Contrastive Language-Image Pre-training</small> | 🏗️ 架构 | 4 亿图文对对比学习，得到可零样本分类的共享嵌入空间。 |
 | 2021-04 | [RoPE](https://arxiv.org/abs/2104.09864)<br><small>RoFormer: Rotary Position Embedding</small> | 🏗️ 架构 | 用旋转矩阵编码相对位置，成为长上下文模型的事实标准。 |
 | 2021-06 | [LoRA](https://arxiv.org/abs/2106.09685)<br><small>Low-Rank Adaptation</small> | ⚙️ 系统 | 用低秩增量冻结主干，把微调显存需求降低一个数量级。 |

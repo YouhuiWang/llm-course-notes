@@ -23,7 +23,8 @@ torch.manual_seed(0)
 
 # ---------------------------------------------------------------- 语料
 
-CORPUS = """
+CORPUS = (
+    """
 大模型的发展经历了从统计语言模型到神经网络语言模型的转变。
 注意力机制让模型可以并行处理序列，这是 Transformer 的核心创新。
 缩放定律表明，损失随参数量和训练数据量呈幂律下降。
@@ -41,7 +42,9 @@ Mixture of experts activates only a subset of parameters for each token.
 Long context requires careful position encoding and memory management.
 Quantization trades a little accuracy for a large memory saving.
 Agents plan, call tools, and remember what they have already tried.
-""" * 4
+"""
+    * 4
+)
 
 
 # ---------------------------------------------------------------- 模型
@@ -69,15 +72,16 @@ class Block(nn.Module):
 
 
 class MiniGPT(nn.Module):
-    def __init__(self, vocab: int, d: int = 128, h: int = 4,
-                 layers: int = 2, d_ff: int = 256) -> None:
+    def __init__(
+        self, vocab: int, d: int = 128, h: int = 4, layers: int = 2, d_ff: int = 256
+    ) -> None:
         super().__init__()
         self.emb = nn.Embedding(vocab, d)
         self.pos = nn.Embedding(1024, d)
         self.blocks = nn.ModuleList([Block(d, h, d_ff) for _ in range(layers)])
         self.ln_f = nn.LayerNorm(d)
         self.head = nn.Linear(d, vocab, bias=False)
-        self.head.weight = self.emb.weight          # 权重绑定
+        self.head.weight = self.emb.weight  # 权重绑定
 
     def forward(self, idx: torch.Tensor) -> torch.Tensor:
         b, n = idx.shape
@@ -92,14 +96,15 @@ class MiniGPT(nn.Module):
 
 def get_batch(data: torch.Tensor, ctx: int, bs: int) -> tuple[torch.Tensor, torch.Tensor]:
     ix = torch.randint(len(data) - ctx - 1, (bs,))
-    x = torch.stack([data[i: i + ctx] for i in ix])
-    y = torch.stack([data[i + 1: i + ctx + 1] for i in ix])
+    x = torch.stack([data[i : i + ctx] for i in ix])
+    y = torch.stack([data[i + 1 : i + ctx + 1] for i in ix])
     return x, y
 
 
 @torch.no_grad()
-def estimate_loss(model: nn.Module, data: torch.Tensor, ctx: int,
-                  bs: int, vocab: int, iters: int = 10) -> float:
+def estimate_loss(
+    model: nn.Module, data: torch.Tensor, ctx: int, bs: int, vocab: int, iters: int = 10
+) -> float:
     model.eval()
     losses = []
     for _ in range(iters):
@@ -110,8 +115,9 @@ def estimate_loss(model: nn.Module, data: torch.Tensor, ctx: int,
 
 
 @torch.no_grad()
-def sample(model: nn.Module, stoi: dict, itos: dict, prompt: str,
-           n_new: int = 80, temperature: float = 0.8) -> str:
+def sample(
+    model: nn.Module, stoi: dict, itos: dict, prompt: str, n_new: int = 80, temperature: float = 0.8
+) -> str:
     model.eval()
     idx = torch.tensor([[stoi.get(c, 0) for c in prompt]])
     out = list(prompt)
@@ -164,8 +170,9 @@ def main() -> None:
         if step % 20 == 0 or step == 1:
             val = estimate_loss(model, val_data, args.ctx, args.bs, len(chars), iters=5)
             history.append((step, val))
-            print(f"  step {step:>4}｜train {loss.item():.3f}｜val {val:.3f}"
-                  f"｜{time.time() - t0:.0f}s")
+            print(
+                f"  step {step:>4}｜train {loss.item():.3f}｜val {val:.3f}｜{time.time() - t0:.0f}s"
+            )
 
     print(f"\n困惑度：{math.exp(history[-1][1]):.1f}")
     print("\n生成示例（temperature 0.8）：")

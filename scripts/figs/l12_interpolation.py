@@ -30,8 +30,13 @@ ax.set_title("两种外推思路：压位置 vs 改频率", loc="left", fontsize
 ax.legend(loc="lower right", fontsize=6.8)
 clean_axes(ax)
 
-fig.text(0.5, -0.03,
-         "PI 会把 32k 内所有位置都压进 4k，分辨率整体下降；NTK 保留近处分辨率",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5,
+    -0.03,
+    "PI 会把 32k 内所有位置都压进 4k，分辨率整体下降；NTK 保留近处分辨率",
+    ha="center",
+    fontsize=7.2,
+    color=INK,
+)
 
 save(fig, "l12-interpolation")

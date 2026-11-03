@@ -25,9 +25,14 @@ ax.plot(L / 1024, yarn, "^-", color=PALETTE[2], lw=1.8, ms=4, label="YaRN")
 
 ax.axvline(4, color=MUTED, lw=0.8, ls=":")
 ax.text(4.3, 0.20, "训练长度", fontsize=7, color=MUTED, rotation=90)
-ax.annotate("超出训练长度后\n断崖式下跌", xy=(8, 0.62), xytext=(11, 0.30),
-            fontsize=7, color=PALETTE[1],
-            arrowprops=dict(arrowstyle="->", color=PALETTE[1], lw=0.8))
+ax.annotate(
+    "超出训练长度后\n断崖式下跌",
+    xy=(8, 0.62),
+    xytext=(11, 0.30),
+    fontsize=7,
+    color=PALETTE[1],
+    arrowprops=dict(arrowstyle="->", color=PALETTE[1], lw=0.8),
+)
 
 ax.set_xlabel("测试长度（k token）", fontsize=8)
 ax.set_ylabel("长文本任务得分", fontsize=8)
@@ -36,7 +41,8 @@ ax.set_ylim(0, 1.0)
 ax.legend(loc="upper right", fontsize=7.2)
 clean_axes(ax)
 
-fig.text(0.5, -0.03, "数据为示意量级：真实曲线的形状与任务强相关",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5, -0.03, "数据为示意量级：真实曲线的形状与任务强相关", ha="center", fontsize=7.2, color=INK
+)
 
 save(fig, "l12-extrapolation")

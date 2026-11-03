@@ -19,7 +19,7 @@ w = 6
 full = np.ones((n, n))
 window = np.zeros((n, n))
 for i in range(n):
-    window[i, max(0, i - w + 1): i + 1] = 1
+    window[i, max(0, i - w + 1) : i + 1] = 1
 
 sparse = np.zeros((n, n))
 for i in range(n):
@@ -46,7 +46,13 @@ for ax, (mat, title, desc) in zip(axes, panels):
     for s in ax.spines.values():
         s.set_visible(False)
 
-fig.text(0.5, -0.05, "纵轴 = 查询位置，横轴 = 被看的位置；深色表示参与注意力",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(
+    0.5,
+    -0.05,
+    "纵轴 = 查询位置，横轴 = 被看的位置；深色表示参与注意力",
+    ha="center",
+    fontsize=7.2,
+    color=INK,
+)
 
 save(fig, "l12-attention-modes")

@@ -193,3 +193,82 @@
   max-width: 100%;
   height: auto;
 }
+
+/* ============ 布局：目录并入左侧栏 ============ */
+/* 整体栅格稍宽，但正文列限制在舒适阅读宽度内（中文约 40–45 字/行） */
+.md-grid {
+  max-width: 80rem;
+}
+
+.md-content {
+  max-width: 46rem;
+  margin-inline: auto;
+}
+
+/* 宽表格与代码块可以突破正文列，避免被挤成多行 */
+.md-typeset table:not([class]),
+.md-typeset .highlight {
+  max-width: 100%;
+}
+
+/* 左侧栏整体稍宽，容纳长中文标题 */
+@media screen and (min-width: 76.25em) {
+  .md-sidebar--primary {
+    width: 14.5rem;
+  }
+}
+
+/* 并入左栏的"目录"块：与导航之间加分隔，层级更清晰 */
+.md-nav--secondary {
+  margin-top: 1.4rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+}
+
+.md-nav--secondary .md-nav__title {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  color: var(--md-default-fg-color--light);
+  padding: 0 0 0.3rem 0;
+  background: none;
+  box-shadow: none;
+}
+
+.md-nav--secondary .md-nav__list {
+  font-size: 0.7rem;
+  line-height: 1.55;
+}
+
+.md-nav--secondary .md-nav__link {
+  margin-top: 0.05rem;
+  padding-top: 0.18rem;
+  padding-bottom: 0.18rem;
+}
+
+/* 当前小节高亮更克制 */
+.md-nav--secondary .md-nav__link--active {
+  font-weight: 600;
+}
+
+/* 三级目录再缩进一级，避免长标题折行后看不出层级 */
+.md-nav--secondary .md-nav .md-nav__list {
+  margin-left: 0.5rem;
+  border-left: 1px solid var(--md-default-fg-color--lightest);
+  padding-left: 0.4rem;
+}
+
+/* 并入左栏的目录：补一个明确的"本页目录"标题 */
+.md-nav--secondary::before {
+  content: "本页目录";
+  display: block;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--md-default-fg-color--light);
+  margin-bottom: 0.35rem;
+}
+
+/* 说明：不要给目录内部列表加 max-height/overflow，
+   否则内容会溢出容器并与下方讲次重叠；整栏滚动交给 .md-sidebar__scrollwrap */

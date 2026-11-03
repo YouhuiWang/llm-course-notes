@@ -29,10 +29,17 @@ for li, (_, nodes) in enumerate(levels):
     for ni, (x, label) in enumerate(nodes):
         alive = ni in keep.get(li, [])
         color = PALETTE[0] if alive else MUTED
-        ax.add_patch(Circle((x, y), 0.26, facecolor=color,
-                            alpha=0.18 if alive else 0.05, edgecolor=color, lw=1.0))
-        ax.text(x, y, label.split()[-1], ha="center", va="center", fontsize=5.8,
-                color=color)
+        ax.add_patch(
+            Circle(
+                (x, y),
+                0.26,
+                facecolor=color,
+                alpha=0.18 if alive else 0.05,
+                edgecolor=color,
+                lw=1.0,
+            )
+        )
+        ax.text(x, y, label.split()[-1], ha="center", va="center", fontsize=5.8, color=color)
 
 # 连线
 ax.plot([5.0, 2.6], [3.30, 2.80], color=MUTED, lw=0.7)
@@ -43,9 +50,14 @@ for x_parent, children in [(2.6, [1.6, 3.4]), (5.0, [5.0]), (7.4, [6.4])]:
         ax.plot([x_parent, xc], [2.30, 1.80], color=MUTED, lw=0.6, ls=":")
 
 note(ax, 5.0, 0.95, "实线 = 被保留的分支；虚线 = 被剪掉的分支", MUTED, fontsize=6.8)
-note(ax, 5.0, 0.55, "剪枝依据：LLM 自评（便宜但有偏）、PRM（贵但准）、环境验证（最准）",
-     PALETTE[2], fontsize=6.6)
-note(ax, 5.0, 0.20, "代价：每个候选都要一次前向，搜索宽度直接乘算力",
-     PALETTE[1], fontsize=6.4)
+note(
+    ax,
+    5.0,
+    0.55,
+    "剪枝依据：LLM 自评（便宜但有偏）、PRM（贵但准）、环境验证（最准）",
+    PALETTE[2],
+    fontsize=6.6,
+)
+note(ax, 5.0, 0.20, "代价：每个候选都要一次前向，搜索宽度直接乘算力", PALETTE[1], fontsize=6.4)
 
 save(fig, "l20-tot")

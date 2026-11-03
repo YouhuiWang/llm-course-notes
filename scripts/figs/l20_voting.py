@@ -24,8 +24,15 @@ def majority(p: float, k: int) -> float:
 
 fig, ax = plt.subplots(figsize=(6.6, 3.2))
 for p, color in [(0.4, PALETTE[1]), (0.6, PALETTE[0]), (0.8, PALETTE[2])]:
-    ax.plot(ks, [majority(p, int(k)) for k in ks], "o-", color=color, lw=1.8, ms=3.5,
-            label=f"单次 $p={p}$")
+    ax.plot(
+        ks,
+        [majority(p, int(k)) for k in ks],
+        "o-",
+        color=color,
+        lw=1.8,
+        ms=3.5,
+        label=f"单次 $p={p}$",
+    )
 
 ax.axhline(0.5, color=MUTED, lw=0.8, ls=":")
 ax.set_xlabel("采样次数 $k$", fontsize=8)
@@ -35,7 +42,6 @@ ax.set_ylim(0, 1.02)
 ax.legend(loc="center right", fontsize=7.2)
 clean_axes(ax)
 
-fig.text(0.5, -0.03, "p=0.4 时投票反而更差——错答案占多数",
-         ha="center", fontsize=7.2, color=INK)
+fig.text(0.5, -0.03, "p=0.4 时投票反而更差——错答案占多数", ha="center", fontsize=7.2, color=INK)
 
 save(fig, "l20-voting")

@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-11-03T12:42:57.593682</dc:date>
+    <dc:date>2026-11-03T15:08:21.595495</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -32,12 +32,12 @@ z
    <g id="patch_2">
     <path d="M 471.594198 90.200738 
 Q 471.594198 158.701207 471.594198 225.971839 
-" clip-path="url(#p210ff96fe4)" style="fill: none; stroke: #7b8794; stroke-width: 1.1; stroke-linecap: round"/>
+" clip-path="url(#p7651b44904)" style="fill: none; stroke: #7b8794; stroke-width: 1.1; stroke-linecap: round"/>
     <path d="M 473.594198 221.971839 
 L 471.594198 225.971839 
 L 469.594198 221.971839 
 z
-" clip-path="url(#p210ff96fe4)" style="fill: #7b8794; stroke: #7b8794; stroke-width: 1.1; stroke-linecap: round"/>
+" clip-path="url(#p7651b44904)" style="fill: #7b8794; stroke: #7b8794; stroke-width: 1.1; stroke-linecap: round"/>
    </g>
    <g id="patch_3">
     <path d="M 23.555083 63.759898 
@@ -50,7 +50,7 @@ Q 18.803872 22.399968 18.803872 27.09996
 L 18.803872 59.059906 
 Q 18.803872 63.759898 23.555083 63.759898 
 z
-" clip-path="url(#p210ff96fe4)" style="fill: #b58b00; stroke: #b58b00; stroke-width: 1.1; stroke-linejoin: miter"/>
+" clip-path="url(#p7651b44904)" style="fill: #b58b00; stroke: #b58b00; stroke-width: 1.1; stroke-linejoin: miter"/>
    </g>
    <g id="patch_4">
     <path d="M 23.555083 108.409822 
@@ -63,7 +63,7 @@ Q 18.803872 67.049892 18.803872 71.749884
 L 18.803872 103.70983 
 Q 18.803872 108.409822 23.555083 108.409822 
 z
-" clip-path="url(#p210ff96fe4)" style="fill: #5b8c5a; stroke: #5b8c5a; stroke-width: 1.1; stroke-linejoin: miter"/>
+" clip-path="url(#p7651b44904)" style="fill: #5b8c5a; stroke: #5b8c5a; stroke-width: 1.1; stroke-linejoin: miter"/>
    </g>
    <g id="patch_5">
     <path d="M 23.555083 153.059746 
@@ -76,7 +76,7 @@ Q 18.803872 111.699816 18.803872 116.399808
 L 18.803872 148.359754 
 Q 18.803872 153.059746 23.555083 153.059746 
 z
-" clip-path="url(#p210ff96fe4)" style="fill: #00838f; stroke: #00838f; stroke-width: 1.1; stroke-linejoin: miter"/>
+" clip-path="url(#p7651b44904)" style="fill: #00838f; stroke: #00838f; stroke-width: 1.1; stroke-linejoin: miter"/>
    </g>
    <g id="patch_6">
     <path d="M 23.555083 197.70967 
@@ -89,7 +89,7 @@ Q 18.803872 156.34974 18.803872 161.049732
 L 18.803872 193.009678 
 Q 18.803872 197.70967 23.555083 197.70967 
 z
-" clip-path="url(#p210ff96fe4)" style="fill: #c8553d; stroke: #c8553d; stroke-width: 1.1; stroke-linejoin: miter"/>
+" clip-path="url(#p7651b44904)" style="fill: #c8553d; stroke: #c8553d; stroke-width: 1.1; stroke-linejoin: miter"/>
    </g>
    <g id="patch_7">
     <path d="M 23.555083 242.359594 
@@ -102,7 +102,7 @@ Q 18.803872 200.999664 18.803872 205.699656
 L 18.803872 237.659602 
 Q 18.803872 242.359594 23.555083 242.359594 
 z
-" clip-path="url(#p210ff96fe4)" style="fill: #2f6f9f; stroke: #2f6f9f; stroke-width: 1.1; stroke-linejoin: miter"/>
+" clip-path="url(#p7651b44904)" style="fill: #2f6f9f; stroke: #2f6f9f; stroke-width: 1.1; stroke-linejoin: miter"/>
    </g>
    <g id="patch_8">
     <path d="M 23.555083 63.759898 
@@ -115,7 +115,7 @@ Q 18.803872 22.399968 18.803872 27.09996
 L 18.803872 59.059906 
 Q 18.803872 63.759898 23.555083 63.759898 
 z
-" clip-path="url(#p210ff96fe4)" style="fill: #ffffff; opacity: 0.9"/>
+" clip-path="url(#p7651b44904)" style="fill: #ffffff; opacity: 0.9"/>
    </g>
    <g id="text_1">
     <!-- 产品层 -->
@@ -1070,7 +1070,7 @@ Q 18.803872 67.049892 18.803872 71.749884
 L 18.803872 103.70983 
 Q 18.803872 108.409822 23.555083 108.409822 
 z
-" clip-path="url(#p210ff96fe4)" style="fill: #ffffff; opacity: 0.9"/>
+" clip-path="url(#p7651b44904)" style="fill: #ffffff; opacity: 0.9"/>
    </g>
    <g id="text_4">
     <!-- 编排层 -->
@@ -2143,7 +2143,7 @@ Q 18.803872 111.699816 18.803872 116.399808
 L 18.803872 148.359754 
 Q 18.803872 153.059746 23.555083 153.059746 
 z
-" clip-path="url(#p210ff96fe4)" style="fill: #ffffff; opacity: 0.9"/>
+" clip-path="url(#p7651b44904)" style="fill: #ffffff; opacity: 0.9"/>
    </g>
    <g id="text_7">
     <!-- 工具层 -->
@@ -2980,7 +2980,7 @@ Q 18.803872 156.34974 18.803872 161.049732
 L 18.803872 193.009678 
 Q 18.803872 197.70967 23.555083 197.70967 
 z
-" clip-path="url(#p210ff96fe4)" style="fill: #ffffff; opacity: 0.9"/>
+" clip-path="url(#p7651b44904)" style="fill: #ffffff; opacity: 0.9"/>
    </g>
    <g id="text_10">
     <!-- 推理层 -->
@@ -3962,7 +3962,7 @@ Q 18.803872 200.999664 18.803872 205.699656
 L 18.803872 237.659602 
 Q 18.803872 242.359594 23.555083 242.359594 
 z
-" clip-path="url(#p210ff96fe4)" style="fill: #ffffff; opacity: 0.9"/>
+" clip-path="url(#p7651b44904)" style="fill: #ffffff; opacity: 0.9"/>
    </g>
    <g id="text_13">
     <!-- 模型层 -->
@@ -5828,7 +5828,7 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="p210ff96fe4">
+  <clipPath id="p7651b44904">
    <rect x="3.6" y="3.6" width="475.121013" height="281.99952"/>
   </clipPath>
  </defs>

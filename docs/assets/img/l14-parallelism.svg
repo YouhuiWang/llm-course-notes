@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-11-03T14:59:26.274528</dc:date>
+    <dc:date>2026-11-03T15:08:52.724147</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -40,7 +40,7 @@ Q 14.872789 31.406027 14.872789 36.284278
 L 14.872789 100.189359 
 Q 14.872789 105.067609 19.996785 105.067609 
 z
-" clip-path="url(#p1db098ce8a)" style="fill: #2f6f9f; stroke: #2f6f9f; stroke-width: 1.1; stroke-linejoin: miter"/>
+" clip-path="url(#p8935509201)" style="fill: #2f6f9f; stroke: #2f6f9f; stroke-width: 1.1; stroke-linejoin: miter"/>
    </g>
    <g id="patch_3">
     <path d="M 273.634547 105.067609 
@@ -53,7 +53,7 @@ Q 268.510552 31.406027 268.510552 36.284278
 L 268.510552 100.189359 
 Q 268.510552 105.067609 273.634547 105.067609 
 z
-" clip-path="url(#p1db098ce8a)" style="fill: #5b8c5a; stroke: #5b8c5a; stroke-width: 1.1; stroke-linejoin: miter"/>
+" clip-path="url(#p8935509201)" style="fill: #5b8c5a; stroke: #5b8c5a; stroke-width: 1.1; stroke-linejoin: miter"/>
    </g>
    <g id="patch_4">
     <path d="M 19.996785 185.558741 
@@ -66,7 +66,7 @@ Q 14.872789 111.89716 14.872789 116.77541
 L 14.872789 180.680491 
 Q 14.872789 185.558741 19.996785 185.558741 
 z
-" clip-path="url(#p1db098ce8a)" style="fill: #b58b00; stroke: #b58b00; stroke-width: 1.1; stroke-linejoin: miter"/>
+" clip-path="url(#p8935509201)" style="fill: #b58b00; stroke: #b58b00; stroke-width: 1.1; stroke-linejoin: miter"/>
    </g>
    <g id="patch_5">
     <path d="M 273.634547 185.558741 
@@ -79,7 +79,7 @@ Q 268.510552 111.89716 268.510552 116.77541
 L 268.510552 180.680491 
 Q 268.510552 185.558741 273.634547 185.558741 
 z
-" clip-path="url(#p1db098ce8a)" style="fill: #c8553d; stroke: #c8553d; stroke-width: 1.1; stroke-linejoin: miter"/>
+" clip-path="url(#p8935509201)" style="fill: #c8553d; stroke: #c8553d; stroke-width: 1.1; stroke-linejoin: miter"/>
    </g>
    <g id="patch_6">
     <path d="M 19.996785 105.067609 
@@ -92,7 +92,7 @@ Q 14.872789 31.406027 14.872789 36.284278
 L 14.872789 100.189359 
 Q 14.872789 105.067609 19.996785 105.067609 
 z
-" clip-path="url(#p1db098ce8a)" style="fill: #ffffff; opacity: 0.9"/>
+" clip-path="url(#p8935509201)" style="fill: #ffffff; opacity: 0.9"/>
    </g>
    <g id="text_1">
     <!-- 数据并行 DP -->
@@ -1260,7 +1260,7 @@ Q 268.510552 31.406027 268.510552 36.284278
 L 268.510552 100.189359 
 Q 268.510552 105.067609 273.634547 105.067609 
 z
-" clip-path="url(#p1db098ce8a)" style="fill: #ffffff; opacity: 0.9"/>
+" clip-path="url(#p8935509201)" style="fill: #ffffff; opacity: 0.9"/>
    </g>
    <g id="text_4">
     <!-- 张量并行 TP -->
@@ -1833,7 +1833,7 @@ Q 14.872789 111.89716 14.872789 116.77541
 L 14.872789 180.680491 
 Q 14.872789 185.558741 19.996785 185.558741 
 z
-" clip-path="url(#p1db098ce8a)" style="fill: #ffffff; opacity: 0.9"/>
+" clip-path="url(#p8935509201)" style="fill: #ffffff; opacity: 0.9"/>
    </g>
    <g id="text_7">
     <!-- 流水并行 PP -->
@@ -2362,7 +2362,7 @@ Q 268.510552 111.89716 268.510552 116.77541
 L 268.510552 180.680491 
 Q 268.510552 185.558741 273.634547 185.558741 
 z
-" clip-path="url(#p1db098ce8a)" style="fill: #ffffff; opacity: 0.9"/>
+" clip-path="url(#p8935509201)" style="fill: #ffffff; opacity: 0.9"/>
    </g>
    <g id="text_10">
     <!-- 专家并行 EP -->
@@ -3502,7 +3502,7 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="p1db098ce8a">
+  <clipPath id="p8935509201">
    <rect x="3.6" y="3.6" width="512.39952" height="224.39952"/>
   </clipPath>
  </defs>

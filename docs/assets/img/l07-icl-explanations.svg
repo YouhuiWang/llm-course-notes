@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-11-03T13:40:31.835039</dc:date>
+    <dc:date>2026-11-03T15:08:37.393840</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -40,7 +40,7 @@ Q 19.535985 47.099901 19.535985 52.099889
 L 19.535985 132.599705 
 Q 19.535985 137.599694 24.51598 137.599694 
 z
-" clip-path="url(#p9324dc2a7d)" style="fill: #2f6f9f; stroke: #2f6f9f; stroke-width: 1.1; stroke-linejoin: miter"/>
+" clip-path="url(#p2afec44334)" style="fill: #2f6f9f; stroke: #2f6f9f; stroke-width: 1.1; stroke-linejoin: miter"/>
    </g>
    <g id="patch_3">
     <path d="M 186.365824 137.599694 
@@ -53,7 +53,7 @@ Q 181.385829 47.099901 181.385829 52.099889
 L 181.385829 132.599705 
 Q 181.385829 137.599694 186.365824 137.599694 
 z
-" clip-path="url(#p9324dc2a7d)" style="fill: #5b8c5a; stroke: #5b8c5a; stroke-width: 1.1; stroke-linejoin: miter"/>
+" clip-path="url(#p2afec44334)" style="fill: #5b8c5a; stroke: #5b8c5a; stroke-width: 1.1; stroke-linejoin: miter"/>
    </g>
    <g id="patch_4">
     <path d="M 348.215668 137.599694 
@@ -66,7 +66,7 @@ Q 343.235673 47.099901 343.235673 52.099889
 L 343.235673 132.599705 
 Q 343.235673 137.599694 348.215668 137.599694 
 z
-" clip-path="url(#p9324dc2a7d)" style="fill: #b58b00; stroke: #b58b00; stroke-width: 1.1; stroke-linejoin: miter"/>
+" clip-path="url(#p2afec44334)" style="fill: #b58b00; stroke: #b58b00; stroke-width: 1.1; stroke-linejoin: miter"/>
    </g>
    <g id="text_1">
     <!-- 参数冻结，变的是「模型认为自己处在什么任务里」 -->
@@ -1042,7 +1042,7 @@ Q 19.535985 47.099901 19.535985 52.099889
 L 19.535985 132.599705 
 Q 19.535985 137.599694 24.51598 137.599694 
 z
-" clip-path="url(#p9324dc2a7d)" style="fill: #ffffff; opacity: 0.9"/>
+" clip-path="url(#p2afec44334)" style="fill: #ffffff; opacity: 0.9"/>
    </g>
    <g id="text_2">
     <!-- ① 任务定位 -->
@@ -1873,7 +1873,7 @@ Q 181.385829 47.099901 181.385829 52.099889
 L 181.385829 132.599705 
 Q 181.385829 137.599694 186.365824 137.599694 
 z
-" clip-path="url(#p9324dc2a7d)" style="fill: #ffffff; opacity: 0.9"/>
+" clip-path="url(#p2afec44334)" style="fill: #ffffff; opacity: 0.9"/>
    </g>
    <g id="text_4">
     <!-- ② 隐式贝叶斯 -->
@@ -2707,7 +2707,7 @@ Q 343.235673 47.099901 343.235673 52.099889
 L 343.235673 132.599705 
 Q 343.235673 137.599694 348.215668 137.599694 
 z
-" clip-path="url(#p9324dc2a7d)" style="fill: #ffffff; opacity: 0.9"/>
+" clip-path="url(#p2afec44334)" style="fill: #ffffff; opacity: 0.9"/>
    </g>
    <g id="text_6">
     <!-- ③ 隐式梯度下降 -->
@@ -5586,7 +5586,7 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="p9324dc2a7d">
+  <clipPath id="p2afec44334">
    <rect x="3.6" y="3.6" width="497.99952" height="209.99952"/>
   </clipPath>
  </defs>

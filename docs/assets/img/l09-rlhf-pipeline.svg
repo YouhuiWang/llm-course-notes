@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-11-03T12:16:36.036761</dc:date>
+    <dc:date>2026-11-03T15:08:42.602228</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -32,22 +32,22 @@ z
    <g id="patch_2">
     <path d="M 159.320166 112.667088 
 Q 172.690249 112.667088 184.830495 112.667088 
-" clip-path="url(#pb045edeeff)" style="fill: none; stroke: #7b8794; stroke-width: 1.1; stroke-linecap: round"/>
+" clip-path="url(#p01b85480a4)" style="fill: none; stroke: #7b8794; stroke-width: 1.1; stroke-linecap: round"/>
     <path d="M 180.830495 110.667088 
 L 184.830495 112.667088 
 L 180.830495 114.667088 
 z
-" clip-path="url(#pb045edeeff)" style="fill: #7b8794; stroke: #7b8794; stroke-width: 1.1; stroke-linecap: round"/>
+" clip-path="url(#p01b85480a4)" style="fill: #7b8794; stroke: #7b8794; stroke-width: 1.1; stroke-linecap: round"/>
    </g>
    <g id="patch_3">
     <path d="M 330.974005 112.667088 
 Q 344.344088 112.667088 356.484334 112.667088 
-" clip-path="url(#pb045edeeff)" style="fill: none; stroke: #7b8794; stroke-width: 1.1; stroke-linecap: round"/>
+" clip-path="url(#p01b85480a4)" style="fill: none; stroke: #7b8794; stroke-width: 1.1; stroke-linecap: round"/>
     <path d="M 352.484334 110.667088 
 L 356.484334 112.667088 
 L 352.484334 114.667088 
 z
-" clip-path="url(#pb045edeeff)" style="fill: #7b8794; stroke: #7b8794; stroke-width: 1.1; stroke-linecap: round"/>
+" clip-path="url(#p01b85480a4)" style="fill: #7b8794; stroke: #7b8794; stroke-width: 1.1; stroke-linecap: round"/>
    </g>
    <g id="patch_4">
     <path d="M 19.996785 172.596583 
@@ -60,7 +60,7 @@ Q 14.872789 52.737594 14.872789 57.329892
 L 14.872789 168.004285 
 Q 14.872789 172.596583 19.996785 172.596583 
 z
-" clip-path="url(#pb045edeeff)" style="fill: #2f6f9f; stroke: #2f6f9f; stroke-width: 1.1; stroke-linejoin: miter"/>
+" clip-path="url(#p01b85480a4)" style="fill: #2f6f9f; stroke: #2f6f9f; stroke-width: 1.1; stroke-linejoin: miter"/>
    </g>
    <g id="patch_5">
     <path d="M 191.650624 172.596583 
@@ -73,7 +73,7 @@ Q 186.526629 52.737594 186.526629 57.329892
 L 186.526629 168.004285 
 Q 186.526629 172.596583 191.650624 172.596583 
 z
-" clip-path="url(#pb045edeeff)" style="fill: #c8553d; stroke: #c8553d; stroke-width: 1.1; stroke-linejoin: miter"/>
+" clip-path="url(#p01b85480a4)" style="fill: #c8553d; stroke: #c8553d; stroke-width: 1.1; stroke-linejoin: miter"/>
    </g>
    <g id="patch_6">
     <path d="M 363.304463 172.596583 
@@ -86,7 +86,7 @@ Q 358.180468 52.737594 358.180468 57.329892
 L 358.180468 168.004285 
 Q 358.180468 172.596583 363.304463 172.596583 
 z
-" clip-path="url(#pb045edeeff)" style="fill: #5b8c5a; stroke: #5b8c5a; stroke-width: 1.1; stroke-linejoin: miter"/>
+" clip-path="url(#p01b85480a4)" style="fill: #5b8c5a; stroke: #5b8c5a; stroke-width: 1.1; stroke-linejoin: miter"/>
    </g>
    <g id="patch_7">
     <path d="M 19.996785 172.596583 
@@ -99,7 +99,7 @@ Q 14.872789 52.737594 14.872789 57.329892
 L 14.872789 168.004285 
 Q 14.872789 172.596583 19.996785 172.596583 
 z
-" clip-path="url(#pb045edeeff)" style="fill: #ffffff; opacity: 0.9"/>
+" clip-path="url(#p01b85480a4)" style="fill: #ffffff; opacity: 0.9"/>
    </g>
    <g id="text_1">
     <!-- ① SFT -->
@@ -1016,7 +1016,7 @@ Q 186.526629 52.737594 186.526629 57.329892
 L 186.526629 168.004285 
 Q 186.526629 172.596583 191.650624 172.596583 
 z
-" clip-path="url(#pb045edeeff)" style="fill: #ffffff; opacity: 0.9"/>
+" clip-path="url(#p01b85480a4)" style="fill: #ffffff; opacity: 0.9"/>
    </g>
    <g id="text_4">
     <!-- ② 奖励模型 -->
@@ -2151,7 +2151,7 @@ Q 358.180468 52.737594 358.180468 57.329892
 L 358.180468 168.004285 
 Q 358.180468 172.596583 363.304463 172.596583 
 z
-" clip-path="url(#pb045edeeff)" style="fill: #ffffff; opacity: 0.9"/>
+" clip-path="url(#p01b85480a4)" style="fill: #ffffff; opacity: 0.9"/>
    </g>
    <g id="text_7">
     <!-- ③ PPO -->
@@ -4533,7 +4533,7 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="pb045edeeff">
+  <clipPath id="p01b85480a4">
    <rect x="3.6" y="3.6" width="512.39952" height="238.79952"/>
   </clipPath>
  </defs>

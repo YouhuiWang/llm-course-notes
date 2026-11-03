@@ -24,8 +24,12 @@ make figures
 # 3. PDF（Chrome headless 打印"全书打印版"）
 make pdf                   # 输出 dist/大模型发展与相关技术详解.pdf
 
-# 4. 一致性检查（死链、术语、公式编号）
+# 4. 一致性检查（死链、术语、结构审计）
 make check
+
+# 5. 单讲交付流水线：内容 → 出图 → 审计 → 构建 → 死链 → PDF → 提交
+make pipeline L=l16          # 任一步失败即中止
+make pipeline ARGS=--all     # 对全部已完成讲次跑一遍
 ```
 
 ## 目录结构

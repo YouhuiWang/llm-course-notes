@@ -216,6 +216,23 @@ PDF 双线说明：
 
 ---
 
+
+### 5.5 交付流水线
+
+`scripts/pipeline.py` 把 §5.4 的打磨清单变成可执行的七步门禁，任一步失败即中止：
+
+```
+1 内容检查  非占位、字数 ≥1200、图 ≥4、算例 ≥2、代码 ≥1
+2 出图      运行 l{NN}_*.py，逐个校验 SVG 产物
+3 结构审计  scripts/audit.py（图号、图注、公式、死链）
+4 构建      mkdocs build --strict，0 warning
+5 死链      check_links.py
+6 PDF       build_pdf.sh + 体积校验
+7 提交      git commit（--commit 启用）
+```
+
+用法：`make pipeline L=l16`、`python scripts/pipeline.py --all --skip-pdf`。
+
 ## 6. 深度示范：第 17–18 讲 Agent 完整小节
 
 > 这是全书的深度标尺，其余各讲按同等颗粒度展开。

@@ -28,6 +28,9 @@ figures:
 pdf: build
 	@bash scripts/build_pdf.sh
 
+pipeline:
+	$(PY) scripts/pipeline.py $(L) $(ARGS)
+
 lab1:
 	$(PY) labs/lab1_attention/main.py
 

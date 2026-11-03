@@ -99,7 +99,8 @@ def audit(path: Path) -> dict:
 
 
 def main() -> None:
-    files = sorted(DOCS.rglob("l[0-9][0-9]-*.md"))
+    pattern = sys.argv[1] if len(sys.argv) > 1 else ""
+    files = [f for f in sorted(DOCS.rglob("l[0-9][0-9]-*.md")) if pattern in f.stem]
     rows = [audit(f) for f in files]
 
     cols = ["讲", "字数", "图", "算例", "代码", "缺段", "图号", "图注", "未引用", "公式", "死链"]

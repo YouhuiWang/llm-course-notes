@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-11-03T13:59:25.802243</dc:date>
+    <dc:date>2026-11-03T15:08:44.036772</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -40,7 +40,7 @@ Q 14.05799 61.599867 14.05799 66.599856
 L 14.05799 138.099693 
 Q 14.05799 143.099681 19.037985 143.099681 
 z
-" clip-path="url(#p8426bf1c4a)" style="fill: #c8553d; opacity: 0.1; stroke: #c8553d; stroke-width: 1.1; stroke-linejoin: miter"/>
+" clip-path="url(#p0a38f85814)" style="fill: #c8553d; opacity: 0.1; stroke: #c8553d; stroke-width: 1.1; stroke-linejoin: miter"/>
    </g>
    <g id="patch_3">
     <path d="M 141.047868 143.099681 
@@ -53,7 +53,7 @@ Q 136.067872 61.599867 136.067872 66.599856
 L 136.067872 138.099693 
 Q 136.067872 143.099681 141.047868 143.099681 
 z
-" clip-path="url(#p8426bf1c4a)" style="fill: #b58b00; opacity: 0.1; stroke: #b58b00; stroke-width: 1.1; stroke-linejoin: miter"/>
+" clip-path="url(#p0a38f85814)" style="fill: #b58b00; opacity: 0.1; stroke: #b58b00; stroke-width: 1.1; stroke-linejoin: miter"/>
    </g>
    <g id="patch_4">
     <path d="M 263.05775 143.099681 
@@ -66,7 +66,7 @@ Q 258.077755 61.599867 258.077755 66.599856
 L 258.077755 138.099693 
 Q 258.077755 143.099681 263.05775 143.099681 
 z
-" clip-path="url(#p8426bf1c4a)" style="fill: #5b8c5a; opacity: 0.1; stroke: #5b8c5a; stroke-width: 1.1; stroke-linejoin: miter"/>
+" clip-path="url(#p0a38f85814)" style="fill: #5b8c5a; opacity: 0.1; stroke: #5b8c5a; stroke-width: 1.1; stroke-linejoin: miter"/>
    </g>
    <g id="patch_5">
     <path d="M 385.067632 143.099681 
@@ -79,7 +79,7 @@ Q 380.087637 61.599867 380.087637 66.599856
 L 380.087637 138.099693 
 Q 380.087637 143.099681 385.067632 143.099681 
 z
-" clip-path="url(#p8426bf1c4a)" style="fill: #2f6f9f; opacity: 0.1; stroke: #2f6f9f; stroke-width: 1.1; stroke-linejoin: miter"/>
+" clip-path="url(#p0a38f85814)" style="fill: #2f6f9f; opacity: 0.1; stroke: #2f6f9f; stroke-width: 1.1; stroke-linejoin: miter"/>
    </g>
    <g id="text_1">
     <!-- ① 直接越狱 -->
@@ -5921,7 +5921,7 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="p8426bf1c4a">
+  <clipPath id="p0a38f85814">
    <rect x="3.6" y="3.6" width="497.99952" height="209.99952"/>
   </clipPath>
  </defs>

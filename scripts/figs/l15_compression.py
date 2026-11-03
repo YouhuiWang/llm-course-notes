@@ -31,7 +31,8 @@ for i, (name, steps, color, desc) in enumerate(rows):
         x += w + 0.2
     note(ax, 9.95, y + 0.05, desc, MUTED, fontsize=6.0, ha="right")
 
-note(ax, 5.0, 0.45, "三者常组合：先用摘要压历史，再用裁剪压检索，超长文档走卸载",
-     MUTED, fontsize=6.8)
+note(
+    ax, 5.0, 0.45, "三者常组合：先用摘要压历史，再用裁剪压检索，超长文档走卸载", MUTED, fontsize=6.8
+)
 
 save(fig, "l15-compression")

@@ -23,8 +23,9 @@ A, B, a, b = 400.0, 400.0, 0.34, 0.28
 L = A / NN**a + B / DD**b + 1.6
 
 fig, ax = plt.subplots(figsize=(6.8, 3.8))
-cs = ax.contour(NN, DD, L, levels=[1.9, 2.0, 2.2, 2.6, 3.2],
-                colors=[PALETTE[0]] * 5, linewidths=1.1)
+cs = ax.contour(
+    NN, DD, L, levels=[1.9, 2.0, 2.2, 2.6, 3.2], colors=[PALETTE[0]] * 5, linewidths=1.1
+)
 
 
 # 等算力线
@@ -43,17 +44,25 @@ ax.set_xlim(1e9, 3e13)
 ax.set_ylim(1e10, 1e14)
 ax.set_xlabel("数据量 $D$", fontsize=8)
 ax.set_ylabel("参数量 $N$", fontsize=8)
-ax.annotate("同一条曲线 = 同样的损失", xy=(2e11, 4e11), xytext=(3e9, 3e13),
-            fontsize=7, color=PALETTE[0],
-            arrowprops=dict(arrowstyle="->", color=PALETTE[0], lw=0.8))
+ax.annotate(
+    "同一条曲线 = 同样的损失",
+    xy=(2e11, 4e11),
+    xytext=(3e9, 3e13),
+    fontsize=7,
+    color=PALETTE[0],
+    arrowprops=dict(arrowstyle="->", color=PALETTE[0], lw=0.8),
+)
 ax.set_title("等损失线与等算力线的切点", loc="left", fontsize=9.5)
 ax.legend(loc="lower right", fontsize=7.2)
 clean_axes(ax, grid_axis=None)
 
 fig.text(
-    0.5, -0.03,
+    0.5,
+    -0.03,
     "沿着红线走：参数与数据同比增加；偏离红线，同样的算力换不到同样的损失",
-    ha="center", fontsize=7.2, color=INK,
+    ha="center",
+    fontsize=7.2,
+    color=INK,
 )
 
 save(fig, "l06-iso-loss")

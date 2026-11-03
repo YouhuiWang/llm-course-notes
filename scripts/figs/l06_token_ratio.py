@@ -26,8 +26,9 @@ colors = [m[3] for m in models]
 
 bars = ax.bar(names, ratios, color=colors, width=0.55)
 for bar, r in zip(bars, ratios):
-    ax.text(bar.get_x() + bar.get_width() / 2, r * 1.08, f"{r:.0f}", ha="center",
-            fontsize=8, color=INK)
+    ax.text(
+        bar.get_x() + bar.get_width() / 2, r * 1.08, f"{r:.0f}", ha="center", fontsize=8, color=INK
+    )
 
 ax.axhline(20, color=MUTED, lw=0.9, ls="--")
 ax.text(3.42, 22, "Chinchilla 推荐 20", fontsize=7, color=MUTED, ha="right")
@@ -39,9 +40,12 @@ ax.set_ylim(0.8, 400)
 clean_axes(ax)
 
 fig.text(
-    0.5, -0.03,
+    0.5,
+    -0.03,
     "GPT-3 只喂了 1.7 token/参数，属于「大模型饿着训」；LLaMA 反其道而行",
-    ha="center", fontsize=7.2, color=INK,
+    ha="center",
+    fontsize=7.2,
+    color=INK,
 )
 
 save(fig, "l06-token-ratio")

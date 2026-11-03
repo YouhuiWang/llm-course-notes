@@ -202,14 +202,14 @@
 }
 
 .md-content {
-  max-width: 46rem;
+  max-width: 48rem;
   margin-inline: auto;
 }
 
 /* 左侧栏稍宽，容纳长中文标题 */
 @media screen and (min-width: 76.25em) {
   .md-sidebar--primary {
-    width: 14.5rem;
+    width: 16.5rem;
   }
 }
 
@@ -275,4 +275,33 @@ body.sidebar-collapsed .md-content {
 /* 顶栏按钮与配色切换之间留一点间距 */
 .sidebar-toggle {
   margin-right: 0.15rem;
+}
+
+/* ============ 目录并入导航树 ============ */
+/* 在当前讲次下方插入"本页目录"，与讲次列表区分开 */
+.md-nav--secondary::before {
+  content: "本页目录";
+  display: block;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--md-default-fg-color--light);
+  margin: 0.3rem 0 0.25rem;
+}
+
+.md-nav--secondary .md-nav__link {
+  font-size: 0.68rem;
+  margin-top: 0.02rem;
+  padding-top: 0.16rem;
+  padding-bottom: 0.16rem;
+}
+
+/* 目录里的三级标题再收一点，避免长标题折行后层级不清 */
+.md-nav--secondary .md-nav .md-nav__link {
+  font-size: 0.65rem;
+  color: var(--md-default-fg-color--light);
+}
+
+.md-nav--secondary .md-nav .md-nav__link--active {
+  color: var(--md-typeset-a-color);
 }

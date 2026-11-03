@@ -15,6 +15,7 @@ theme:
     - navigation.indexes
     - navigation.footer
     - toc.follow
+    - toc.integrate
     - content.code.copy
     - content.code.annotate
     - content.tabs.link

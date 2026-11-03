@@ -27,7 +27,7 @@ def gen_without_cache(k: torch.Tensor, v: torch.Tensor, steps: int = 80) -> floa
     """每步都重算整个前缀：O(n²)"""
     t0 = time.perf_counter()
     for i in range(1, steps + 1):
-        q = k[:, :, i: i + 1]                      # 用 k 当前行当查询，只为计时
+        q = k[:, :, i : i + 1]  # 用 k 当前行当查询，只为计时
         _ = F.scaled_dot_product_attention(q, k[:, :, : i + 1], v[:, :, : i + 1])
     return time.perf_counter() - t0
 
@@ -37,9 +37,9 @@ def gen_with_cache(k: torch.Tensor, v: torch.Tensor, steps: int = 80) -> float:
     t0 = time.perf_counter()
     cache_k, cache_v = k[:, :, :1].clone(), v[:, :, :1].clone()
     for i in range(1, steps + 1):
-        q = k[:, :, i: i + 1]
-        cache_k = torch.cat([cache_k, k[:, :, i: i + 1]], dim=2)
-        cache_v = torch.cat([cache_v, v[:, :, i: i + 1]], dim=2)
+        q = k[:, :, i : i + 1]
+        cache_k = torch.cat([cache_k, k[:, :, i : i + 1]], dim=2)
+        cache_v = torch.cat([cache_v, v[:, :, i : i + 1]], dim=2)
         _ = F.scaled_dot_product_attention(q, cache_k, cache_v)
     return time.perf_counter() - t0
 
@@ -82,7 +82,9 @@ def main() -> None:
     err = (w - wq).abs()
     size_fp32 = w.numel() * 4 / 1e6
     size_int8 = q.numel() * 1 / 1e6
-    print(f"  fp32 {size_fp32:>6.1f} MB  ->  int8 {size_int8:>6.1f} MB（{size_fp32 / size_int8:.0f}×）")
+    print(
+        f"  fp32 {size_fp32:>6.1f} MB  ->  int8 {size_int8:>6.1f} MB（{size_fp32 / size_int8:.0f}×）"
+    )
     print(f"  平均绝对误差 {err.mean():.6f}｜最大误差 {err.max():.6f}")
     print(f"  相对误差 {(err.mean() / w.abs().mean()):.2%}")
 

@@ -3,7 +3,7 @@
 > 本页由 `refs/timeline.yaml` 自动生成，请勿手工编辑。
 > 运行 `python scripts/gen_timeline.py` 更新。
 
-共收录 **41** 个节点，覆盖 1943–2025 年。
+共收录 **57** 个节点，覆盖 1943–2026 年。
 
 ## 1940s
 
@@ -79,7 +79,23 @@
 | 2024-11 | [MCP](https://www.anthropic.com/news/model-context-protocol)<br><small>Model Context Protocol</small> | ⚙️ 系统 | 统一模型与外部工具/数据源的连接方式，agent 生态的接口标准。 |
 | 2024-12 | [DeepSeek-V3](https://arxiv.org/abs/2412.19437)<br><small>DeepSeek-V3 Technical Report</small> | 🔓 开源 | 671B MoE、14.8T token 预训练，训练成本与性能比刷新认知。 |
 | 2025-01 | [DeepSeek-R1](https://arxiv.org/abs/2501.12948)<br><small>DeepSeek-R1</small> | 🎯 对齐 | 纯 RL（R1-Zero）涌现反思与长链推理，推理能力可被蒸馏到小模型。 |
+| 2025-01 | [DeepSeek-R1](https://arxiv.org/abs/2501.12948)<br><small>DeepSeek-R1</small> | 🎯 对齐 | 纯 RL 训练的长链推理模型，开源 MIT 许可，并蒸馏出 6 个小模型。 |
+| 2025-02 | [Claude 3.7 Sonnet](https://www.anthropic.com/news/claude-3-7-sonnet)<br><small>Claude 3.7 Sonnet</small> | 🏗️ 架构 | 首个"混合推理"商用模型：同一模型可切换即时回答与扩展思考。 |
+| 2025-03 | [Gemini 2.5 Pro](https://blog.google/technology/google-deepmind/gemini-model-thinking-updates-march-2025/)<br><small>Gemini 2.5 Pro</small> | 🏗️ 架构 | 100 万 token 上下文的思考型模型，长上下文与推理结合。 |
 | 2025-04 ⚠️ | [Qwen3](https://qwenlm.github.io/blog/qwen3/)<br><small>Qwen3</small> | 🔓 开源 | 稠密与 MoE 并行的开源家族，支持思考/非思考模式切换。 |
+| 2025-04 | [Llama 4（MoE + 1000 万上下文）](https://ai.meta.com/blog/llama-4-multimodal-intelligence/)<br><small>Llama 4 Scout / Maverick</small> | 🔓 开源 | 首个 Llama MoE 系列，Scout 宣称 1000 万 token 上下文，原生多模态。 |
+| 2025-04 | [Qwen3（混合思考）](https://qwenlm.github.io/blog/qwen3/)<br><small>Qwen3</small> | 🔓 开源 | 235B-A22B 旗舰 MoE，同一模型支持思考/非思考模式，Apache 2.0。 |
+| 2025-05 | [Claude 4（Opus 4 / Sonnet 4）](https://www.anthropic.com/news/claude-4)<br><small>Claude 4</small> | 🚀 应用 | 主打编码与 agent 场景，Claude Code 正式可用。 |
+| 2025-07 | [Kimi K2](https://moonshotai.github.io/Kimi-K2/)<br><small>Kimi K2</small> | 🔓 开源 | 1T 总参数 / 32B 激活的开源 MoE，用 Muon 优化器训练，主打 agent 能力。 |
+| 2025-08 | [GPT-5（路由式统一系统）](https://openai.com/index/introducing-gpt-5/)<br><small>GPT-5</small> | 🏗️ 架构 | 用实时路由在"快模型"与"推理模型"之间自动切换，开箱即用。 |
+| 2025-08 | [gpt-oss（OpenAI 重新开源）](https://openai.com/index/introducing-gpt-oss/)<br><small>gpt-oss-120b / 20b</small> | 🔓 开源 | OpenAI 自 GPT-2 之后首次发布开放权重模型，Apache 2.0。 |
+| 2025-11 | [Gemini 3 Pro](https://blog.google/products/gemini/gemini-3/)<br><small>Gemini 3 Pro</small> | 🚀 应用 | Gemini 3 首款模型，多模态与长上下文继续保持领先。 |
+| 2025-12 | [DeepSeek-V3.2（稀疏注意力）](https://api-docs.deepseek.com/news/news251201)<br><small>DeepSeek-V3.2</small> | 🏗️ 架构 | 引入 DeepSeek Sparse Attention，并把思考能力整合进工具调用。 |
+| 2026-01 ⚠️ | [Kimi K2.5（原生多模态）](https://moonshotai.github.io/Kimi-K2.5/)<br><small>Kimi K2.5</small> | 🔓 开源 | 约 15T 图文混合 token 训练，1T 总参数 / 32B 激活。 |
+| 2026-02 ⚠️ | [Qwen3.5（原生视觉）](https://qwen.ai/blog)<br><small>Qwen3.5-397B-A17B</small> | 🔓 开源 | Qwen 首个带原生视觉的开源旗舰，Apache 2.0。 |
+| 2026-02 ⚠️ | [GLM-5](https://z.ai/blog/glm-5)<br><small>GLM-5</small> | 🔓 开源 | 744B 总参数 / 40B 激活，采用稀疏注意力，MIT 许可。 |
+| 2026-03 ⚠️ | [GPT-5.4（100 万上下文 + 内置电脑操作）](https://platform.openai.com/docs/changelog)<br><small>GPT-5.4</small> | 🚀 应用 | 首个 1M 上下文并内置 computer use 的 GPT-5 系列模型。 |
+| 2026-04 ⚠️ | [Gemma 4](https://ai.google.dev/gemma)<br><small>Gemma 4</small> | 🔓 开源 | 开源多模态系列，支持文本/图像/音频输入。 |
 
 ---
 

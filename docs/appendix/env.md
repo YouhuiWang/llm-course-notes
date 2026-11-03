@@ -115,3 +115,105 @@ site/ dist/            构建产物（不入库）
 - 文档链：`requirements.txt` 只锁大版本（`>=`），保证插件兼容；
 - 实验链：`requirements-lab.txt` 锁小版本（`==`），保证数值可复现；
 - 每次升级后跑 `make figures && make build && make pdf`，三件事都过才算升级成功。
+
+---
+
+## 7 部署
+
+### 7.1 本地预览
+
+```bash
+make serve          # http://127.0.0.1:8000，改文件自动刷新
+```
+
+### 7.2 构建静态站
+
+```bash
+make build          # 输出到 site/，可直接用任意静态服务器托管
+python -m http.server -d site 8000
+```
+
+`make build` 带 `--strict`：任何死链或未知文件都会让构建失败。
+
+### 7.3 部署到 GitHub Pages
+
+仓库里加一个 workflow（`.github/workflows/pages.yml`）：
+
+```yaml
+name: pages
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: mkdocs build --strict
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+    steps:
+      - uses: actions/deploy-pages@v4
+```
+
+然后在仓库 Settings → Pages 里把 Source 设为 "GitHub Actions"。
+
+### 7.4 分发 PDF
+
+```bash
+make pdf            # dist/大模型发展与相关技术详解.pdf
+```
+
+PDF 由 `scripts/build_pdf.sh` 用 Chrome headless 打印"全书打印版"页面生成，
+与网页同源——改 Markdown 就同时改了两者。
+
+### 7.5 版本管理建议
+
+- 每讲完成打一个 tag（如 `v0.2-l09`）；
+- PDF 产物不入库（`dist/` 已在 `.gitignore`）；
+- 术语表与时间线是"单一数据源"，改数据后跑 `make figures` 或 `gen_timeline.py` 重新生成。
+
+---
+
+## 8 已知问题与排查
+
+### 8.1 PDF 目录页为空
+
+**现象**：`make pdf` 生成的 PDF 第 2 页只有"目录"两个字，下面空白。
+
+**原因**：`mkdocs-print-site-plugin` 的 `print-site.js` 只从右栏
+（`.md-sidebar--secondary`）复制目录，而本站启用了 `toc.integrate`，
+右栏不存在，脚本报错。
+
+**修复**：`docs/assets/js/print-toc.js` 直接扫描打印页里的 `h1` 重建目录，
+不依赖主题结构。已在 `mkdocs.yml` 的 `extra_javascript` 中注册。
+
+### 8.2 某一讲的标题在打印页里变成 `<h00-导论-...>`
+
+**现象**：PDF 目录缺某一讲，HTML 里该页的标题标签名被污染
+（`<h00-导论-l01-what-is-llm-1>`）。
+
+**原因**：当 Markdown 的 H1 生成的锚点是一个**纯数字**（如 `# 第 1 讲` 生成 `id="1"`），
+插件在做字符串替换时会误伤标签名。
+
+**修复**：给该标题加显式锚点，避开纯数字 id：
+
+```markdown
+# 第 1 讲　大模型是什么 {: #l01 }
+```
+
+新建讲次时，若标题以数字开头，建议一律加显式锚点。

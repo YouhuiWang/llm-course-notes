@@ -101,6 +101,7 @@ extra_javascript:
   - assets/vendor/katex/auto-render.min.js
   - assets/js/katex-init.js
   - assets/js/sidebar-toggle.js
+  - assets/js/print-toc.js
 
 nav:
   - 首页: index.md

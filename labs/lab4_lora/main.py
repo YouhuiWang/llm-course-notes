@@ -96,7 +96,7 @@ def apply_lora(model: nn.Module, r: int = 4) -> None:
     """把模型里所有 Linear 换成 LoRALinear（head 除外）"""
     for name, module in model.named_children():
         if isinstance(module, nn.MultiheadAttention):
-            continue          # 不碰注意力内部：它依赖 out_proj.weight 的 fused 实现
+            continue  # 不碰注意力内部：它依赖 out_proj.weight 的 fused 实现
         if isinstance(module, nn.Linear):
             if name != "head":
                 setattr(model, name, LoRALinear(module, r))
@@ -130,8 +130,9 @@ def set_trainable(model: TinyEncoder, mode: str) -> int:
 # ---------------------------------------------------------------- 训练
 
 
-def train(model: TinyEncoder, x: torch.Tensor, y: torch.Tensor, steps: int,
-          lr: float = 1e-3) -> float:
+def train(
+    model: TinyEncoder, x: torch.Tensor, y: torch.Tensor, steps: int, lr: float = 1e-3
+) -> float:
     opt = torch.optim.AdamW([p for p in model.parameters() if p.requires_grad], lr=lr)
     t0 = time.time()
     for _ in range(steps):
@@ -174,8 +175,10 @@ def main() -> None:
         acc = accuracy(model, xb_val, yb_val)
         print(f"{mode:<12}{n_train:>12,}{n_train / total:>7.1%}{t:>7.1f}s{acc:>8.3f}")
 
-    print("\n注：LoRA 只训练很少的参数，准确率接近全参微调；"
-          "只训 head 明显更差——说明「适配哪一层」比「训多少参数」更重要。")
+    print(
+        "\n注：LoRA 只训练很少的参数，准确率接近全参微调；"
+        "只训 head 明显更差——说明「适配哪一层」比「训多少参数」更重要。"
+    )
 
 
 if __name__ == "__main__":

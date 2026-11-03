@@ -332,3 +332,133 @@
   summary: 稠密与 MoE 并行的开源家族，支持思考/非思考模式切换。
   link: https://qwenlm.github.io/blog/qwen3/
   verified: false
+
+# ---------- 2025–2026（来源：agitracker.io / llm.okamomedia.tokyo 两个聚合站交叉核对） ----------
+
+- date: 2025-01
+  title: DeepSeek-R1
+  en: DeepSeek-R1
+  category: 对齐
+  summary: 纯 RL 训练的长链推理模型，开源 MIT 许可，并蒸馏出 6 个小模型。
+  link: https://arxiv.org/abs/2501.12948
+  verified: true
+
+- date: 2025-02
+  title: Claude 3.7 Sonnet
+  en: Claude 3.7 Sonnet
+  category: 架构
+  summary: 首个"混合推理"商用模型：同一模型可切换即时回答与扩展思考。
+  link: https://www.anthropic.com/news/claude-3-7-sonnet
+  verified: true
+
+- date: 2025-03
+  title: Gemini 2.5 Pro
+  en: Gemini 2.5 Pro
+  category: 架构
+  summary: 100 万 token 上下文的思考型模型，长上下文与推理结合。
+  link: https://blog.google/technology/google-deepmind/gemini-model-thinking-updates-march-2025/
+  verified: true
+
+- date: 2025-04
+  title: Llama 4（MoE + 1000 万上下文）
+  en: Llama 4 Scout / Maverick
+  category: 开源
+  summary: 首个 Llama MoE 系列，Scout 宣称 1000 万 token 上下文，原生多模态。
+  link: https://ai.meta.com/blog/llama-4-multimodal-intelligence/
+  verified: true
+
+- date: 2025-04
+  title: Qwen3（混合思考）
+  en: Qwen3
+  category: 开源
+  summary: 235B-A22B 旗舰 MoE，同一模型支持思考/非思考模式，Apache 2.0。
+  link: https://qwenlm.github.io/blog/qwen3/
+  verified: true
+
+- date: 2025-05
+  title: Claude 4（Opus 4 / Sonnet 4）
+  en: Claude 4
+  category: 应用
+  summary: 主打编码与 agent 场景，Claude Code 正式可用。
+  link: https://www.anthropic.com/news/claude-4
+  verified: true
+
+- date: 2025-07
+  title: Kimi K2
+  en: Kimi K2
+  category: 开源
+  summary: 1T 总参数 / 32B 激活的开源 MoE，用 Muon 优化器训练，主打 agent 能力。
+  link: https://moonshotai.github.io/Kimi-K2/
+  verified: true
+
+- date: 2025-08
+  title: GPT-5（路由式统一系统）
+  en: GPT-5
+  category: 架构
+  summary: 用实时路由在"快模型"与"推理模型"之间自动切换，开箱即用。
+  link: https://openai.com/index/introducing-gpt-5/
+  verified: true
+
+- date: 2025-08
+  title: gpt-oss（OpenAI 重新开源）
+  en: gpt-oss-120b / 20b
+  category: 开源
+  summary: OpenAI 自 GPT-2 之后首次发布开放权重模型，Apache 2.0。
+  link: https://openai.com/index/introducing-gpt-oss/
+  verified: true
+
+- date: 2025-11
+  title: Gemini 3 Pro
+  en: Gemini 3 Pro
+  category: 应用
+  summary: Gemini 3 首款模型，多模态与长上下文继续保持领先。
+  link: https://blog.google/products/gemini/gemini-3/
+  verified: true
+
+- date: 2025-12
+  title: DeepSeek-V3.2（稀疏注意力）
+  en: DeepSeek-V3.2
+  category: 架构
+  summary: 引入 DeepSeek Sparse Attention，并把思考能力整合进工具调用。
+  link: https://api-docs.deepseek.com/news/news251201
+  verified: true
+
+- date: 2026-01
+  title: Kimi K2.5（原生多模态）
+  en: Kimi K2.5
+  category: 开源
+  summary: 约 15T 图文混合 token 训练，1T 总参数 / 32B 激活。
+  link: https://moonshotai.github.io/Kimi-K2.5/
+  verified: false
+
+- date: 2026-02
+  title: Qwen3.5（原生视觉）
+  en: Qwen3.5-397B-A17B
+  category: 开源
+  summary: Qwen 首个带原生视觉的开源旗舰，Apache 2.0。
+  link: https://qwen.ai/blog
+  verified: false
+
+- date: 2026-02
+  title: GLM-5
+  en: GLM-5
+  category: 开源
+  summary: 744B 总参数 / 40B 激活，采用稀疏注意力，MIT 许可。
+  link: https://z.ai/blog/glm-5
+  verified: false
+
+- date: 2026-03
+  title: GPT-5.4（100 万上下文 + 内置电脑操作）
+  en: GPT-5.4
+  category: 应用
+  summary: 首个 1M 上下文并内置 computer use 的 GPT-5 系列模型。
+  link: https://platform.openai.com/docs/changelog
+  verified: false
+
+- date: 2026-04
+  title: Gemma 4
+  en: Gemma 4
+  category: 开源
+  summary: 开源多模态系列，支持文本/图像/音频输入。
+  link: https://ai.google.dev/gemma
+  verified: false

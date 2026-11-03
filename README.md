@@ -61,7 +61,7 @@ dist/            PDF 产物
 | M0 | 骨架与构建链 | ✅ 已完成 |
 | M1 | 样章 L4（注意力）、L17（Agent） | ✅ 已完成 |
 | M2–M6 | L1–L24 成文 | ⬜ 待开始 |
-| M7 | PDF 精排与校对 | ⬜ 待开始 |
+| M7 | PDF 精排与校对 | ✅ 已完成 |
 
 当前可读：[第 4 讲 注意力机制](docs/02-transformer/l04-attention.md)、
 [第 9 讲 偏好优化](docs/03-对齐/l09-preference-optimization.md)、
@@ -78,6 +78,15 @@ dist/            PDF 产物
 - 每 800–1200 字配一张图
 
 新建一讲：复制 `docs/_template.md` → 改名 `l{NN}-{slug}.md` → 填写。
+
+## 部署
+
+```bash
+make build     # 静态站 → site/（--strict，死链会构建失败）
+make pdf       # PDF → dist/
+```
+
+GitHub Pages 的 workflow 模板见 [环境手册 §7](docs/appendix/env.md#7)。
 
 ## 约定
 

@@ -103,3 +103,40 @@
 | 蒸馏 | Distillation | 用大模型输出训练小模型，迁移能力 | L13 |
 | 混合精度 | Mixed Precision | 用 bf16/fp16 计算、fp32 累加，兼顾速度与稳定 | L14 |
 | 模型浮点利用率 | MFU | 实际算力占硬件峰值的比例，衡量训练效率 | L14 |
+
+## 补充（L10–L24 引入）
+
+| 术语 | English | 一句话定义 | 首讲 |
+|---|---|---|---|
+| 对齐税 | Alignment Tax | 安全对齐带来的通用能力下降 | L10 |
+| 越狱 | Jailbreak | 构造输入绕过模型的安全拒答 | L10 |
+| 对抗后缀 | Adversarial Suffix | 用梯度搜出的一串字符，诱导模型违规 | L10 |
+| 间接注入 | Indirect Prompt Injection | 把恶意指令藏在检索内容或工具返回里 | L10 |
+| 容量因子 | Capacity Factor | 每个专家最多接收的 token 数上限 | L11 |
+| 稀疏激活 | Sparse Activation | 每个 token 只计算少数专家的参数 | L11 |
+| 细粒度专家 | Fine-grained Experts | 把专家切得更小更多，组合更灵活 | L11 |
+| 位置插值 | Position Interpolation | 把长序列位置压缩回训练范围以支持外推 | L12 |
+| 分频段外推 | YaRN | 高频不缩放、低频插值、加温度修正的外推方法 | L12 |
+| 连续批处理 | Continuous Batching | 请求一结束就补新请求，提升槽位利用率 | L13 |
+| 分页注意力 | PagedAttention | 把 KV cache 切成固定块按需分配 | L13 |
+| 显存带宽瓶颈 | Memory-bound | 推理时瓶颈在读权重而非算力 | L13 |
+| 数据分片 | Sharding | 把参数/梯度/优化器状态切到多卡 | L14 |
+| 零冗余优化 | ZeRO | 三阶段切分优化器状态、梯度与参数 | L14 |
+| 重计算 | Activation Checkpointing | 前向不存激活，反向重算以省显存 | L14 |
+| 前缀缓存 | Prefix Caching | 复用固定前缀的 KV，省重复计算 | L15 |
+| 中间遗忘 | Lost in the Middle | 长上下文中间位置的信息召回率最低 | L15 |
+| 倒数排名融合 | RRF | 只用排名融合多路检索结果，无需归一化 | L16 |
+| 忠实度 | Faithfulness | 答案中每句话有上下文支撑的比例 | L16 |
+| 假设文档嵌入 | HyDE | 先让模型写假答案，再用它检索 | L16 |
+| 智能体间协议 | A2A | 让不同框架的 agent 互相发现与委派 | L18 |
+| 反思 | Reflection | 失败后总结教训并改变策略 | L17 |
+| 误差累积 | Error Accumulation | 多步任务的整体成功率按 $p^n$ 衰减 | L17 |
+| 视觉指令微调 | Visual Instruction Tuning | 用图文对话数据训练多模态助手 | L19 |
+| 投影层 | Projector | 把视觉特征映射到语言模型词向量空间 | L19 |
+| 自一致性 | Self-Consistency | 多次采样后取多数答案 | L20 |
+| 过度思考 | Overthinking | 思考过长导致准确率反而下降 | L20 |
+| 可验证奖励 | RLVR | 用规则或测试判定对错，替代人类偏好 | L21 |
+| 拒绝采样 | Rejection Sampling | 同题多次采样，只保留成功轨迹 | L21 |
+| 组内相对优势 | Group Relative Advantage | GRPO 用组内均值作基线算优势 | L21 |
+| 状态空间模型 | SSM | 用线性递推代替注意力，复杂度 $O(n)$ | L22 |
+| 持续学习 | Continual Learning | 顺序学新任务而不遗忘旧任务 | L22 |

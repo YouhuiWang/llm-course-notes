@@ -366,3 +366,28 @@ body.sidebar-collapsed .md-content {
 #print-site-cover-page table tr:nth-child(1) td:first-child::after { content: "简介"; font-size: 0.75rem; }
 #print-site-cover-page table tr:nth-child(2) td:first-child::after { content: "作者"; font-size: 0.75rem; }
 #print-site-cover-page table tr:nth-child(3) td:first-child::after { content: "版权"; font-size: 0.75rem; }
+
+/* ============ 导航细节 ============ */
+/* 面包屑：弱化，不与标题争 */
+.md-typeset .md-path {
+  font-size: 0.68rem;
+  opacity: 0.75;
+  margin-bottom: 0.4rem;
+}
+
+/* 编辑按钮：贴在标题右侧，悬停才明显 */
+.md-content__button {
+  opacity: 0.35;
+  transition: opacity 0.15s;
+}
+
+.md-content__button:hover {
+  opacity: 0.9;
+}
+
+/* 侧栏当前项：加一条左侧强调线 */
+.md-nav__link--active {
+  border-left: 2px solid var(--md-accent-fg-color);
+  padding-left: 0.5rem;
+  margin-left: -0.5rem;
+}

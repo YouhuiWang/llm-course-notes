@@ -42,9 +42,12 @@ ax.legend(loc="upper left", fontsize=7)
 clean_axes(ax)
 
 fig.text(
-    0.5, -0.03,
+    0.5,
+    -0.03,
     "SwiGLU = SiLU(门控分支) ⊙ 线性分支，再降维——三个矩阵换更好的表达力",
-    ha="center", fontsize=7.2, color=INK,
+    ha="center",
+    fontsize=7.2,
+    color=INK,
 )
 
 save(fig, "l05-activations")

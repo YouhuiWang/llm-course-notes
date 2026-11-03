@@ -37,15 +37,27 @@ def draw(x0, title, pre_ln: bool, color):
     ax.plot([xs[0] + W / 2, plus_x], [y - 0.75, y - 0.75], color=PALETTE[0], lw=1.3, ls="--")
     arrow(ax, (plus_x, y - 0.75), (plus_x, y), color=PALETTE[0], dashed=True)
 
-    note(ax, x0 + 2.45, 1.95,
-         "残差干净" if pre_ln else "残差穿过 LN",
-         PALETTE[0] if pre_ln else PALETTE[1], fontsize=6.8)
+    note(
+        ax,
+        x0 + 2.45,
+        1.95,
+        "残差干净" if pre_ln else "残差穿过 LN",
+        PALETTE[0] if pre_ln else PALETTE[1],
+        fontsize=6.8,
+    )
 
 
 draw(0.30, "Post-LN（原版 Transformer）", False, PALETTE[1])
 draw(6.10, "Pre-LN（现代大模型）", True, PALETTE[0])
 
-note(ax, 5.7, 0.75, "Post-LN 在 12 层以上就要靠 warmup 才能训；Pre-LN 可以直接上 100 层", MUTED, fontsize=7)
+note(
+    ax,
+    5.7,
+    0.75,
+    "Post-LN 在 12 层以上就要靠 warmup 才能训；Pre-LN 可以直接上 100 层",
+    MUTED,
+    fontsize=7,
+)
 note(ax, 5.7, 0.30, "代价：Pre-LN 的最终层输出未归一化，推理时通常再补一个 LN", MUTED, fontsize=6.8)
 
 save(fig, "l05-pre-post-ln")

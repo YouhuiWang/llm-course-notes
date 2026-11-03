@@ -1,0 +1,334 @@
+# 大模型发展时间线（数据源）
+# 用途：生成附录时间线页与全书总览图；所有条目均需可回溯到公开来源。
+# 字段：date / title / en / category / summary / link / verified
+#   category: 理论 | 架构 | 规模 | 对齐 | 应用 | 开源 | 系统 | 政策
+#   verified: true = 已核实；false = 待 M6 阶段联网复核
+# 说明：2024 年之后条目必须在 refs/sources.yaml 留有抓取记录。
+
+- date: 1943-01
+  title: 麦卡洛克-皮茨神经元
+  en: McCulloch-Pitts Neuron
+  category: 理论
+  summary: 用阈值逻辑单元描述神经活动，奠定"计算单元"的抽象。
+  link: https://doi.org/10.1007/BF02478259
+  verified: true
+
+- date: 1950-10
+  title: 图灵测试
+  en: Computing Machinery and Intelligence
+  category: 理论
+  summary: 把"机器能否思考"转化为可操作的行为判据。
+  link: https://doi.org/10.1093/mind/LIX.236.433
+  verified: true
+
+- date: 1958-07
+  title: 感知机
+  en: The Perceptron
+  category: 理论
+  summary: 第一个可学习的线性分类器，也暴露了线性不可分的局限。
+  link: https://doi.org/10.1037/h0042519
+  verified: true
+
+- date: 1986-10
+  title: 反向传播
+  en: Backpropagation
+  category: 理论
+  summary: 用链式法则高效计算多层网络梯度，深度学习的前置条件。
+  link: https://doi.org/10.1038/323533a0
+  verified: true
+
+- date: 1997-11
+  title: 长短期记忆网络
+  en: LSTM
+  category: 架构
+  summary: 用门控与细胞状态缓解梯度消失，统治序列建模近二十年。
+  link: https://doi.org/10.1162/neco.1997.9.8.1735
+  verified: true
+
+- date: 2003-06
+  title: 神经网络语言模型
+  en: A Neural Probabilistic Language Model
+  category: 架构
+  summary: 首次用稠密词向量 + 前馈网络做语言建模，困惑度显著优于 n-gram。
+  link: https://www.jmlr.org/papers/v3/bengio03a.html
+  verified: true
+
+- date: 2013-01
+  title: word2vec
+  en: Efficient Estimation of Word Representations
+  category: 架构
+  summary: 负采样 + 层次 softmax 让词向量训练可规模化，语义算术成为现象级演示。
+  link: https://arxiv.org/abs/1301.3781
+  verified: true
+
+- date: 2014-09
+  title: 序列到序列学习
+  en: Sequence to Sequence Learning
+  category: 架构
+  summary: 编码器-解码器结构统一了翻译等变长映射任务。
+  link: https://arxiv.org/abs/1409.3215
+  verified: true
+
+- date: 2014-09
+  title: 加性注意力
+  en: Neural Machine Translation by Jointly Learning to Align and Translate
+  category: 架构
+  summary: 让解码器动态对齐源句片段，注意力的雏形。
+  link: https://arxiv.org/abs/1409.0473
+  verified: true
+
+- date: 2015-12
+  title: 残差连接
+  en: Deep Residual Learning
+  category: 架构
+  summary: 恒等捷径让上百层网络可训练，成为 Transformer 的必备组件。
+  link: https://arxiv.org/abs/1512.03385
+  verified: true
+
+- date: 2017-06
+  title: Transformer
+  en: Attention Is All You Need
+  category: 架构
+  summary: 完全用注意力替代循环，实现训练并行化，大模型时代的起点。
+  link: https://arxiv.org/abs/1706.03762
+  verified: true
+
+- date: 2018-06
+  title: GPT-1
+  en: Improving Language Understanding by Generative Pre-Training
+  category: 架构
+  summary: 生成式预训练 + 下游微调，确立"预训练-微调"范式。
+  link: https://openai.com/research/language-unsupervised
+  verified: true
+
+- date: 2018-10
+  title: BERT
+  en: Bidirectional Encoder Representations from Transformers
+  category: 架构
+  summary: 双向掩码语言建模刷新 11 项 NLP 任务，编码器路线的高峰。
+  link: https://arxiv.org/abs/1810.04805
+  verified: true
+
+- date: 2019-02
+  title: GPT-2
+  en: Language Models are Unsupervised Multitask Learners
+  category: 规模
+  summary: 15 亿参数，零样本迁移初现，因滥用风险分阶段发布。
+  link: https://openai.com/research/better-language-models
+  verified: true
+
+- date: 2019-10
+  title: T5
+  en: Exploring the Limits of Transfer Learning
+  category: 架构
+  summary: 把一切任务统一为"文本到文本"，系统比较预训练目标与规模。
+  link: https://arxiv.org/abs/1910.10683
+  verified: true
+
+- date: 2020-01
+  title: 缩放定律
+  en: Scaling Laws for Neural Language Models
+  category: 规模
+  summary: 损失随参数量、数据量、算力呈幂律下降，为"堆规模"提供定量依据。
+  link: https://arxiv.org/abs/2001.08361
+  verified: true
+
+- date: 2020-01
+  title: Switch Transformer
+  en: Switch Transformers
+  category: 架构
+  summary: 万亿参数稀疏 MoE，验证"参数量与计算量解耦"的可行性。
+  link: https://arxiv.org/abs/2101.03961
+  verified: true
+
+- date: 2020-05
+  title: GPT-3
+  en: Language Models are Few-Shot Learners
+  category: 规模
+  summary: 1750 亿参数，少样本上下文学习成为新范式。
+  link: https://arxiv.org/abs/2005.14165
+  verified: true
+
+- date: 2020-10
+  title: ViT
+  en: An Image is Worth 16x16 Words
+  category: 架构
+  summary: 图像切 patch 直接送进 Transformer，视觉与语言架构开始统一。
+  link: https://arxiv.org/abs/2010.11929
+  verified: true
+
+- date: 2021-01
+  title: CLIP
+  en: Contrastive Language-Image Pre-training
+  category: 架构
+  summary: 4 亿图文对对比学习，得到可零样本分类的共享嵌入空间。
+  link: https://arxiv.org/abs/2103.00020
+  verified: true
+
+- date: 2021-04
+  title: RoPE
+  en: "RoFormer: Rotary Position Embedding"
+  category: 架构
+  summary: 用旋转矩阵编码相对位置，成为长上下文模型的事实标准。
+  link: https://arxiv.org/abs/2104.09864
+  verified: true
+
+- date: 2021-06
+  title: LoRA
+  en: Low-Rank Adaptation
+  category: 系统
+  summary: 用低秩增量冻结主干，把微调显存需求降低一个数量级。
+  link: https://arxiv.org/abs/2106.09685
+  verified: true
+
+- date: 2021-07
+  title: Codex
+  en: Evaluating LLMs Trained on Code
+  category: 应用
+  summary: 代码预训练带来程序合成能力，GitHub Copilot 的技术基础。
+  link: https://arxiv.org/abs/2107.03374
+  verified: true
+
+- date: 2022-01
+  title: InstructGPT
+  en: Training Language Models to Follow Instructions with Human Feedback
+  category: 对齐
+  summary: RLHF 三阶段流程成型，1.3B 模型的人类偏好超过 175B 基座。
+  link: https://arxiv.org/abs/2203.02155
+  verified: true
+
+- date: 2022-03
+  title: Chinchilla
+  en: Training Compute-Optimal Large Language Models
+  category: 规模
+  summary: 参数与数据应同比扩展，多数模型此前严重训练不足。
+  link: https://arxiv.org/abs/2203.15556
+  verified: true
+
+- date: 2022-05
+  title: FlashAttention
+  en: Fast and Memory-Efficient Exact Attention with IO-Awareness
+  category: 系统
+  summary: 用分块与在线 softmax 把注意力做成 IO 最优，长序列训练成为可能。
+  link: https://arxiv.org/abs/2205.14135
+  verified: true
+
+- date: 2022-11
+  title: ChatGPT
+  en: ChatGPT
+  category: 应用
+  summary: 对话式交互把大模型推向大众，两个月用户破亿。
+  link: https://openai.com/blog/chatgpt
+  verified: true
+
+- date: 2023-02
+  title: LLaMA
+  en: Open and Efficient Foundation Language Models
+  category: 开源
+  summary: 小模型 + 充分数据达到强性能，开源生态由此爆发。
+  link: https://arxiv.org/abs/2302.13971
+  verified: true
+
+- date: 2023-03
+  title: GPT-4
+  en: GPT-4 Technical Report
+  category: 规模
+  summary: 多模态输入 + 大幅提升的推理与考试表现，闭源路线的标杆。
+  link: https://arxiv.org/abs/2303.08774
+  verified: true
+
+- date: 2023-05
+  title: DPO
+  en: Direct Preference Optimization
+  category: 对齐
+  summary: 把 RLHF 目标解析地转成分类损失，偏好对齐不再需要 RL 循环。
+  link: https://arxiv.org/abs/2305.18290
+  verified: true
+
+- date: 2023-07
+  title: Llama 2
+  en: Llama 2
+  category: 开源
+  summary: 开放商用许可，配套对话模型与安全报告，开源进入产品化阶段。
+  link: https://arxiv.org/abs/2307.09288
+  verified: true
+
+- date: 2023-09
+  title: Mistral 7B
+  en: Mistral 7B
+  category: 开源
+  summary: 滑窗注意力 + GQA，小模型效率标杆。
+  link: https://arxiv.org/abs/2310.06825
+  verified: true
+
+- date: 2023-12
+  title: Mixtral 8x7B
+  en: Mixtral of Experts
+  category: 架构
+  summary: 开源稀疏 MoE 首次在通用任务上追平更大稠密模型。
+  link: https://arxiv.org/abs/2401.04088
+  verified: true
+
+- date: 2024-02
+  title: Gemini 1.5
+  en: Gemini 1.5
+  category: 架构
+  summary: MoE + 百万级 token 上下文，长上下文成为竞争维度。
+  link: https://arxiv.org/abs/2403.05530
+  verified: true
+
+- date: 2024-05
+  title: DeepSeek-V2 / MLA
+  en: DeepSeek-V2
+  category: 系统
+  summary: 多头潜在注意力压缩 KV cache，推理成本大幅下降。
+  link: https://arxiv.org/abs/2405.04434
+  verified: true
+
+- date: 2024-05
+  title: GPT-4o
+  en: GPT-4o
+  category: 应用
+  summary: 文本/视觉/语音端到端统一，交互延迟接近实时对话。
+  link: https://openai.com/index/hello-gpt-4o/
+  verified: true
+
+- date: 2024-09
+  title: o1
+  en: Learning to Reason with LLMs
+  category: 对齐
+  summary: 用 RL 训练长思维链，把"测试时计算"变成可扩展的能力维度。
+  link: https://openai.com/index/learning-to-reason-with-llms/
+  verified: true
+
+- date: 2024-11
+  title: MCP
+  en: Model Context Protocol
+  category: 系统
+  summary: 统一模型与外部工具/数据源的连接方式，agent 生态的接口标准。
+  link: https://www.anthropic.com/news/model-context-protocol
+  verified: true
+
+- date: 2024-12
+  title: DeepSeek-V3
+  en: DeepSeek-V3 Technical Report
+  category: 开源
+  summary: 671B MoE、14.8T token 预训练，训练成本与性能比刷新认知。
+  link: https://arxiv.org/abs/2412.19437
+  verified: true
+
+- date: 2025-01
+  title: DeepSeek-R1
+  en: DeepSeek-R1
+  category: 对齐
+  summary: 纯 RL（R1-Zero）涌现反思与长链推理，推理能力可被蒸馏到小模型。
+  link: https://arxiv.org/abs/2501.12948
+  verified: true
+
+- date: 2025-04
+  title: Qwen3
+  en: Qwen3
+  category: 开源
+  summary: 稠密与 MoE 并行的开源家族，支持思考/非思考模式切换。
+  link: https://qwenlm.github.io/blog/qwen3/
+  verified: false

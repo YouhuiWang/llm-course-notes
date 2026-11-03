@@ -1,0 +1,4 @@
+# 文档站依赖
+mkdocs-material>=9.6
+mkdocs-print-site-plugin>=2.5
+pymdown-extensions>=10.14

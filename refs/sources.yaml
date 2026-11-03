@@ -1,0 +1,65 @@
+# 事实来源台账
+#
+# 规则：正文中 2024 年之后的事实性陈述，必须在此登记
+#       claim / url / fetched_at / quote。
+# quote 保留原文片段，便于日后核对是否被曲解。
+# 核查周期：每半年复核一次；被推翻的条目移到 retracted 并注明原因。
+
+meta:
+  last_reviewed: 2026-11-03
+  reviewer: wyh
+  policy: 官方文档 / 原始论文 / 厂商博客优先；二手解读仅作线索
+
+sources:
+  - id: src-2026-agent-review
+    claim: >-
+      2026 年的系统综述把 LLM agent 归纳为 profile、memory、planning、
+      action、security 五个模块，并指出规划-执行-反思的角色分工在
+      多个应用域反复出现。
+    url: https://link.springer.com/article/10.1007/s10462-026-11731-2
+    site: Artificial Intelligence Review (Springer)
+    fetched_at: 2026-11-03
+    quote: >-
+      We propose a unified five-module architecture comprising profile,
+      memory, planning, action, and security
+    used_in: ["L17 §0", "L17 §9"]
+
+  - id: src-2026-tooluse-survey
+    claim: >-
+      工具使用的研究重心已从单次调用正确性转向长轨迹上的多工具编排，
+      安全、成本与可验证性成为主要约束。
+    url: https://link.springer.com/article/10.1007/s10462-026-11700-9
+    site: Artificial Intelligence Review (Springer)
+    fetched_at: 2026-11-03
+    quote: >-
+      the focus has increasingly shifted from isolated invocation to
+      multi-tool orchestration over long trajectories
+    used_in: ["L17 §6", "L18 §2"]
+
+  - id: src-2026-agent-reliability
+    claim: >-
+      agent 的可靠性可按决策/状态/执行/环境/治理五层分析，
+      失效会跨层传播。
+    url: https://www.oaepublish.com/articles/inect.2026.13
+    site: Intelligence & Computing (OAE Publishing)
+    fetched_at: 2026-11-03
+    quote: >-
+      we abstract LLM agent frameworks into five architectural layers:
+      decision/control, state/memory, action/execution,
+      environment/feedback, and governance/monitoring
+    used_in: ["L17 §7", "L18 §4"]
+
+  - id: src-2026-agent-critical
+    claim: >-
+      对 98 篇文献的系统评估给出三条高置信结论：内在自我纠错不可靠、
+      长程自主规划仍弱、工具类 agent 普遍易受提示注入。
+    url: https://link.springer.com/article/10.1007/s44163-026-02342-5
+    site: Discover Artificial Intelligence (Springer)
+    fetched_at: 2026-11-03
+    quote: >-
+      High-confidence findings are that intrinsic self-correction is
+      unreliable, long-horizon autonomous planning remains weak and
+      toolusing agents are broadly vulnerable to injection.
+    used_in: ["L17 §4.5", "L18 §4"]
+
+retracted: []

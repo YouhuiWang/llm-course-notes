@@ -1,0 +1,13 @@
+[project]
+name = "llm-course-notes"
+version = "0.1.0"
+description = "大模型发展与相关技术详解：24 讲系统讲义 + 8 个可复现实验"
+requires-python = ">=3.12"
+readme = "README.md"
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"

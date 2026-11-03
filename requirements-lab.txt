@@ -1,0 +1,6 @@
+# 实验依赖（锁定小版本，保证数值可复现）
+torch==2.15.0
+numpy==2.5.4
+matplotlib==3.11.2
+# 可选：Lab3 与 tiktoken 对比
+tiktoken==0.12.0

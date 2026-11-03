@@ -1,0 +1,117 @@
+# 环境手册
+
+> 目标：从零到能跑通全书代码，不超过 10 分钟。
+
+## 1 前置
+
+| 项 | 要求 | 检查命令 |
+|---|---|---|
+| 操作系统 | macOS 12+ / Linux / WSL2 | `uname -a` |
+| Python | 3.12（**不要用 3.14**） | `python3 --version` |
+| uv | ≥ 0.5 | `uv --version` |
+| 磁盘 | ≥ 5 GB（含 torch 与模型权重） | `df -h .` |
+
+!!! warning "为什么固定 3.12"
+    PyTorch 对新版本 Python 的轮子发布有滞后。3.14 上 `pip install torch` 可能退化为源码编译，耗时且易失败。uv 可以独立下载 3.12，不影响系统 Python。
+
+```bash
+# 安装 uv（若未安装）
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+## 2 三条独立的构建链
+
+本项目有三类任务，各自依赖不同，建议分环境：
+
+| 链 | 用途 | 依赖文件 | 命令 |
+|---|---|---|---|
+| 文档站 | 写讲义、预览、出 PDF | `requirements.txt` | `make serve` / `make pdf` |
+| 图表 | 生成 SVG/PDF 插图 | `requirements-fig.txt` | `make figures` |
+| 实验 | 跑 8 个 Lab | `requirements-lab.txt` | `python labs/lab1_attention/main.py` |
+
+**最省事的做法**：一个 venv 装全部（约 2 GB）。
+
+```bash
+cd 大模型发展与相关技术详解
+uv venv --python 3.12 .venv
+uv pip install --python .venv/bin/python -r requirements.txt -r requirements-fig.txt -r requirements-lab.txt
+```
+
+## 3 验证
+
+```bash
+# 文档站
+make serve          # 打开 http://127.0.0.1:8000
+
+# 图表（会打印每张图的输出路径）
+make figures
+
+# PDF
+make pdf            # 输出 dist/大模型发展与相关技术详解.pdf
+```
+
+三件事都成功，环境就绪。
+
+## 4 常见问题
+
+### 4.1 `mkdocs: command not found`
+
+没有激活 venv，或用了系统 Python。用 `make serve`（内部调用 `.venv/bin/mkdocs`）可绕过。
+
+### 4.2 中文在图中显示为方块
+
+matplotlib 找不到中文字体。检查：
+
+```bash
+.venv/bin/python -c "from matplotlib import font_manager as fm; print([f.name for f in fm.fontManager.ttflist if 'Hei' in f.name or 'PingFang' in f.name])"
+```
+
+若为空，安装思源黑体（Noto Sans CJK SC），或在 `scripts/figs/style.py` 的 `CJK_CANDIDATES` 里加入本机字体名。
+
+### 4.3 PDF 生成失败
+
+- 检查 Chrome 路径：`ls "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"`
+- 自定义路径：`CHROME=/path/to/chrome make pdf`
+- 页面没生成：先 `make build`，确认 `site/print_page/index.html` 存在
+- PDF 里公式是源码：KaTeX 未加载，检查 `docs/assets/vendor/katex/` 是否完整
+
+### 4.4 `--strict` 构建报死链
+
+MkDocs 严格模式会把断链当错误。先运行 `make check` 定位，再修 Markdown 链接（常见原因：相对路径层级写错）。
+
+### 4.5 torch 安装慢
+
+```bash
+# 使用国内镜像（可选）
+uv pip install --python .venv/bin/python torch --index-url https://pypi.tuna.tsinghua.edu.cn/simple
+```
+
+CPU 版足够跑全部实验；GPU 只在 Lab 5 的大模型量化对比中才有明显收益。
+
+### 4.6 Apple Silicon 上的多进程报错
+
+Lab 7 的沙箱执行用到 `multiprocessing`，macOS 默认 spawn 模式。若报 `RuntimeError`，在入口加：
+
+```python
+if __name__ == "__main__":
+    ...
+```
+
+## 5 目录速查
+
+```
+.venv/                 虚拟环境（不入库）
+docs/                  讲义源文件
+docs/assets/vendor/    KaTeX 与 Mermaid（本地化，离线可用）
+docs/assets/img/       插图（脚本生成，勿手改）
+scripts/figs/          每张图一个脚本
+labs/                  实验代码
+refs/                  papers.bib + sources.yaml
+site/ dist/            构建产物（不入库）
+```
+
+## 6 版本锁定策略
+
+- 文档链：`requirements.txt` 只锁大版本（`>=`），保证插件兼容；
+- 实验链：`requirements-lab.txt` 锁小版本（`==`），保证数值可复现；
+- 每次升级后跑 `make figures && make build && make pdf`，三件事都过才算升级成功。

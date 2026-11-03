@@ -1,0 +1,18 @@
+# 构建产物
+site/
+dist/
+.cache/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# 实验产物（体积大，不入库）
+labs/**/data/
+labs/**/checkpoints/
+labs/**/runs/
+
+# 系统
+.DS_Store

@@ -1,0 +1,135 @@
+# 大模型发展与相关技术详解
+
+<div class="grid cards" markdown>
+
+-   :material-book-open-variant:{ .lg .middle } **24 讲系统讲义**
+
+    ---
+
+    从 n-gram 到智能体，每条技术路线都回答同一个问题：**上一代为什么不够用**。
+
+    [:octicons-arrow-right-24: 从第 1 讲开始](00-导论/l01-what-is-llm.md)
+
+-   :material-flask-outline:{ .lg .middle } **8 个可复现实验**
+
+    ---
+
+    全部 CPU 可跑。手写注意力、迷你 GPT、BPE、LoRA、量化、RAG、Agent、测试时计算。
+
+    [:octicons-arrow-right-24: 实验总览](labs/index.md)
+
+-   :material-chart-timeline-variant:{ .lg .middle } **发展时间线**
+
+    ---
+
+    80 年关键节点，数据驱动、可检索、附论文链接。
+
+    [:octicons-arrow-right-24: 时间线](appendix/timeline.md)
+
+-   :material-file-pdf-box:{ .lg .middle } **网页 + PDF 双交付**
+
+    ---
+
+    同一份 Markdown，两条构建链：站点用于检索，PDF 用于通读与打印。
+
+    [:octicons-arrow-right-24: 全书打印版](/print_page/)
+
+</div>
+
+## 这本书想解决什么问题
+
+市面上的大模型资料大致分两类：一类是**新闻式综述**，能告诉你"发生了什么"，但说不清"为什么这么设计"；另一类是**论文合集**，公式齐全，却缺少从问题到方案的连续叙事。
+
+本讲义试图补上中间那层：**每个技术选择，都还原成它当时要解决的具体问题**。
+
+- 为什么注意力要除以 $\sqrt{d_k}$？——因为不除，softmax 会饱和，梯度会消失。这个理由可以用三行方差推导写清楚。
+- 为什么要有位置编码？——因为注意力对置换等变，不给位置它分不清"狗咬人"和"人咬狗"。这个结论可以严格证明。
+- 为什么 Agent 需要记忆？——因为上下文是有损压缩的状态表示，长程任务里误差会指数累积。
+
+**深度标准**：每一讲都要能回答"是什么、为什么、怎么算、怎么实现、会在哪里出错"。
+
+## 三条主线
+
+| 主线 | 关注点 | 代表讲次 |
+|---|---|---|
+| **规模线** | 参数、数据、算力如何共同决定能力 | L6 Scaling Laws、L13 推理系统、L14 训练系统 |
+| **架构线** | 从 RNN 到 Transformer 到 MoE 到长上下文 | L3、L4、L5、L11、L12 |
+| **对齐线** | 从预训练到可用产品：SFT → 偏好优化 → 推理 RL | L8、L9、L10、L21 |
+
+三条线在应用层汇合：RAG、Agent、多模态都是"模型能力 + 系统设计"的乘积。
+
+## 三种阅读路径
+
+<div class="grid cards" markdown>
+
+-   :material-speedometer-slow:{ .lg .middle } **🟢 入门线**
+
+    ---
+
+    读「直觉」「图解」「工程要点」，跳过 🔴 折叠的推导。约 8 小时通读，建立完整心智模型。
+
+-   :material-school:{ .lg .middle } **🟡 标准线**
+
+    ---
+
+    全部正文 + 前两档习题。适合研究生课程一学期使用，约 40 学时。
+
+-   :material-brain:{ .lg .middle } **🔴 深入线**
+
+    ---
+
+    推导 + 论文 + 第三档习题 + 复现实验。适合做相关方向研究前的系统准备。
+
+</div>
+
+## 课程地图
+
+| 部分 | 讲次 | 一句话 |
+|---|---|---|
+| 一 导论 | L1 | 规模到多少才算"大"，涌现是真是假 |
+| 二 前史 | L2–L3 | 统计方法与 RNN 的天花板在哪里 |
+| 三 Transformer 与预训练 | L4–L7 | 一个 block 到底算了什么，规模如何换算 |
+| 四 对齐 | L8–L10 | 从"会说话"到"听话、有用、不危险" |
+| 五 架构与系统 | L11–L14 | 稀疏化、长上下文、显存账本、千卡并行 |
+| 六 应用层 | L15–L19 | 上下文工程、RAG、Agent、多模态 |
+| 七 推理与前沿 | L20–L22 | 测试时计算、推理 RL、下一步在哪 |
+| 八 治理与实践 | L23–L24 | 评测为何失真，如何交付一个系统 |
+
+## 写作状态
+
+| 里程碑 | 内容 | 状态 |
+|---|---|---|
+| M0 | 骨架、构建链、术语表、时间线数据 | ✅ 完成 |
+| M1 | 样章：L4 注意力、L17 Agent | 🚧 进行中 |
+| M2 | L1–L9 成文 | ⬜ 待开始 |
+| M3 | L10–L16 + Lab1–3 | ⬜ 待开始 |
+| M4 | L17–L19 + Lab7 | ⬜ 待开始 |
+| M5 | L20–L22 + Lab8 | ⬜ 待开始 |
+| M6 | L23–L24 + 附录 | ⬜ 待开始 |
+| M7 | PDF 双线、全站校对 | ⬜ 待开始 |
+
+## 本地构建
+
+```bash
+# 文档站
+uv venv --python 3.12 .venv
+uv pip install --python .venv/bin/python -r requirements.txt
+make serve          # http://127.0.0.1:8000
+
+# 图表（全部脚本生成）
+make figures
+
+# PDF（Chrome headless 打印打印版页面）
+make pdf
+```
+
+## 约定
+
+- **符号**：向量 $\boldsymbol{q}$、矩阵 $\boldsymbol{Q}$、集合 $\mathcal{D}$；标量小写斜体。
+- **公式编号**：`(L4.3)` 表示第 4 讲第 3 式，全站可引用。
+- **术语**：首次出现给中英对照，之后只用中文；完整对照见[术语表](appendix/glossary.md)。
+- **事实核查**：2024 年之后的事实性陈述均附来源与核查日期，见页首徽章。
+
+## 许可
+
+讲义文字采用 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)，代码采用 MIT。

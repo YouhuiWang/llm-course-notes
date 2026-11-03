@@ -1,0 +1,4 @@
+# 图表生成依赖（不含实验用的 torch）
+matplotlib>=3.9
+numpy>=2.0
+PyYAML>=6.0

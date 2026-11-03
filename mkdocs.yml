@@ -1,0 +1,152 @@
+---
+site_name: 大模型发展与相关技术详解
+site_description: 从统计语言模型到智能体——原理、推导与工程实践的系统讲义
+site_author: wyh
+docs_dir: docs
+site_dir: site
+use_directory_urls: true
+copyright: 讲义内容 CC BY-NC-SA 4.0 ｜ 代码 MIT
+
+theme:
+  name: material
+  language: zh
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - navigation.footer
+    - toc.follow
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - search.suggest
+    - search.highlight
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: 切换到深色
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: 切换到浅色
+  font:
+    text: false
+    code: false
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: "¶"
+      toc_depth: 3
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tilde
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.smartsymbols
+  - pymdownx.snippets:
+      base_path: ["docs", "."]
+      check_paths: true
+  # mermaid 代码块由 assets/js/mermaid-init.js 在浏览器端转换为图表，
+  # 避免使用 YAML 的 python/name 标签（可被纯 YAML 工具安全解析）
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+plugins:
+  - search:
+      lang:
+        - zh
+        - en
+  - print-site:
+      add_to_navigation: true
+      print_page_title: 全书打印版
+      add_cover_page: true
+      add_table_of_contents: true
+      toc_title: 目录
+
+extra_css:
+  - assets/vendor/katex/katex.min.css
+  - assets/css/extra.css
+
+extra_javascript:
+  - assets/vendor/katex/katex.min.js
+  - assets/vendor/katex/auto-render.min.js
+  - assets/js/katex-init.js
+
+nav:
+  - 首页: index.md
+  - 第一部分 导论:
+      - 第 1 讲 大模型是什么: 00-导论/l01-what-is-llm.md
+  - 第二部分 前史:
+      - 第 2 讲 统计语言模型与词的表示: 01-前史/l02-statistical-lm.md
+      - 第 3 讲 神经序列建模: 01-前史/l03-neural-seq.md
+  - 第三部分 Transformer 与预训练:
+      - 第 4 讲 注意力机制完全拆解: 02-transformer/l04-attention.md
+      - 第 5 讲 Block 与三大范式: 02-transformer/l05-block-and-paradigms.md
+      - 第 6 讲 Scaling Laws: 02-transformer/l06-scaling-laws.md
+      - 第 7 讲 GPT 谱系与上下文学习: 02-transformer/l07-gpt-lineage.md
+  - 第四部分 对齐:
+      - 第 8 讲 指令微调与数据工程: 03-对齐/l08-sft-data.md
+      - 第 9 讲 偏好优化: 03-对齐/l09-preference-optimization.md
+      - 第 10 讲 安全对齐与红队: 03-对齐/l10-safety-redteam.md
+  - 第五部分 架构与系统:
+      - 第 11 讲 MoE 与稀疏化: 04-架构与系统/l11-moe.md
+      - 第 12 讲 长上下文: 04-架构与系统/l12-long-context.md
+      - 第 13 讲 推理系统: 04-架构与系统/l13-inference-systems.md
+      - 第 14 讲 训练系统: 04-架构与系统/l14-training-systems.md
+  - 第六部分 应用层:
+      - 第 15 讲 上下文工程与结构化输出: 05-应用层/l15-context-engineering.md
+      - 第 16 讲 RAG 全链路: 05-应用层/l16-rag.md
+      - 第 17 讲 Agent（一）循环·规划·记忆·工具: 05-应用层/l17-agent-1.md
+      - 第 18 讲 Agent（二）协议·多智能体·可靠性: 05-应用层/l18-agent-2.md
+      - 第 19 讲 多模态: 05-应用层/l19-multimodal.md
+  - 第七部分 推理与前沿:
+      - 第 20 讲 测试时计算与搜索: 06-推理与前沿/l20-test-time-compute.md
+      - 第 21 讲 推理模型训练: 06-推理与前沿/l21-reasoning-training.md
+      - 第 22 讲 前沿方向: 06-推理与前沿/l22-frontier.md
+  - 第八部分 治理与实践:
+      - 第 23 讲 评测与治理: 07-治理与实践/l23-evaluation-governance.md
+      - 第 24 讲 综合实践: 07-治理与实践/l24-capstone.md
+  - 实验:
+      - 实验总览: labs/index.md
+      - Lab 1 手写注意力: labs/lab1-attention.md
+      - Lab 2 迷你 GPT: labs/lab2-minigpt.md
+      - Lab 3 手写 BPE: labs/lab3-bpe.md
+      - Lab 4 LoRA 微调: labs/lab4-lora.md
+      - Lab 5 推理加速: labs/lab5-inference.md
+      - Lab 6 最小 RAG: labs/lab6-rag.md
+      - Lab 7 Agent 与消融: labs/lab7-agent.md
+      - Lab 8 测试时计算: labs/lab8-test-time.md
+  - 附录:
+      - 术语表: appendix/glossary.md
+      - 论文清单: appendix/papers.md
+      - 大模型时间线: appendix/timeline.md
+      - 数学基础: appendix/math.md
+      - 环境手册: appendix/env.md

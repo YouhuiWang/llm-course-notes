@@ -1,0 +1,2925 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="从统计语言模型到智能体——原理、推导与工程实践的系统讲义">
+      
+      
+        <meta name="author" content="wyh">
+      
+      
+        <link rel="canonical" href="https://youhuiwang.github.io/llm-course-notes/02-transformer/l07-gpt-lineage/">
+      
+      
+        <link rel="prev" href="../l06-scaling-laws/">
+      
+      
+        <link rel="next" href="../../03-%E5%AF%B9%E9%BD%90/l08-sft-data/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>第 7 讲 GPT 谱系与上下文学习 - 大模型发展与相关技术详解</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/print-site.css">
+    
+      <link rel="stylesheet" href="../../css/print-site-material.css">
+    
+      <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+    
+      <link rel="stylesheet" href="../../assets/css/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#7-gpt" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="大模型发展与相关技术详解" class="md-header__button md-logo" aria-label="大模型发展与相关技术详解" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            大模型发展与相关技术详解
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              第 7 讲 GPT 谱系与上下文学习
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到深色"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换到深色" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到浅色"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换到浅色" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="大模型发展与相关技术详解" class="md-nav__button md-logo" aria-label="大模型发展与相关技术详解" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    大模型发展与相关技术详解
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第一部分 导论
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第一部分 导论
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../00-%E5%AF%BC%E8%AE%BA/l01-what-is-llm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 1 讲 大模型是什么
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第二部分 前史
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第二部分 前史
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-%E5%89%8D%E5%8F%B2/l02-statistical-lm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 2 讲 统计语言模型与词的表示
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-%E5%89%8D%E5%8F%B2/l03-neural-seq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 3 讲 神经序列建模
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第三部分 Transformer 与预训练
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第三部分 Transformer 与预训练
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../l04-attention/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 4 讲 注意力机制完全拆解
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../l05-block-and-paradigms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 5 讲 Block 与三大范式
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../l06-scaling-laws/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 6 讲 Scaling Laws
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 7 讲 GPT 谱系与上下文学习
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 7 讲 GPT 谱系与上下文学习
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        学习目标
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0 直觉：从"补全"到"听懂任务"
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-gpt-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 GPT-1：预训练 + 微调
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-gpt-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 GPT-2：零样本的苗头
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2 GPT-2：零样本的苗头">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 零样本为什么不够
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-gpt-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 GPT-3：上下文学习成为范式
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3 GPT-3：上下文学习成为范式">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-prompt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 prompt 的结构
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#71-icl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例 7.1 算清 ICL 的成本
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-few-shot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 为什么 few-shot 有效
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-icl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 ICL 还是微调：一张决策表
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-icl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 ICL 的三种解释
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-icl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 ICL 的边界
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5 ICL 的边界">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 边际收益递减
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例 7.2 示例数量的边际收益
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 三个已知的失效模式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-icl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 一个真实的 ICL 失败
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 从补全到对话
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6 从补全到对话">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-chat-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 chat template：把对话压成一条序列
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 工程要点与坑
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8 论文与延伸
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9 习题
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10 本讲小结
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        来源
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第四部分 对齐
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第四部分 对齐
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-%E5%AF%B9%E9%BD%90/l08-sft-data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 8 讲 指令微调与数据工程
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-%E5%AF%B9%E9%BD%90/l09-preference-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 9 讲 偏好优化
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-%E5%AF%B9%E9%BD%90/l10-safety-redteam/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 10 讲 安全对齐与红队
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第五部分 架构与系统
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第五部分 架构与系统
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-%E6%9E%B6%E6%9E%84%E4%B8%8E%E7%B3%BB%E7%BB%9F/l11-moe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 11 讲 MoE 与稀疏化
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-%E6%9E%B6%E6%9E%84%E4%B8%8E%E7%B3%BB%E7%BB%9F/l12-long-context/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 12 讲 长上下文
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-%E6%9E%B6%E6%9E%84%E4%B8%8E%E7%B3%BB%E7%BB%9F/l13-inference-systems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 13 讲 推理系统
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-%E6%9E%B6%E6%9E%84%E4%B8%8E%E7%B3%BB%E7%BB%9F/l14-training-systems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 14 讲 训练系统
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第六部分 应用层
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第六部分 应用层
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-%E5%BA%94%E7%94%A8%E5%B1%82/l15-context-engineering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 15 讲 上下文工程与结构化输出
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-%E5%BA%94%E7%94%A8%E5%B1%82/l16-rag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 16 讲 RAG 全链路
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-%E5%BA%94%E7%94%A8%E5%B1%82/l17-agent-1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 17 讲 Agent（一）循环·规划·记忆·工具
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-%E5%BA%94%E7%94%A8%E5%B1%82/l18-agent-2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 18 讲 Agent（二）协议·多智能体·可靠性
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-%E5%BA%94%E7%94%A8%E5%B1%82/l19-multimodal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 19 讲 多模态
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第七部分 推理与前沿
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第七部分 推理与前沿
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-%E6%8E%A8%E7%90%86%E4%B8%8E%E5%89%8D%E6%B2%BF/l20-test-time-compute/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 20 讲 测试时计算与搜索
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-%E6%8E%A8%E7%90%86%E4%B8%8E%E5%89%8D%E6%B2%BF/l21-reasoning-training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 21 讲 推理模型训练
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-%E6%8E%A8%E7%90%86%E4%B8%8E%E5%89%8D%E6%B2%BF/l22-frontier/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 22 讲 前沿方向
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第八部分 治理与实践
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第八部分 治理与实践
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-%E6%B2%BB%E7%90%86%E4%B8%8E%E5%AE%9E%E8%B7%B5/l23-evaluation-governance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 23 讲 评测与治理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-%E6%B2%BB%E7%90%86%E4%B8%8E%E5%AE%9E%E8%B7%B5/l24-capstone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 24 讲 综合实践
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../labs/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    实验
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    实验
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab1-attention/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 1 手写注意力
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab2-minigpt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 2 迷你 GPT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab3-bpe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 3 手写 BPE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab4-lora/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 4 LoRA 微调
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab5-inference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 5 推理加速
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab6-rag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 6 最小 RAG
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab7-agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 7 Agent 与消融
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab8-test-time/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 8 测试时计算
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    附录
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    附录
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    术语表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/term-index/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    术语索引（按讲次）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/papers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    论文清单
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/timeline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    大模型时间线
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/math/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    数学基础
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/answers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    习题答案要点
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    常见问题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/env/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    环境手册
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../print_page/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    全书打印版
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="7-gpt">第 7 讲　GPT 谱系与上下文学习<a class="headerlink" href="#7-gpt" title="Permanent link">¶</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">本讲位置</p>
+<p>第三部分的收尾。前四讲讲清了 Transformer 怎么算，本讲讲它怎么被"用起来"——从微调一个任务，到不训练就能做新任务。</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">📅 事实核查至 2026-11</p>
+<p>GPT-&frac12;/3 的规格与 ICL 的三种解释（Brown 2020、Xie 2022、von Oswald 2023）均已核对原文。</p>
+</div>
+<h2 id="_1">学习目标<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
+<p>学完本讲，你应该能够：</p>
+<ol>
+<li>说出 GPT-&frac12;/3 三代在"怎么用"上的差别，而不只是参数量；</li>
+<li>写出上下文学习（in-context learning，ICL）的 prompt 结构，并算清它的 token 成本；</li>
+<li>用三种假说解释 ICL，并指出各自的证据与反证；</li>
+<li>判断一个任务该用 ICL 还是微调。</li>
+</ol>
+<hr />
+<h2 id="0">0 直觉：从"补全"到"听懂任务"<a class="headerlink" href="#0" title="Permanent link">¶</a></h2>
+<p>语言模型的本职工作只有一个：<strong>给定前文，补下一个词</strong>。</p>
+<p>那它是怎么"学会翻译"的？GPT-1 的答案是：<strong>微调</strong>——在下游数据上再训一遍，把"翻译"这个能力焊进参数。</p>
+<p>GPT-2 发现：不微调也能做，只要把任务写成"前文"。GPT-3 把这件事推到极致：<strong>给几个例子，模型就照做</strong>。</p>
+<figure>
+  <img alt="图 L7-1" src="../../assets/img/l07-generations.svg" width="100%" />
+<br />
+<figcaption>图 L7-1　读图要点：参数涨 1500 倍、数据涨 60 倍，但真正变的是使用方式——<b>微调 → 零样本 → 少样本</b>。规模是前提，范式才是分水岭。</figcaption>
+</figure>
+<div class="admonition note">
+<p class="admonition-title">一句话总结</p>
+<p>上下文学习 = <strong>把"训练"搬进 prompt</strong>：参数不动，靠上下文里的示例让模型"临时学会"一个任务。</p>
+</div>
+<hr />
+<h2 id="1-gpt-1">1 GPT-1：预训练 + 微调<a class="headerlink" href="#1-gpt-1" title="Permanent link">¶</a></h2>
+<p>2018 年的做法很朴素：</p>
+<ol>
+<li>在大量文本上做无监督预训练（下一个词预测）；</li>
+<li>在下游任务的有标注数据上微调，换一个输出头。</li>
+</ol>
+<p><strong>贡献</strong>：证明了"预训练学到的表示可以迁移"。在此之前，每个任务都要从头训一个模型。</p>
+<p><strong>局限</strong>：每个任务都要一份标注数据、一次微调、一份模型副本。任务多了，维护成本爆炸。</p>
+<hr />
+<h2 id="2-gpt-2">2 GPT-2：零样本的苗头<a class="headerlink" href="#2-gpt-2" title="Permanent link">¶</a></h2>
+<p>GPT-2 把参数从 1.17 亿提到 15 亿，然后发现：<strong>有些任务不微调也能做</strong>，只要把它写成自然语言。</p>
+<p>比如翻译，不写"请翻译"，而是写：</p>
+<blockquote>
+<p>法语：Bonjour le monde.
+英语：Hello world.
+法语：Comment ça va?
+英语：</p>
+</blockquote>
+<p>模型会接着往下写——而"接着往下写"恰好就是翻译。</p>
+<p><strong>关键洞察</strong>：任务可以表示为<strong>前文的模式</strong>，而不必是参数的修改。这为 GPT-3 铺好了路。</p>
+<hr />
+<h3 id="21">2.1 零样本为什么不够<a class="headerlink" href="#21" title="Permanent link">¶</a></h3>
+<p>GPT-2 的零样本演示很惊艳，但工程上很快暴露三个问题：</p>
+<ul>
+<li><strong>不稳定</strong>：换个说法、换个标点，结果可能完全不同；</li>
+<li><strong>不可控</strong>：模型可能"续写"而不是"回答"，输出格式没法保证；</li>
+<li><strong>难评测</strong>：没有统一格式，准确率几乎无法自动计算。</li>
+</ul>
+<p>few-shot 恰好缓解了这三点：示例给出了<strong>格式模板</strong>，模型照着填；输出可解析，评测可自动化。</p>
+<p>代价是 prompt 变长——这就引出了下一节的成本账。</p>
+<h2 id="3-gpt-3">3 GPT-3：上下文学习成为范式<a class="headerlink" href="#3-gpt-3" title="Permanent link">¶</a></h2>
+<h3 id="31-prompt">3.1 prompt 的结构<a class="headerlink" href="#31-prompt" title="Permanent link">¶</a></h3>
+<figure>
+  <img alt="图 L7-2" src="../../assets/img/l07-prompt-structure.svg" width="100%" />
+<br />
+<figcaption>图 L7-2　读图要点：三段式——任务描述、$k$ 个示例、待补全的查询。<b>$k=0$ 是零样本，$k\ge2$ 是少样本，参数始终冻结</b>。</figcaption>
+</figure>
+<h3 id="71-icl">例 7.1　算清 ICL 的成本<a class="headerlink" href="#71-icl" title="Permanent link">¶</a></h3>
+<p>假设一个分类任务，prompt 构成如下：</p>
+<table>
+<thead>
+<tr>
+<th>部分</th>
+<th>token 数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>任务描述</td>
+<td>30</td>
+</tr>
+<tr>
+<td>8 个示例（每个约 40）</td>
+<td>320</td>
+</tr>
+<tr>
+<td>查询</td>
+<td>20</td>
+</tr>
+<tr>
+<td><strong>合计</strong></td>
+<td><strong>370</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>方案 A：ICL</strong>，1000 条测试数据，每条都要带完整 prompt：</p>
+<div class="arithmatex">\[1000\times370=3.7\times10^{5}\ \text{input token}\]</div>
+<p><strong>方案 B：微调</strong>，1000 条标注数据训一次，推理时只需 20 token：</p>
+<div class="arithmatex">\[1000\times20=2.0\times10^{4}\ \text{input token}\]</div>
+<p><strong>单次推理贵 18.5 倍</strong>——这就是 ICL 的代价：<strong>用推理成本换掉了训练成本</strong>。</p>
+<div class="admonition tip">
+<p class="admonition-title">从这个例子里能读出三件事</p>
+<ol>
+<li><strong>示例越多越贵</strong>：<span class="arithmatex">\(k\)</span> 从 8 加到 32，prompt 变成 1300 token，成本翻三倍多；</li>
+<li><strong>前缀缓存能救一半</strong>：任务描述与示例是固定的，可以缓存 KV（第 13 讲）；</li>
+<li><strong>高频任务该微调</strong>：一天调用百万次的任务，微调的固定成本很快摊平。</li>
+</ol>
+</div>
+<h3 id="32-few-shot">3.2 为什么 few-shot 有效<a class="headerlink" href="#32-few-shot" title="Permanent link">¶</a></h3>
+<p>因为模型在预训练时<strong>见过海量的"格式"</strong>：问答、翻译、摘要、代码补全……它学到的不是某个具体任务，而是"看到这种格式，该做什么"。</p>
+<p>prompt 的作用是<strong>把模型调到正确的"任务模式"</strong>，而不是教它新知识。</p>
+<hr />
+<h3 id="33-icl">3.3 ICL 还是微调：一张决策表<a class="headerlink" href="#33-icl" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>ICL</th>
+<th>微调</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>冷启动</td>
+<td>分钟级（写 prompt）</td>
+<td>小时到天（备数据、训练）</td>
+</tr>
+<tr>
+<td>单次推理成本</td>
+<td>高（prompt 长）</td>
+<td>低（短 prompt）</td>
+</tr>
+<tr>
+<td>效果上限</td>
+<td>受基座能力限制</td>
+<td>可以超过基座</td>
+</tr>
+<tr>
+<td>数据需求</td>
+<td>几条示例</td>
+<td>几百到几万条</td>
+</tr>
+<tr>
+<td>维护</td>
+<td>改 prompt 即可</td>
+<td>要重新训练</td>
+</tr>
+<tr>
+<td>可解释性</td>
+<td>示例即说明</td>
+<td>黑箱</td>
+</tr>
+</tbody>
+</table>
+<p>经验判断：</p>
+<ul>
+<li><strong>调用量 &lt; 10 万次/月</strong>：用 ICL，省事；</li>
+<li><strong>调用量 &gt; 100 万次/月</strong>：算一下微调的摊薄成本，通常更划算；</li>
+<li><strong>需要稳定格式或领域知识</strong>：微调；</li>
+<li><strong>任务经常变</strong>：ICL。</li>
+</ul>
+<h2 id="4-icl">4 ICL 的三种解释<a class="headerlink" href="#4-icl" title="Permanent link">¶</a></h2>
+<figure>
+  <img alt="图 L7-3" src="../../assets/img/l07-icl-explanations.svg" width="100%" />
+<br />
+<figcaption>图 L7-3　读图要点：三条假说都承认"参数没变"，分歧在于"变的是什么"——<b>被检索出来的任务、被更新的信念、还是被隐式优化的函数</b>。</figcaption>
+</figure>
+<table>
+<thead>
+<tr>
+<th>假说</th>
+<th>核心主张</th>
+<th>支持证据</th>
+<th>反证</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>任务定位</td>
+<td>prompt 检索出预训练时见过的任务向量</td>
+<td>能找到"任务向量"，加它能提升对应任务</td>
+<td>新任务（预训练没见过）也能 few-shot</td>
+</tr>
+<tr>
+<td>隐式贝叶斯</td>
+<td>示例是证据，更新对"潜在任务"的后验</td>
+<td>示例顺序影响结果，符合贝叶斯更新</td>
+<td>对错误标签的鲁棒性超出贝叶斯预测</td>
+</tr>
+<tr>
+<td>隐式梯度下降</td>
+<td>前向等价于在上下文上做几步梯度下降</td>
+<td>构造的线性任务上可精确对应</td>
+<td>真实模型里只是"类比"，不是等价</td>
+</tr>
+</tbody>
+</table>
+<p><strong>三者不互斥</strong>：检索解释"为什么能"，贝叶斯解释"怎么权衡示例"，梯度下降解释"为什么几步就够"。</p>
+<p>补充一个机制层面的证据：模型内部存在<strong>归纳头</strong>（induction head）——一种专门实现"看到 A 后面跟过 B，那么再见到 A 就预测 B"的注意力回路。它正是 ICL 的执行单元，在约 10 亿参数规模上突然出现。</p>
+<hr />
+<h2 id="5-icl">5 ICL 的边界<a class="headerlink" href="#5-icl" title="Permanent link">¶</a></h2>
+<h3 id="51">5.1 边际收益递减<a class="headerlink" href="#51" title="Permanent link">¶</a></h3>
+<figure>
+  <img alt="图 L7-4" src="../../assets/img/l07-fewshot.svg" width="100%" />
+<br />
+<figcaption>图 L7-4　读图要点：0→4 个示例提升最快，8 个之后基本饱和；<b>同样的示例数量，打乱顺序会掉 10–17 个点</b>——格式与顺序比数量更重要。</figcaption>
+</figure>
+<h3 id="72">例 7.2　示例数量的边际收益<a class="headerlink" href="#72" title="Permanent link">¶</a></h3>
+<p>任务 A 的准确率随 <span class="arithmatex">\(k\)</span> 变化：</p>
+<table>
+<thead>
+<tr>
+<th><span class="arithmatex">\(k\)</span></th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>4</th>
+<th>8</th>
+<th>16</th>
+<th>32</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>准确率</td>
+<td>42%</td>
+<td>61%</td>
+<td>70%</td>
+<td>78%</td>
+<td>82%</td>
+<td>84%</td>
+<td>84.5%</td>
+</tr>
+<tr>
+<td>每加一个示例的增益</td>
+<td>—</td>
+<td>+19</td>
+<td>+9</td>
+<td>+4</td>
+<td>+1</td>
+<td>+0.25</td>
+<td>+0.03</td>
+</tr>
+</tbody>
+</table>
+<p><strong>结论</strong>：<span class="arithmatex">\(k=4\)</span> 之后，每多一个示例的收益不到 1 个点，而成本线性增长。<strong>4–8 个示例是性价比最高的区间</strong>。</p>
+<h3 id="52">5.2 三个已知的失效模式<a class="headerlink" href="#52" title="Permanent link">¶</a></h3>
+<ol>
+<li><strong>顺序敏感</strong>：同样的示例换顺序，结果能差 10 个点以上；</li>
+<li><strong>标签噪声敏感</strong>：示例里有错标签，模型会跟着学错；</li>
+<li><strong>格式敏感</strong>：换一个分隔符、多一个空行，效果可能突变。</li>
+</ol>
+<p>这三点都指向同一个结论：<strong>ICL 不是真正的"学习"，更像是"模式匹配"</strong>。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">build_prompt</span><span class="p">(</span><span class="n">task</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">examples</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="sd">"""把任务描述、示例与查询拼成 few-shot prompt"""</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">task</span><span class="p">]</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">parts</span> <span class="o">+=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">examples</span><span class="p">]</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2"> -&gt;"</span><span class="p">)</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">prompt</span> <span class="o">=</span> <span class="n">build_prompt</span><span class="p">(</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="s2">"把中文词翻译成英文"</span><span class="p">,</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="p">[(</span><span class="s2">"猫"</span><span class="p">,</span> <span class="s2">"cat"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"狗"</span><span class="p">,</span> <span class="s2">"dog"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"鸟"</span><span class="p">,</span> <span class="s2">"bird"</span><span class="p">)],</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="s2">"鱼"</span><span class="p">,</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">)</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="nb">print</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"字符数:"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">prompt</span><span class="p">),</span> <span class="s2">"| 粗估 token:"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="53-icl">5.3 一个真实的 ICL 失败<a class="headerlink" href="#53-icl" title="Permanent link">¶</a></h3>
+<p>某团队做合同要素抽取，few-shot 提示在测试集上准确率 82%，上线后跌到 61%。排查发现三个问题：</p>
+<ul>
+<li><strong>示例来自同一类合同</strong>：8 个示例全是采购合同，遇到服务合同时格式对不上；</li>
+<li><strong>标签空间没封闭</strong>：示例里没出现"违约条款"这个类别，模型自己造了一个新标签；</li>
+<li><strong>长度分布偏移</strong>：真实合同平均 40 页，示例平均 3 页，长文档里要素被淹没。</li>
+</ul>
+<p>修法很朴素：按合同类型分层抽示例、显式列出全部标签、长文档先切分再抽取。改完后线上回到 79%。</p>
+<p><strong>教训</strong>：few-shot 的效果高度依赖示例与真实输入的<strong>分布匹配</strong>。做离线评测时，测试集必须和线上同分布——否则 82% 只是幻觉。</p>
+<hr />
+<h2 id="6">6 从补全到对话<a class="headerlink" href="#6" title="Permanent link">¶</a></h2>
+<p>GPT-3 的接口是"补全"：给它一段文字，它续写。但用户想要的是"回答问题"。</p>
+<p>这个鸿沟由 InstructGPT（第 9 讲）填上：用指令微调 + 偏好对齐，把"续写器"变成"助手"。差别有多大？同一个基座模型，对齐后人类偏好率能从 30% 提到 70% 以上——<strong>能力没变，行为变了</strong>。</p>
+<h3 id="61-chat-template">6.1 chat template：把对话压成一条序列<a class="headerlink" href="#61-chat-template" title="Permanent link">¶</a></h3>
+<p>对话模型没有"多轮"这个结构，它仍然只是一条序列。做法是用<strong>特殊标记</strong>把角色切开：</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>&lt;|system|&gt;你是一个助手&lt;|end|&gt;
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>&lt;|user|&gt;北京天气怎么样&lt;|end|&gt;
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>&lt;|assistant|&gt;今天晴，26 度&lt;|end|&gt;
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>&lt;|user|&gt;要带伞吗&lt;|end|&gt;
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>&lt;|assistant|&gt;
+</span></code></pre></div>
+<p>这套标记叫 <strong>chat template</strong>，每个模型都不一样（Llama、Qwen、ChatGLM 各有一套）。它带来两个工程后果：</p>
+<ol>
+<li><strong>必须用模型自带模板</strong>：用错模板，效果会明显下降，而且不报错；</li>
+<li><strong>模板影响可复现性</strong>：同一段对话，换个模板就换了个模型。</li>
+</ol>
+<p>第 8 讲会讲这些模板是怎么在 SFT 阶段"教"给模型的。</p>
+<hr />
+<h2 id="7">7 工程要点与坑<a class="headerlink" href="#7" title="Permanent link">¶</a></h2>
+<ol>
+<li><strong>示例要同类</strong>：给数学题的示例去做翻译，效果会崩。</li>
+<li><strong>标签空间要封闭</strong>：分类任务的示例必须覆盖所有类别，否则模型会自造标签。</li>
+<li><strong>格式要一致</strong>：示例用什么分隔符，查询就得用什么，差一个空格都可能掉点。</li>
+<li><strong>顺序要固定并测试</strong>：把示例顺序当超参，至少试 3 种。</li>
+<li><strong>长 prompt 要算账</strong>：<span class="arithmatex">\(k\)</span> 增大时成本线性涨，收益对数涨。</li>
+<li><strong>能缓存就缓存</strong>：固定前缀的 KV 缓存能省 30%–70% 的输入成本。</li>
+</ol>
+<hr />
+<h2 id="8">8 论文与延伸<a class="headerlink" href="#8" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>年份</th>
+<th>论文</th>
+<th>一句话贡献</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2018</td>
+<td><a href="https://openai.com/research/language-unsupervised">GPT-1: Improving Language Understanding by Generative Pre-Training</a></td>
+<td>预训练 + 微调范式</td>
+</tr>
+<tr>
+<td>2019</td>
+<td><a href="https://openai.com/research/better-language-models">GPT-2: Language Models are Unsupervised Multitask Learners</a></td>
+<td>零样本迁移的苗头</td>
+</tr>
+<tr>
+<td>2020</td>
+<td><a href="https://arxiv.org/abs/2005.14165">GPT-3: Language Models are Few-Shot Learners</a></td>
+<td>上下文学习成为范式</td>
+</tr>
+<tr>
+<td>2022</td>
+<td><a href="https://arxiv.org/abs/2111.02080">Xie et al., An Explanation of In-context Learning as Implicit Bayesian Inference</a></td>
+<td>隐式贝叶斯</td>
+</tr>
+<tr>
+<td>2022</td>
+<td><a href="https://arxiv.org/abs/2209.11895">Olsson et al., In-context Learning and Induction Heads</a></td>
+<td>归纳头机制</td>
+</tr>
+<tr>
+<td>2023</td>
+<td><a href="https://arxiv.org/abs/2212.07677">von Oswald et al., Transformers Learn In-Context by Gradient Descent</a></td>
+<td>隐式梯度下降</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="9">9 习题<a class="headerlink" href="#9" title="Permanent link">¶</a></h2>
+<p><strong>🟢 概念题</strong></p>
+<ol>
+<li>GPT-&frac12;/3 的差别，除了参数量还有什么？</li>
+<li>为什么说 ICL "更像模式匹配而不是学习"？给出三条证据。</li>
+</ol>
+<p><strong>🟡 推导题</strong></p>
+<ol>
+<li>用例 7.1 的方法，算 <span class="arithmatex">\(k=32\)</span> 时单次推理的成本倍数。</li>
+<li>用表 7.2 的数据，画出"每示例增益"随 <span class="arithmatex">\(k\)</span> 的曲线，说明它为什么是递减的。</li>
+</ol>
+<p><strong>🔴 实现题</strong></p>
+<ol>
+<li>用 <code>build_prompt</code> 构造 0/&frac14;/8-shot 四组 prompt，在一个小分类任务上测准确率。</li>
+<li>把示例顺序打乱 5 次，统计准确率的方差，验证"顺序敏感"。</li>
+</ol>
+<hr />
+<h2 id="10">10 本讲小结<a class="headerlink" href="#10" title="Permanent link">¶</a></h2>
+<div class="cheatsheet">
+<p><strong>一条主线</strong></p>
+<blockquote>
+<p>微调 → 零样本 → 少样本：<strong>把训练搬进 prompt</strong>。</p>
+</blockquote>
+<p><strong>一个公式</strong></p>
+<div class="arithmatex">\[\text{成本}_{\text{ICL}}=\text{请求数}\times(\text{描述}+\text{示例}+\text{查询})\]</div>
+<p><strong>三个结论</strong></p>
+<ul>
+<li><span class="arithmatex">\(k=4\)</span>–<span class="arithmatex">\(8\)</span> 是性价比区间，再多是浪费</li>
+<li>格式与顺序比示例数量更关键</li>
+<li>ICL 用推理成本换训练成本，高频任务该微调</li>
+</ul>
+</div>
+<hr />
+<h2 id="_2">来源<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
+<ul>
+<li>GPT-&frac12;/3 的规格与 ICL 三种解释的结论核对自原文，链接见 §8，核查日期 2026-11。</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../l06-scaling-laws/" class="md-footer__link md-footer__link--prev" aria-label="上一页: 第 6 讲 Scaling Laws">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                第 6 讲 Scaling Laws
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../03-%E5%AF%B9%E9%BD%90/l08-sft-data/" class="md-footer__link md-footer__link--next" aria-label="下一页: 第 8 讲 指令微调与数据工程">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              <div class="md-ellipsis">
+                第 8 讲 指令微调与数据工程
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      讲义内容 CC BY-NC-SA 4.0 ｜ 代码 MIT
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.top", "navigation.indexes", "navigation.footer", "toc.follow", "toc.integrate", "content.code.copy", "content.code.annotate", "content.tabs.link", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+        <script src="../../js/print-site.js"></script>
+      
+        <script src="../../assets/vendor/katex/katex.min.js"></script>
+      
+        <script src="../../assets/vendor/katex/auto-render.min.js"></script>
+      
+        <script src="../../assets/js/katex-init.js"></script>
+      
+        <script src="../../assets/js/sidebar-toggle.js"></script>
+      
+        <script src="../../assets/js/print-toc.js"></script>
+      
+    
+  </body>
+</html>

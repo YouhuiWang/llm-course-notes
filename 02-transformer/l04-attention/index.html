@@ -1,0 +1,3256 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="从统计语言模型到智能体——原理、推导与工程实践的系统讲义">
+      
+      
+        <meta name="author" content="wyh">
+      
+      
+        <link rel="canonical" href="https://youhuiwang.github.io/llm-course-notes/02-transformer/l04-attention/">
+      
+      
+        <link rel="prev" href="../../01-%E5%89%8D%E5%8F%B2/l03-neural-seq/">
+      
+      
+        <link rel="next" href="../l05-block-and-paradigms/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>第 4 讲 注意力机制完全拆解 - 大模型发展与相关技术详解</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/print-site.css">
+    
+      <link rel="stylesheet" href="../../css/print-site-material.css">
+    
+      <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+    
+      <link rel="stylesheet" href="../../assets/css/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#4" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="大模型发展与相关技术详解" class="md-header__button md-logo" aria-label="大模型发展与相关技术详解" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            大模型发展与相关技术详解
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              第 4 讲 注意力机制完全拆解
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到深色"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换到深色" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到浅色"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换到浅色" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="大模型发展与相关技术详解" class="md-nav__button md-logo" aria-label="大模型发展与相关技术详解" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    大模型发展与相关技术详解
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第一部分 导论
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第一部分 导论
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../00-%E5%AF%BC%E8%AE%BA/l01-what-is-llm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 1 讲 大模型是什么
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第二部分 前史
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第二部分 前史
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-%E5%89%8D%E5%8F%B2/l02-statistical-lm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 2 讲 统计语言模型与词的表示
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-%E5%89%8D%E5%8F%B2/l03-neural-seq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 3 讲 神经序列建模
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第三部分 Transformer 与预训练
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第三部分 Transformer 与预训练
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 4 讲 注意力机制完全拆解
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 4 讲 注意力机制完全拆解
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        学习目标
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0 直觉：一次可微的查字典
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-qkv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 形式化：Q、K、V 为什么是三个
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1 形式化：Q、K、V 为什么是三个">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例 4.1 三词句子的注意力手算
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 缩放因子：一个方差论证
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2 缩放因子：一个方差论证">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 推导
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 不缩放会发生什么
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-softmax" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 数值稳定的 softmax
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 多头注意力：子空间分解，不是简单并行
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3 多头注意力：子空间分解，不是简单并行">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 参数与计算量核算
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 为什么有效：可解释性证据
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 位置编码：打破置换等变
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4 位置编码：打破置换等变">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 没有位置编码会怎样
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例 4.2 "狗咬人"与"人咬狗"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 四代方案
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-rope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 RoPE：把位置写进相位
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-mask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 掩码：三种 mask 不要混
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5 掩码：三种 mask 不要混">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 因果掩码
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 填充掩码
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-nan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 NaN 陷阱
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 一个 block 到底算了什么
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6 一个 block 到底算了什么">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 数据流
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-llama-7b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 参数核算：以 LLaMA-7B 为例
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 复杂度
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 动手实现
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8 工程坑清单
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9 论文与延伸
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10 习题
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11 本讲小结
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../l05-block-and-paradigms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 5 讲 Block 与三大范式
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../l06-scaling-laws/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 6 讲 Scaling Laws
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../l07-gpt-lineage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 7 讲 GPT 谱系与上下文学习
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第四部分 对齐
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第四部分 对齐
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-%E5%AF%B9%E9%BD%90/l08-sft-data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 8 讲 指令微调与数据工程
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-%E5%AF%B9%E9%BD%90/l09-preference-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 9 讲 偏好优化
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-%E5%AF%B9%E9%BD%90/l10-safety-redteam/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 10 讲 安全对齐与红队
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第五部分 架构与系统
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第五部分 架构与系统
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-%E6%9E%B6%E6%9E%84%E4%B8%8E%E7%B3%BB%E7%BB%9F/l11-moe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 11 讲 MoE 与稀疏化
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-%E6%9E%B6%E6%9E%84%E4%B8%8E%E7%B3%BB%E7%BB%9F/l12-long-context/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 12 讲 长上下文
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-%E6%9E%B6%E6%9E%84%E4%B8%8E%E7%B3%BB%E7%BB%9F/l13-inference-systems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 13 讲 推理系统
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-%E6%9E%B6%E6%9E%84%E4%B8%8E%E7%B3%BB%E7%BB%9F/l14-training-systems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 14 讲 训练系统
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第六部分 应用层
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第六部分 应用层
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-%E5%BA%94%E7%94%A8%E5%B1%82/l15-context-engineering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 15 讲 上下文工程与结构化输出
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-%E5%BA%94%E7%94%A8%E5%B1%82/l16-rag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 16 讲 RAG 全链路
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-%E5%BA%94%E7%94%A8%E5%B1%82/l17-agent-1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 17 讲 Agent（一）循环·规划·记忆·工具
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-%E5%BA%94%E7%94%A8%E5%B1%82/l18-agent-2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 18 讲 Agent（二）协议·多智能体·可靠性
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-%E5%BA%94%E7%94%A8%E5%B1%82/l19-multimodal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 19 讲 多模态
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第七部分 推理与前沿
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第七部分 推理与前沿
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-%E6%8E%A8%E7%90%86%E4%B8%8E%E5%89%8D%E6%B2%BF/l20-test-time-compute/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 20 讲 测试时计算与搜索
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-%E6%8E%A8%E7%90%86%E4%B8%8E%E5%89%8D%E6%B2%BF/l21-reasoning-training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 21 讲 推理模型训练
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-%E6%8E%A8%E7%90%86%E4%B8%8E%E5%89%8D%E6%B2%BF/l22-frontier/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 22 讲 前沿方向
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第八部分 治理与实践
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    第八部分 治理与实践
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-%E6%B2%BB%E7%90%86%E4%B8%8E%E5%AE%9E%E8%B7%B5/l23-evaluation-governance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 23 讲 评测与治理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-%E6%B2%BB%E7%90%86%E4%B8%8E%E5%AE%9E%E8%B7%B5/l24-capstone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第 24 讲 综合实践
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../labs/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    实验
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    实验
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab1-attention/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 1 手写注意力
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab2-minigpt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 2 迷你 GPT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab3-bpe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 3 手写 BPE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab4-lora/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 4 LoRA 微调
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab5-inference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 5 推理加速
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab6-rag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 6 最小 RAG
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab7-agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 7 Agent 与消融
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/lab8-test-time/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 8 测试时计算
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    附录
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    附录
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    术语表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/term-index/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    术语索引（按讲次）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/papers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    论文清单
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/timeline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    大模型时间线
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/math/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    数学基础
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/answers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    习题答案要点
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    常见问题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/env/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    环境手册
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../print_page/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    全书打印版
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="4">第 4 讲　注意力机制完全拆解<a class="headerlink" href="#4" title="Permanent link">¶</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">本讲位置</p>
+<p>第三部分的开篇。前置知识：第 3 讲的 seq2seq 与加性注意力。本讲把 Transformer 的核心部件拆到零件级别，第 5 讲再用它搭出完整的 block。</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">📅 事实核查至 2026-11</p>
+<p>本讲的历史事实（Vaswani et al., 2017；Su et al., 2021）均已核对原始论文，无 2024 年后的时效性陈述。</p>
+</div>
+<h2 id="_1">学习目标<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
+<p>学完本讲，你应该能够：</p>
+<ol>
+<li>写出缩放点积注意力的完整公式，并用三行方差推导解释 <span class="arithmatex">\(\sqrt{d_k}\)</span> 的来历；</li>
+<li>说明多头注意力与单头在<strong>参数量、计算量</strong>上的等价关系，以及它为什么不是"简单的并行"；</li>
+<li>证明不加位置编码时注意力对置换等变，并推导 RoPE 的相对位置性质；</li>
+<li>独立实现一个数值稳定、mask 正确的注意力模块，与 PyTorch 输出对齐到 <span class="arithmatex">\(10^{-6}\)</span>。</li>
+</ol>
+<hr />
+<h2 id="0">0 直觉：一次可微的查字典<a class="headerlink" href="#0" title="Permanent link">¶</a></h2>
+<p>想象你在图书馆找资料。</p>
+<p>你脑子里有一个<strong>问题</strong>——这是 query。每本书的书脊上有一行<strong>标签</strong>——这是 key。书里真正的内容是 <strong>value</strong>。</p>
+<p>传统检索是<strong>硬匹配</strong>：按标签排序，取出最相关的那一本。这个操作不可微，没法端到端训练。</p>
+<p>注意力做的事情只有一点差别：<strong>它不取一本，而是按匹配度把所有书都翻一遍，然后加权汇总</strong>。</p>
+<div class="arithmatex">\[\text{输出} = \sum_{i} \underbrace{\text{匹配度}(q, k_i)}_{\text{权重}} \cdot v_i\]</div>
+<p>权重经过 softmax 归一化，于是"取哪一本"变成了"各看多少"。整个操作对 <span class="arithmatex">\(q\)</span>、<span class="arithmatex">\(k\)</span>、<span class="arithmatex">\(v\)</span> 都可微，梯度可以一路回传。</p>
+<p>这就是注意力的全部直觉。剩下的问题都是工程细节：匹配度怎么算、权重会不会太尖、多个头怎么分工、顺序信息从哪来。</p>
+<div class="admonition note">
+<p class="admonition-title">一句话总结</p>
+<p>注意力 = <strong>用相似度做软寻址</strong>。它替代的不是"记忆"，而是"检索"。</p>
+</div>
+<hr />
+<h2 id="1-qkv">1 形式化：Q、K、V 为什么是三个<a class="headerlink" href="#1-qkv" title="Permanent link">¶</a></h2>
+<p>设输入序列为 <span class="arithmatex">\(\boldsymbol{X} \in \R^{n \times d}\)</span>（<span class="arithmatex">\(n\)</span> 个 token，每个 <span class="arithmatex">\(d\)</span> 维）。我们引入三个可学习的投影矩阵：</p>
+<div class="arithmatex">\[\boldsymbol{Q} = \boldsymbol{X}\boldsymbol{W}_Q,\quad
+\boldsymbol{K} = \boldsymbol{X}\boldsymbol{W}_K,\quad
+\boldsymbol{V} = \boldsymbol{X}\boldsymbol{W}_V,
+\qquad \boldsymbol{W}_Q,\boldsymbol{W}_K \in \R^{d\times d_k},\ \boldsymbol{W}_V \in \R^{d\times d_v}\]</div>
+<p>于是缩放点积注意力（scaled dot-product attention）定义为</p>
+<div class="arithmatex">\[
+\attn(\boldsymbol{Q},\boldsymbol{K},\boldsymbol{V})
+= \softmax\!\left(\frac{\boldsymbol{Q}\boldsymbol{K}^{\top}}{\sqrt{d_k}}\right)\boldsymbol{V}
+\tag{L4.1}
+\]</div>
+<p>其中 softmax 按<strong>行</strong>归一化，<span class="arithmatex">\(\boldsymbol{Q}\boldsymbol{K}^\top \in \R^{n\times n}\)</span> 的第 <span class="arithmatex">\((i,j)\)</span> 个元素是第 <span class="arithmatex">\(i\)</span> 个查询与第 <span class="arithmatex">\(j\)</span> 个键的相似度。</p>
+<p><strong>为什么必须是三个投影，而不是一个？</strong></p>
+<p>假设令 <span class="arithmatex">\(\boldsymbol{W}_Q=\boldsymbol{W}_K=\boldsymbol{W}_V=\boldsymbol{I}\)</span>，则</p>
+<div class="arithmatex">\[\attn = \softmax\!\left(\frac{\boldsymbol{X}\boldsymbol{X}^{\top}}{\sqrt{d}}\right)\boldsymbol{X}\]</div>
+<p>此时"我该关注谁"和"我该取出什么"被迫共用同一个表示：一个 token 的向量既决定它被别人关注的程度，又决定它被取出时的内容。这两件事在语义上是正交的——代词"它"应该高度关注"小猫"，但"它"这个 token 本身并不携带"小猫"的内容。</p>
+<p>解耦之后，模型可以学到一个专门的<strong>匹配子空间</strong>（<span class="arithmatex">\(\boldsymbol{W}_Q,\boldsymbol{W}_K\)</span>）和一个专门的<strong>内容子空间</strong>（<span class="arithmatex">\(\boldsymbol{W}_V\)</span>）。这是注意力表达力的来源。</p>
+<div class="admonition tip">
+<p class="admonition-title">维度约定</p>
+<p>本讲义统一用 <span class="arithmatex">\(d\)</span> 表示模型宽度（<span class="arithmatex">\(\dmodel\)</span>），<span class="arithmatex">\(d_k=d_v=d/h\)</span> 表示单头维度，<span class="arithmatex">\(h\)</span> 表示头数，<span class="arithmatex">\(n\)</span> 表示序列长度。记住这四个符号，后面所有复杂度分析都围绕它们展开。</p>
+</div>
+<hr />
+<h3 id="41">例 4.1　三词句子的注意力手算<a class="headerlink" href="#41" title="Permanent link">¶</a></h3>
+<p>公式看完还是虚的。我们用一个能算完的例子，把 (L4.1) 的三步走一遍。</p>
+<p>句子只有三个词：<strong>我 / 爱 / 猫</strong>。取 <span class="arithmatex">\(d_k=2\)</span>，并假设投影后的查询、键、值恰好相同（只为手算方便，真实模型里三者由不同矩阵得到）：</p>
+<table>
+<thead>
+<tr>
+<th>token</th>
+<th><span class="arithmatex">\(\boldsymbol{q}_i=\boldsymbol{k}_i=\boldsymbol{v}_i\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>我</td>
+<td><span class="arithmatex">\((1,\ 0)\)</span></td>
+</tr>
+<tr>
+<td>爱</td>
+<td><span class="arithmatex">\((0,\ 1)\)</span></td>
+</tr>
+<tr>
+<td>猫</td>
+<td><span class="arithmatex">\((1,\ 1)\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>第一步：打分。</strong> 先算点积，再除以 <span class="arithmatex">\(\sqrt{2}\approx1.41\)</span>：</p>
+<table>
+<thead>
+<tr>
+<th>查询 ＼ 键</th>
+<th>我</th>
+<th>爱</th>
+<th>猫</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>我</strong></td>
+<td>0.71</td>
+<td>0.00</td>
+<td>0.71</td>
+</tr>
+<tr>
+<td><strong>爱</strong></td>
+<td>0.00</td>
+<td>0.71</td>
+<td>0.71</td>
+</tr>
+<tr>
+<td><strong>猫</strong></td>
+<td>0.71</td>
+<td>0.71</td>
+<td><strong>1.41</strong></td>
+</tr>
+</tbody>
+</table>
+<p>"猫"和自己的点积是 <span class="arithmatex">\(1\times1+1\times1=2\)</span>，除以 1.41 得 1.41，是整张表里最大的分数。</p>
+<p><strong>第二步：softmax。</strong> 每一行独立归一化。以第一行为例：</p>
+<div class="arithmatex">\[
+\frac{e^{0.71}}{e^{0.71}+e^{0}+e^{0.71}}
+=\frac{2.03}{2.03+1+2.03}=0.40
+\]</div>
+<p>三行都算完：</p>
+<table>
+<thead>
+<tr>
+<th>查询 ＼ 键</th>
+<th>我</th>
+<th>爱</th>
+<th>猫</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>我</strong></td>
+<td>0.40</td>
+<td>0.20</td>
+<td>0.40</td>
+</tr>
+<tr>
+<td><strong>爱</strong></td>
+<td>0.20</td>
+<td>0.40</td>
+<td>0.40</td>
+</tr>
+<tr>
+<td><strong>猫</strong></td>
+<td>0.25</td>
+<td>0.25</td>
+<td><strong>0.50</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>第三步：加权求和。</strong> 还是看第一行：</p>
+<div class="arithmatex">\[
+\boldsymbol{o}_1=0.40\cdot(1,0)+0.20\cdot(0,1)+0.40\cdot(1,1)=(0.80,\ 0.60)
+\]</div>
+<p>三行合起来就是输出矩阵：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>维度 1</th>
+<th>维度 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>我</strong></td>
+<td>0.80</td>
+<td>0.60</td>
+</tr>
+<tr>
+<td><strong>爱</strong></td>
+<td>0.60</td>
+<td>0.80</td>
+</tr>
+<tr>
+<td><strong>猫</strong></td>
+<td>0.75</td>
+<td>0.75</td>
+</tr>
+</tbody>
+</table>
+<figure>
+  <img alt="图 L4-1" src="../../assets/img/l04-worked-example.svg" width="100%" />
+<br />
+<figcaption>图 L4-1　读图要点：同一个例子的三步：① 相似度打分 → ② 按行 softmax → ③ 用权重对值加权求和。格子里是实际数值。</figcaption>
+</figure>
+<div class="admonition tip">
+<p class="admonition-title">从这个例子里能读出三件事</p>
+<ol>
+<li><strong>每行加起来都是 1</strong>：softmax 按行归一化，不是按列。所以每个查询"分配出去"的关注度总量固定。</li>
+<li><strong>分数大不等于权重压倒性</strong>：1.41 的最高分只换来 0.50 的权重，因为 softmax 会把差距压平——这正是 §2 讨论尺度问题的原因。</li>
+<li><strong>输出是加权平均，不是选择</strong>：<span class="arithmatex">\(\boldsymbol{o}_1\)</span> 同时混入了三个词的信息，没有任何一个权重等于 1。</li>
+</ol>
+</div>
+<h2 id="2">2 缩放因子：一个方差论证<a class="headerlink" href="#2" title="Permanent link">¶</a></h2>
+<p>公式 (L4.1) 里那个 <span class="arithmatex">\(\sqrt{d_k}\)</span> 不是装饰。它是这一节要证明的唯一结论。</p>
+<h3 id="21">2.1 推导<a class="headerlink" href="#21" title="Permanent link">¶</a></h3>
+<p>假设 <span class="arithmatex">\(\boldsymbol{q},\boldsymbol{k}\in\R^{d_k}\)</span> 的每个分量独立同分布，均值 0、方差 1。这是 LayerNorm 之后激活的合理近似。</p>
+<p>点积展开：</p>
+<div class="arithmatex">\[\boldsymbol{q}\cdot\boldsymbol{k}=\sum_{i=1}^{d_k} q_i k_i\]</div>
+<p>期望：</p>
+<div class="arithmatex">\[\E[\boldsymbol{q}\cdot\boldsymbol{k}]=\sum_{i=1}^{d_k}\E[q_i]\E[k_i]=0\]</div>
+<p>方差（各项独立、均值为零，交叉项消失）：</p>
+<div class="arithmatex">\[
+\Var(\boldsymbol{q}\cdot\boldsymbol{k})
+=\sum_{i=1}^{d_k}\Var(q_i k_i)
+=\sum_{i=1}^{d_k}\E[q_i^2]\E[k_i^2]
+=\sum_{i=1}^{d_k} 1 = d_k
+\tag{L4.2}
+\]</div>
+<p>所以点积的<strong>标准差是 <span class="arithmatex">\(\sqrt{d_k}\)</span></strong>。<span class="arithmatex">\(d_k=128\)</span> 时标准差约 11.3，<span class="arithmatex">\(d_k=4096\)</span> 时约 64。</p>
+<h3 id="22">2.2 不缩放会发生什么<a class="headerlink" href="#22" title="Permanent link">¶</a></h3>
+<p>softmax 对输入的尺度极其敏感。当 logits 的标准差达到几十，最大值与其余值的差距会被指数放大，输出退化成近似 one-hot：</p>
+<div class="arithmatex">\[\softmax(\boldsymbol{z}) \approx (1, 0, \dots, 0)\]</div>
+<p>此时 softmax 的雅可比矩阵 <span class="arithmatex">\(\partial p_i/\partial z_j = p_i(\delta_{ij}-p_j)\)</span> 几乎全为零——<strong>梯度消失</strong>。模型不是"学得慢"，而是<strong>根本学不动</strong>。</p>
+<p>除以 <span class="arithmatex">\(\sqrt{d_k}\)</span> 之后，由 (L4.2)，缩放后点积的方差为 <span class="arithmatex">\(d_k/d_k=1\)</span>，与维度无关。softmax 始终工作在"温和"区间。</p>
+<figure>
+  <img alt="图 L4-2" src="../../assets/img/l04-softmax-scale.svg" width="100%" />
+<br />
+<figcaption>图 L4-2　读图要点：缩放对 softmax 的影响。(a) $d_k=512$ 时最大权重的分布：不缩放几乎必然饱和到 1；(b) 最大权重均值随 $d_k$ 的变化，缩放后稳定在低值区。</figcaption>
+</figure>
+<div class="admonition warning">
+<p class="admonition-title">常见误解：<span class="arithmatex">\(\sqrt{d_k}\)</span> 是"温度"吗</p>
+<p>可以这么理解，但要小心。除以 <span class="arithmatex">\(\sqrt{d_k}\)</span> 的目的是<strong>让 logits 的方差与维度无关</strong>，而不是调节"创造性"。推理时调 temperature 是在这个基础上再乘一个系数，两者作用位置相同、目的不同。</p>
+</div>
+<h3 id="23-softmax">2.3 数值稳定的 softmax<a class="headerlink" href="#23-softmax" title="Permanent link">¶</a></h3>
+<p>实现时不能直接算 <span class="arithmatex">\(e^{z_i}\)</span>：<span class="arithmatex">\(z_i\)</span> 稍大就溢出。标准做法是先减去每行最大值：</p>
+<div class="arithmatex">\[\softmax(\boldsymbol{z})_i=\frac{e^{z_i-m}}{\sum_j e^{z_j-m}},\qquad m=\max_j z_j\]</div>
+<p><strong>为什么减一个常数不改变结果</strong>：分子分母同乘 <span class="arithmatex">\(e^{-m}\)</span>，约分即得。减去 <span class="arithmatex">\(m\)</span> 后最大的指数项是 <span class="arithmatex">\(e^0=1\)</span>，不会上溢。</p>
+<p>这一步在数学上平凡，在工程上是生死线。第 8 节会讲一个更隐蔽的坑：整行被 mask 时会发生什么。</p>
+<hr />
+<h2 id="3">3 多头注意力：子空间分解，不是简单并行<a class="headerlink" href="#3" title="Permanent link">¶</a></h2>
+<p>单个注意力头只能学<strong>一种</strong>匹配模式。但语言里的依赖关系是多种并存的：前一个词、句首、主谓一致、指代、标点边界……</p>
+<p>多头注意力（multi-head attention）把 <span class="arithmatex">\(d\)</span> 维空间切成 <span class="arithmatex">\(h\)</span> 份，每份独立做一次注意力，最后拼接投影：</p>
+<div class="arithmatex">\[
+\begin{aligned}
+\text{head}_i &amp;= \attn(\boldsymbol{X}\boldsymbol{W}_Q^{(i)},\ \boldsymbol{X}\boldsymbol{W}_K^{(i)},\ \boldsymbol{X}\boldsymbol{W}_V^{(i)})\\
+\attn_{\text{multi}} &amp;= \big[\text{head}_1;\dots;\text{head}_h\big]\boldsymbol{W}_O
+\end{aligned}
+\tag{L4.3}
+\]</div>
+<p>其中 <span class="arithmatex">\(\boldsymbol{W}_Q^{(i)},\boldsymbol{W}_K^{(i)},\boldsymbol{W}_V^{(i)}\in\R^{d\times d/h}\)</span>，<span class="arithmatex">\(\boldsymbol{W}_O\in\R^{d\times d}\)</span>。</p>
+<h3 id="31">3.1 参数与计算量核算<a class="headerlink" href="#31" title="Permanent link">¶</a></h3>
+<p>设 <span class="arithmatex">\(d=512\)</span>，<span class="arithmatex">\(h=8\)</span>，于是 <span class="arithmatex">\(d_k=64\)</span>。</p>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>每个投影矩阵</th>
+<th>三个投影合计</th>
+<th>输出投影</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单头（<span class="arithmatex">\(d_k=512\)</span>）</td>
+<td><span class="arithmatex">\(512\times512=262{,}144\)</span></td>
+<td><span class="arithmatex">\(786{,}432\)</span></td>
+<td><span class="arithmatex">\(262{,}144\)</span></td>
+</tr>
+<tr>
+<td>多头（<span class="arithmatex">\(h=8\)</span>，<span class="arithmatex">\(d_k=64\)</span>）</td>
+<td><span class="arithmatex">\(512\times64=32{,}768\)</span></td>
+<td><span class="arithmatex">\(786{,}432\)</span></td>
+<td><span class="arithmatex">\(262{,}144\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>参数量完全相同，计算量也完全相同。</strong></p>
+<p>那多头的意义在哪？在于<strong>低秩约束</strong>。单头在 <span class="arithmatex">\(d\)</span> 维空间里直接算一个 <span class="arithmatex">\(n\times n\)</span> 的相似度矩阵；多头则是 <span class="arithmatex">\(h\)</span> 个 <span class="arithmatex">\(d/h\)</span> 维子空间里的 <span class="arithmatex">\(n\times n\)</span> 矩阵，各自独立归一化、独立加权。</p>
+<p>这带来两个实际后果：</p>
+<ol>
+<li><strong>每个头被迫专注一种关系</strong>。<span class="arithmatex">\(d/h\)</span> 维空间装不下所有模式，低秩瓶颈起到正则化作用。</li>
+<li><strong>权重分布不同</strong>。softmax 在各自的子空间内归一化，因此一个头可以"只看前一个词"，另一个头可以"只看句首"，互不干扰。单头里这些模式会互相竞争同一份概率质量。</li>
+</ol>
+<p><span class="arithmatex">\(\boldsymbol{W}_O\)</span> 也不是可有可无的：它把各头输出混合回 <span class="arithmatex">\(d\)</span> 维。没有它，各头只能简单拼接，维度间无法交互。</p>
+<figure>
+  <img alt="图 L4-3" src="../../assets/img/l04-attention-patterns.svg" width="100%" />
+<br />
+<figcaption>图 L4-3　读图要点：注意力矩阵的四种典型形态（按模式手工构造的示意图）。(a) 均匀因果；(b) 位置头关注前一个 token；(c) 内容头让代词"它"回指"小猫"；(d) 注意力汇：大量权重堆在首 token 上。</figcaption>
+</figure>
+<h3 id="32">3.2 为什么有效：可解释性证据<a class="headerlink" href="#32" title="Permanent link">¶</a></h3>
+<p>Michel et al. (2019) 做了一个很说明问题的实验：训练后逐个头剪枝，发现<strong>大部分头可以删掉而性能几乎不变</strong>，但少数关键头一旦删除，模型立刻崩溃。</p>
+<p>这说明头之间存在明确分工，且重要性高度不均。后续的注意力可视化研究进一步发现：</p>
+<ul>
+<li>浅层多为<strong>位置头</strong>（关注相邻 token）与<strong>句法头</strong>（关注依存关系）；</li>
+<li>中层出现<strong>指代头</strong>与<strong>实体头</strong>；</li>
+<li>深层趋向<strong>语义聚合</strong>，注意力分布变平。</li>
+</ul>
+<p>图 L4-3(d) 展示的"注意力汇"（attention sink）是另一个反复出现的现象：无论输入是什么，第一个 token 总会吸收大量注意力。StreamingLLM 正是利用这一点，保留首 token 的 KV 就能支持无限长流式输入。</p>
+<div class="admonition tip">
+<p class="admonition-title">从多头到 GQA</p>
+<p>既然键值可以共享，何必每个头都存一份？<strong>多查询注意力</strong>（MQA）让所有头共享一组 K/V，<strong>分组查询注意力</strong>（GQA）让每组头共享一组。这是第 13 讲推理优化的伏笔：GQA 把 KV cache 直接缩小 <span class="arithmatex">\(h/h_{kv}\)</span> 倍。</p>
+</div>
+<hr />
+<h2 id="4_1">4 位置编码：打破置换等变<a class="headerlink" href="#4_1" title="Permanent link">¶</a></h2>
+<h3 id="41_1">4.1 没有位置编码会怎样<a class="headerlink" href="#41_1" title="Permanent link">¶</a></h3>
+<p><strong>命题</strong>：若注意力中不含任何位置信息，则它对输入序列的置换等变。</p>
+<p>设 <span class="arithmatex">\(\boldsymbol{P}\)</span> 为置换矩阵（<span class="arithmatex">\(\boldsymbol{P}^\top\boldsymbol{P}=\boldsymbol{I}\)</span>），输入变为 <span class="arithmatex">\(\boldsymbol{P}\boldsymbol{X}\)</span>。则</p>
+<div class="arithmatex">\[
+\begin{aligned}
+\attn(\boldsymbol{P}\boldsymbol{X})
+&amp;=\softmax\!\left(\frac{\boldsymbol{P}\boldsymbol{X}\boldsymbol{W}_Q\boldsymbol{W}_K^\top\boldsymbol{X}^\top\boldsymbol{P}^\top}{\sqrt{d_k}}\right)\boldsymbol{P}\boldsymbol{X}\boldsymbol{W}_V\\
+&amp;=\boldsymbol{P}\,\softmax\!\left(\frac{\boldsymbol{X}\boldsymbol{W}_Q\boldsymbol{W}_K^\top\boldsymbol{X}^\top}{\sqrt{d_k}}\right)\boldsymbol{P}^\top\boldsymbol{P}\boldsymbol{X}\boldsymbol{W}_V\\
+&amp;=\boldsymbol{P}\,\attn(\boldsymbol{X})
+\end{aligned}
+\tag{L4.4}
+\]</div>
+<p>第二步用了 softmax 按行归一化的性质：同时置换行和列，等价于先算再置换。</p>
+<p>结论：输出只是跟着输入一起被置换。模型<strong>无法区分</strong>"狗咬人"和"人咬狗"。</p>
+<h3 id="42">例 4.2　"狗咬人"与"人咬狗"<a class="headerlink" href="#42" title="Permanent link">¶</a></h3>
+<p>把 3 个词的注意力权重矩阵画出来，交换首尾两个词，看矩阵怎么变。</p>
+<p>设原句"狗咬人"的权重矩阵为 <span class="arithmatex">\(\boldsymbol{W}\)</span>。交换第 1、3 个词得到"人咬狗"，相当于左乘右乘同一个置换矩阵：</p>
+<div class="arithmatex">\[
+\boldsymbol{W}'=\boldsymbol{P}\,\boldsymbol{W}\,\boldsymbol{P}^{\top}
+\]</div>
+<figure>
+  <img alt="图 L4-4" src="../../assets/img/l04-permutation.svg" width="100%" />
+<br />
+<figcaption>图 L4-4　读图要点：交换首尾两个词后，注意力权重矩阵只是行列重排：0.62 从左上角移到右下角，0.07 从右上角移到左下角，数值一个没变。</figcaption>
+</figure>
+<p>逐格对照：0.62 从左上角跑到右下角，0.07 从右上角跑到左下角，<strong>每个数字都没变，只是换了位置</strong>。</p>
+<p>这正是 (L4.4) 的直观含义：输入变了，但模型"看到"的仍是同一张表，输出也只是跟着换位置。没有位置编码，它无从知道谁是主语、谁是宾语。</p>
+<div class="admonition note">
+<p class="admonition-title">加了位置编码之后会怎样</p>
+<p><span class="arithmatex">\(\boldsymbol{q}_{\text{狗}}\)</span> 与 <span class="arithmatex">\(\boldsymbol{q}_{\text{人}}\)</span> 的相位不同，两句话的权重矩阵不再互为置换。模型才第一次有了区分语序的依据。</p>
+</div>
+<h3 id="42_1">4.2 四代方案<a class="headerlink" href="#42_1" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>代表</th>
+<th>做法</th>
+<th>外推性</th>
+<th>代价</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>正弦绝对位置</td>
+<td>原版 Transformer</td>
+<td>用不同频率的 sin/cos 加到嵌入上</td>
+<td>差</td>
+<td>无</td>
+</tr>
+<tr>
+<td>学习式绝对位置</td>
+<td>BERT、GPT-2</td>
+<td>每个位置一个可训练向量</td>
+<td>无（长度固定）</td>
+<td>参数 <span class="arithmatex">\(n_{\max}\times d\)</span></td>
+</tr>
+<tr>
+<td>相对位置偏置</td>
+<td>T5、ALiBi</td>
+<td>在 logits 上加 <span class="arithmatex">\(b(i-j)\)</span></td>
+<td>较好</td>
+<td>少量参数或无参数</td>
+</tr>
+<tr>
+<td>旋转位置编码</td>
+<td>RoPE（LLaMA 系）</td>
+<td>旋转 Q/K 的相位</td>
+<td>好（可外推）</td>
+<td>无额外参数</td>
+</tr>
+</tbody>
+</table>
+<p>ALiBi 的做法特别简洁：直接在注意力 logits 上加 <span class="arithmatex">\(-m\cdot|i-j|\)</span>，<span class="arithmatex">\(m\)</span> 是每个头固定的斜率。距离越远惩罚越大，天然鼓励局部关注，外推表现意外地好。</p>
+<p>但今天的主流是 RoPE。原因值得单独推导。</p>
+<h3 id="43-rope">4.3 RoPE：把位置写进相位<a class="headerlink" href="#43-rope" title="Permanent link">¶</a></h3>
+<p><strong>核心想法</strong>：不改变向量的模长，只旋转它的相位；让旋转角度随位置线性增长，于是两个向量的内积只依赖它们的<strong>相对</strong>位移。</p>
+<p>把 <span class="arithmatex">\(d\)</span> 维向量两两分组，看成 <span class="arithmatex">\(d/2\)</span> 个二维平面。第 <span class="arithmatex">\(i\)</span> 组的旋转角为</p>
+<div class="arithmatex">\[\theta_i = m\cdot\omega_i,\qquad \omega_i = 10000^{-2i/d}\]</div>
+<p>位置 <span class="arithmatex">\(m\)</span> 对应的旋转矩阵是分块对角阵：</p>
+<div class="arithmatex">\[\boldsymbol{R}_m=\operatorname{diag}\big(\boldsymbol{R}(m\omega_0),\ \boldsymbol{R}(m\omega_1),\ \dots,\ \boldsymbol{R}(m\omega_{d/2-1})\big),\qquad
+\boldsymbol{R}(\theta)=\begin{pmatrix}\cos\theta &amp; -\sin\theta\\ \sin\theta &amp; \cos\theta\end{pmatrix}\]</div>
+<p>对查询和键分别施加旋转：<span class="arithmatex">\(\tilde{\boldsymbol{q}}_m=\boldsymbol{R}_m\boldsymbol{q}\)</span>，<span class="arithmatex">\(\tilde{\boldsymbol{k}}_n=\boldsymbol{R}_n\boldsymbol{k}\)</span>。</p>
+<p><strong>关键性质</strong>：旋转矩阵是正交的，且角度可加，</p>
+<div class="arithmatex">\[\boldsymbol{R}_m^\top\boldsymbol{R}_n=\boldsymbol{R}_{-m}\boldsymbol{R}_{n}=\boldsymbol{R}_{n-m}\]</div>
+<p>于是</p>
+<div class="arithmatex">\[
+\langle \tilde{\boldsymbol{q}}_m,\tilde{\boldsymbol{k}}_n\rangle
+=\boldsymbol{q}^\top\boldsymbol{R}_m^\top\boldsymbol{R}_n\boldsymbol{k}
+=\boldsymbol{q}^\top\boldsymbol{R}_{n-m}\boldsymbol{k}
+\tag{L4.5}
+\]</div>
+<p><strong>内积只依赖 <span class="arithmatex">\(n-m\)</span></strong>。这就是 RoPE 相对位置性质的完整证明——只有两行。</p>
+<figure>
+  <img alt="图 L4-5" src="../../assets/img/l04-rope.svg" width="100%" />
+<br />
+<figcaption>图 L4-5　读图要点：RoPE 的几何含义。(a) 位置 $m$、$n$ 的向量各自旋转 $m\theta$、$n\theta$，内积只由夹角差决定；(b) 固定 $\Delta=5$，RoPE 的内积不随绝对位置变化，而"正弦位置相加"会持续漂移。</figcaption>
+</figure>
+<p>三个值得记住的推论：</p>
+<ol>
+<li><strong>不改变模长</strong>：<span class="arithmatex">\(\|\boldsymbol{R}_m\boldsymbol{q}\|=\|\boldsymbol{q}\|\)</span>，数值稳定。</li>
+<li><strong>无额外参数</strong>：位置信息完全由固定的频率决定。</li>
+<li><strong>可作用于 KV cache</strong>：旋转在写入缓存前完成，之后无需重算。</li>
+</ol>
+<p>至于频率设计，<span class="arithmatex">\(\omega_i\)</span> 从 <span class="arithmatex">\(1\)</span> 衰减到 <span class="arithmatex">\(10000^{-1}\)</span>，对应波长从 <span class="arithmatex">\(2\pi\)</span> 到 <span class="arithmatex">\(2\pi\times10^4\)</span>。高维（<span class="arithmatex">\(i\)</span> 大）的旋转极慢，负责长程粗定位；低维旋转快，负责局部精细位置。这种"多尺度"结构是 RoPE 能外推的物理直觉。</p>
+<div class="admonition warning">
+<p class="admonition-title">RoPE 不是万能的</p>
+<p>训练长度之外，高频维度会"转圈"导致混叠，性能仍会下降。位置插值（PI）、NTK-aware 缩放、YaRN 都是对这个问题的补救，详见第 12 讲。</p>
+</div>
+<hr />
+<h2 id="5-mask">5 掩码：三种 mask 不要混<a class="headerlink" href="#5-mask" title="Permanent link">¶</a></h2>
+<h3 id="51">5.1 因果掩码<a class="headerlink" href="#51" title="Permanent link">¶</a></h3>
+<p>自回归生成要求位置 <span class="arithmatex">\(t\)</span> 只能看到 <span class="arithmatex">\(\le t\)</span> 的信息。做法是在 softmax 之前把上三角置为负无穷：</p>
+<div class="arithmatex">\[\text{scores}_{ij}=\begin{cases}\boldsymbol{q}_i\cdot\boldsymbol{k}_j/\sqrt{d_k}, &amp; j\le i\\ -\infty, &amp; j&gt;i\end{cases}\]</div>
+<p>训练时一次前向算完整序列（teacher forcing），推理时每步只算新 token——这是<strong>训练并行、推理串行</strong>的根本原因，也是 KV cache 存在的理由。</p>
+<h3 id="52">5.2 填充掩码<a class="headerlink" href="#52" title="Permanent link">¶</a></h3>
+<p>批处理时序列长度不一，需要把 padding 位置屏蔽掉。注意它和因果掩码的<strong>形状不同</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>掩码</th>
+<th>形状</th>
+<th>作用维度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>因果掩码</td>
+<td><span class="arithmatex">\(n\times n\)</span></td>
+<td>每个查询屏蔽未来的键</td>
+</tr>
+<tr>
+<td>填充掩码</td>
+<td><span class="arithmatex">\(1\times n\)</span> 或 <span class="arithmatex">\(b\times 1\times 1\times n\)</span></td>
+<td>屏蔽所有查询对 padding 键的注意力</td>
+</tr>
+</tbody>
+</table>
+<p>两者需要<strong>按位与</strong>合并，而不是相加。</p>
+<h3 id="53-nan">5.3 NaN 陷阱<a class="headerlink" href="#53-nan" title="Permanent link">¶</a></h3>
+<p>如果用 <span class="arithmatex">\(-\infty\)</span> 做 mask，且某一行的<strong>所有</strong>位置都被 mask（例如整句都是 padding），softmax 会变成 <span class="arithmatex">\(\frac{0}{0}\)</span>，输出 NaN。</p>
+<p>两种解法：</p>
+<ul>
+<li>用有限大负数，如 <span class="arithmatex">\(-10^9\)</span> 或 <code>torch.finfo(dtype).min</code>；</li>
+<li>或在 softmax 前加保护，把全 mask 行的 logits 置零。</li>
+</ul>
+<div class="admonition danger">
+<p class="admonition-title">这个 bug 极难查</p>
+<p>NaN 会沿着梯度传播，污染整个 batch，但你看到的报错往往在几百步之后。<strong>在写 attention 的第一天就养成用有限大负数的习惯。</strong></p>
+</div>
+<hr />
+<h2 id="6-block">6 一个 block 到底算了什么<a class="headerlink" href="#6-block" title="Permanent link">¶</a></h2>
+<h3 id="61">6.1 数据流<a class="headerlink" href="#61" title="Permanent link">¶</a></h3>
+<figure>
+  <img alt="图 L4-6" src="../../assets/img/l04-block-flow.svg" width="100%" />
+<br />
+<figcaption>图 L4-6　读图要点：Pre-LN Transformer block 的数据流。两条残差通路分别绕过注意力和 FFN，保证梯度有直通路径。</figcaption>
+</figure>
+<p>现代大模型普遍采用 <strong>Pre-LN</strong>：归一化放在子层输入端，残差通路保持"干净"。原版 Transformer 的 Post-LN 在深层会梯度爆炸，需要 warmup 才能训起来。</p>
+<h3 id="62-llama-7b">6.2 参数核算：以 LLaMA-7B 为例<a class="headerlink" href="#62-llama-7b" title="Permanent link">¶</a></h3>
+<p>设 <span class="arithmatex">\(d=4096\)</span>，<span class="arithmatex">\(L=32\)</span> 层，<span class="arithmatex">\(h=32\)</span>，<span class="arithmatex">\(d_{\text{ff}}=11008\)</span>，词表 32000。</p>
+<p><strong>每层注意力</strong>：四个 <span class="arithmatex">\(d\times d\)</span> 矩阵</p>
+<div class="arithmatex">\[4\times 4096^2 \approx 67.1\text{M}\]</div>
+<p><strong>每层 FFN</strong>（SwiGLU 有三个矩阵：gate、up、down）：</p>
+<div class="arithmatex">\[3\times 4096\times 11008 \approx 135.3\text{M}\]</div>
+<p><strong>每层合计</strong>约 <span class="arithmatex">\(202.4\)</span>M，32 层约 <span class="arithmatex">\(6.48\)</span>B，加上词嵌入 <span class="arithmatex">\(32000\times4096\approx131\)</span>M，总计约 <strong>6.7B</strong>——这正是 LLaMA-7B 的实际参数量。</p>
+<p><strong>每 token 前向 FLOPs</strong> 约 <span class="arithmatex">\(2N \approx 13.4\)</span> GFLOPs；训练时含反向与重计算，约 <span class="arithmatex">\(6N \approx 40\)</span> GFLOPs。</p>
+<p><strong>KV cache</strong>（fp16，上下文 4096）：</p>
+<div class="arithmatex">\[2\times L\times d\times n\times 2\text{ bytes}
+=2\times32\times4096\times4096\times2 \approx 2.1\text{ GB}\]</div>
+<p>注意这一项随上下文长度<strong>线性</strong>增长，与参数量无关。一个 7B 模型跑 128K 上下文，仅 KV cache 就要 67GB——比模型本身大一个数量级。这是第 13 讲所有优化的起点。</p>
+<h3 id="63">6.3 复杂度<a class="headerlink" href="#63" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>时间</th>
+<th>显存</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>注意力打分</td>
+<td><span class="arithmatex">\(O(n^2 d)\)</span></td>
+<td><span class="arithmatex">\(O(n^2)\)</span>（可优化到 <span class="arithmatex">\(O(n)\)</span>）</td>
+</tr>
+<tr>
+<td>线性投影</td>
+<td><span class="arithmatex">\(O(n d^2)\)</span></td>
+<td><span class="arithmatex">\(O(nd)\)</span></td>
+</tr>
+<tr>
+<td>FFN</td>
+<td><span class="arithmatex">\(O(n d\, d_{\text{ff}})\)</span></td>
+<td><span class="arithmatex">\(O(nd_{\text{ff}})\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><span class="arithmatex">\(n\)</span> 与 <span class="arithmatex">\(d\)</span> 的相对大小决定瓶颈：短序列时 FFN 主导，长序列时 <span class="arithmatex">\(n^2\)</span> 项主导。粗略的分界点是 <span class="arithmatex">\(n\approx d\)</span>。</p>
+<hr />
+<h2 id="7">7 动手实现<a class="headerlink" href="#7" title="Permanent link">¶</a></h2>
+<p>下面是完整实现，30 行，无第三方依赖（除 PyTorch）：</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="k">def</span><span class="w"> </span><span class="nf">scaled_dot_product_attention</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">causal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pad_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="sd">"""q, k, v: (B, H, N, D)。返回 (输出, 注意力权重)。"""</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">d_k</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">scores</span> <span class="o">=</span> <span class="n">q</span> <span class="o">@</span> <span class="n">k</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d_k</span><span class="p">)</span>   <span class="c1"># (B,H,N,N)</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="k">if</span> <span class="n">causal</span><span class="p">:</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>        <span class="n">n</span> <span class="o">=</span> <span class="n">scores</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>        <span class="c1"># 上三角为 True 的位置要屏蔽；用有限大负数，避免 NaN</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>        <span class="n">mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">q</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">diagonal</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>        <span class="n">scores</span> <span class="o">=</span> <span class="n">scores</span><span class="o">.</span><span class="n">masked_fill</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">scores</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>    <span class="k">if</span> <span class="n">pad_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>        <span class="c1"># pad_mask: (B, N)，True 表示是 padding</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>        <span class="n">scores</span> <span class="o">=</span> <span class="n">scores</span><span class="o">.</span><span class="n">masked_fill</span><span class="p">(</span><span class="n">pad_mask</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:],</span> <span class="n">torch</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">scores</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>    <span class="n">attn</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>    <span class="k">return</span> <span class="n">attn</span> <span class="o">@</span> <span class="n">v</span><span class="p">,</span> <span class="n">attn</span>
+</span></code></pre></div>
+<p>与 PyTorch 官方实现对齐（Lab 1 会完整跑这个测试）：</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">q</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">out</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scaled_dot_product_attention</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">ref</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">scaled_dot_product_attention</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">is_causal</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="nb">print</span><span class="p">((</span><span class="n">out</span> <span class="o">-</span> <span class="n">ref</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>   <span class="c1"># 期望 &lt; 1e-12（float64）</span>
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">为什么用 float64 测</p>
+<p>float32 下 softmax 的实现顺序差异会带来 <span class="arithmatex">\(10^{-7}\)</span> 量级的误差，掩盖真正的 bug。对齐测试一律用 float64，确认逻辑正确后再回到 bf16 跑性能。</p>
+</div>
+<hr />
+<h2 id="8">8 工程坑清单<a class="headerlink" href="#8" title="Permanent link">¶</a></h2>
+<p>这些是实际写模型时最容易踩的八个坑，按出现频率排序。</p>
+<ol>
+<li><strong>用 <span class="arithmatex">\(-\infty\)</span> 做 mask</strong> → 整行被 mask 时 NaN。用 <code>finfo.min</code>。</li>
+<li><strong>忘记除以 <span class="arithmatex">\(\sqrt{d_k}\)</span></strong> → 训练 loss 一开始就平，梯度极小。</li>
+<li><strong>多头 reshape 顺序错</strong>：正确顺序是 <code>(B, N, H, D) → (B, H, N, D)</code>，转置时把 head 维和 seq 维搞混是最常见的静默 bug。</li>
+<li><strong>因果掩码方向反了</strong>：<code>triu(diagonal=1)</code> 屏蔽未来，<code>tril</code> 屏蔽过去。写反了模型仍能训练，只是效果莫名其妙地差。</li>
+<li><strong>padding mask 形状广播错</strong>：<code>(B,N)</code> 要扩成 <code>(B,1,1,N)</code>，否则会按最后一维广播成完全错误的形状。</li>
+<li><strong>bf16 下 logits 溢出</strong>：bf16 动态范围大但精度低，累加顺序不当会掉点。注意 <code>finfo.min</code> 在 bf16 下约 <span class="arithmatex">\(-3.4\times10^{38}\)</span>，参与减法仍安全。</li>
+<li><strong>GQA 用 <code>repeat</code> 而不是 <code>expand</code></strong>：<code>repeat</code> 会真实复制 KV，显存翻倍；<code>expand</code> 只改 stride。</li>
+<li><strong>FlashAttention 的数值差异</strong>：在线 softmax 改变了求和顺序，与朴素实现有 <span class="arithmatex">\(10^{-3}\)</span> 量级差异，属于正常现象，不要拿它当 bug 查。</li>
+</ol>
+<hr />
+<h2 id="9">9 论文与延伸<a class="headerlink" href="#9" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>年份</th>
+<th>论文</th>
+<th>一句话贡献</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2014</td>
+<td><a href="https://arxiv.org/abs/1409.0473">Bahdanau et al., Neural Machine Translation by Jointly Learning to Align and Translate</a></td>
+<td>加性注意力的起点</td>
+</tr>
+<tr>
+<td>2017</td>
+<td><a href="https://arxiv.org/abs/1706.03762">Vaswani et al., Attention Is All You Need</a></td>
+<td>缩放点积 + 多头 + 正弦位置</td>
+</tr>
+<tr>
+<td>2019</td>
+<td><a href="https://arxiv.org/abs/1905.10650">Michel et al., Are Sixteen Heads Really Better than One?</a></td>
+<td>头剪枝实验，证明分工不均</td>
+</tr>
+<tr>
+<td>2019</td>
+<td><a href="https://arxiv.org/abs/1911.02150">Shazeer, Fast Transformer Decoding: One Write-Head is All You Need</a></td>
+<td>MQA，KV cache 优化的起点</td>
+</tr>
+<tr>
+<td>2021</td>
+<td><a href="https://arxiv.org/abs/2104.09864">Su et al., RoFormer: Enhanced Transformer with Rotary Position Embedding</a></td>
+<td>RoPE</td>
+</tr>
+<tr>
+<td>2021</td>
+<td><a href="https://arxiv.org/abs/2012.14913">Geva et al., Transformer Feed-Forward Layers Are Key-Value Memories</a></td>
+<td>FFN 的记忆解释</td>
+</tr>
+<tr>
+<td>2022</td>
+<td><a href="https://arxiv.org/abs/2205.14135">Dao et al., FlashAttention</a></td>
+<td>IO 感知的精确注意力</td>
+</tr>
+<tr>
+<td>2023</td>
+<td><a href="https://arxiv.org/abs/2305.13245">Ainslie et al., GQA</a></td>
+<td>分组查询注意力</td>
+</tr>
+<tr>
+<td>2023</td>
+<td><a href="https://arxiv.org/abs/2309.17453">Xiao et al., Efficient Streaming Language Models with Attention Sinks</a></td>
+<td>注意力汇与流式推理</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="10">10 习题<a class="headerlink" href="#10" title="Permanent link">¶</a></h2>
+<p><strong>🟢 概念题</strong></p>
+<ol>
+<li>如果把 <span class="arithmatex">\(h\)</span> 从 8 增到 16（保持 <span class="arithmatex">\(d\)</span> 不变），参数量、计算量、单头维度各如何变化？为什么说"多头不是免费午餐"？</li>
+<li>因果掩码在训练和推理时的形状分别是什么？为什么推理时不需要 <span class="arithmatex">\(n\times n\)</span> 的掩码？</li>
+</ol>
+<p><strong>🟡 推导题</strong></p>
+<ol>
+<li>证明：若 <span class="arithmatex">\(q_i,k_i\)</span> 独立且 <span class="arithmatex">\(\E[q_i]=\mu_q,\E[k_i]=\mu_k\)</span>，则 <span class="arithmatex">\(\Var(\boldsymbol{q}\cdot\boldsymbol{k})=d_k(\sigma_q^2\sigma_k^2+\mu_q^2\sigma_k^2+\mu_k^2\sigma_q^2)\)</span>。均值不为零时，缩放因子还应该是 <span class="arithmatex">\(\sqrt{d_k}\)</span> 吗？</li>
+<li>推导 softmax 的雅可比矩阵，并说明为什么 <span class="arithmatex">\(p\to\)</span> one-hot 时梯度消失。给出"梯度最大"时 <span class="arithmatex">\(p\)</span> 的取值。</li>
+</ol>
+<p><strong>🔴 实现题</strong></p>
+<ol>
+<li>实现 RoPE 的 <code>rotate_half</code> 版本，验证与"逐对旋转"版本数值一致；再验证 (L4.5) 的相对位置性质。</li>
+<li>用纯 NumPy 实现一个 4 层、4 头的迷你 Transformer block，输入随机序列，前向跑通并与 PyTorch 对齐（提示：注意 LayerNorm 的 epsilon 和 PyTorch 默认值一致）。</li>
+</ol>
+<hr />
+<h2 id="11">11 本讲小结<a class="headerlink" href="#11" title="Permanent link">¶</a></h2>
+<div class="cheatsheet">
+<p><strong>一张图记住注意力</strong></p>
+<div class="arithmatex">\[\attn(\boldsymbol{Q},\boldsymbol{K},\boldsymbol{V})=\softmax\!\left(\frac{\boldsymbol{Q}\boldsymbol{K}^\top}{\sqrt{d_k}}\right)\boldsymbol{V}\]</div>
+<p><strong>四个关键数字</strong></p>
+<ul>
+<li><span class="arithmatex">\(\sqrt{d_k}\)</span>：让 logits 方差恒为 1，防止 softmax 饱和</li>
+<li>多头参数量 = 单头参数量：<span class="arithmatex">\(h\times(d\times d/h)=d^2\)</span></li>
+<li>KV cache = <span class="arithmatex">\(2\cdot L\cdot d\cdot n\cdot\)</span> 字节数：随 <span class="arithmatex">\(n\)</span> 线性增长</li>
+<li>每 token 前向 FLOPs ≈ <span class="arithmatex">\(2N\)</span></li>
+</ul>
+<p><strong>三个易错点</strong></p>
+<ul>
+<li>mask 用 <span class="arithmatex">\(-\infty\)</span> → NaN；用 <code>finfo.min</code></li>
+<li>多头 reshape 顺序：<code>(B,N,H,D) → (B,H,N,D)</code></li>
+<li>RoPE 的内积只依赖 <span class="arithmatex">\(n-m\)</span>，这是它能外推的根本原因</li>
+</ul>
+<p><strong>一句话</strong></p>
+<blockquote>
+<p>注意力的本质是<strong>可微的软检索</strong>；<span class="arithmatex">\(\sqrt{d_k}\)</span> 管数值稳定，多头管子空间分工，位置编码管顺序，掩码管因果性。</p>
+</blockquote>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../../01-%E5%89%8D%E5%8F%B2/l03-neural-seq/" class="md-footer__link md-footer__link--prev" aria-label="上一页: 第 3 讲 神经序列建模">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                第 3 讲 神经序列建模
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../l05-block-and-paradigms/" class="md-footer__link md-footer__link--next" aria-label="下一页: 第 5 讲 Block 与三大范式">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              <div class="md-ellipsis">
+                第 5 讲 Block 与三大范式
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      讲义内容 CC BY-NC-SA 4.0 ｜ 代码 MIT
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.top", "navigation.indexes", "navigation.footer", "toc.follow", "toc.integrate", "content.code.copy", "content.code.annotate", "content.tabs.link", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+        <script src="../../js/print-site.js"></script>
+      
+        <script src="../../assets/vendor/katex/katex.min.js"></script>
+      
+        <script src="../../assets/vendor/katex/auto-render.min.js"></script>
+      
+        <script src="../../assets/js/katex-init.js"></script>
+      
+        <script src="../../assets/js/sidebar-toggle.js"></script>
+      
+        <script src="../../assets/js/print-toc.js"></script>
+      
+    
+  </body>
+</html>

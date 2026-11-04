@@ -1216,6 +1216,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 嵌入模型的选型清单
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1255,6 +1266,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 检索失败的三类原因
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1268,6 +1290,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="3 查询侧">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 调优顺序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1290,6 +1329,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="5 生成与引用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 生成阶段的三个硬约束
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2705,6 +2761,16 @@
 </tbody>
 </table>
 <p><strong>一个常见误区</strong>：以为维度越高越好。1024 维与 4096 维在多数任务上差距很小，但存储和检索成本差 4 倍。</p>
+<h3 id="13">1.3 嵌入模型的选型清单<a class="headerlink" href="#13" title="Permanent link">¶</a></h3>
+<p>五个维度，按重要性排序：</p>
+<ol>
+<li><strong>中文效果</strong>：MTEB 的中文子集（C-MTEB）比总榜更有参考价值；</li>
+<li><strong>维度</strong>：768–1024 是甜点区，4096 维的存储与检索成本高 4 倍，收益通常不到 2 个点；</li>
+<li><strong>最大长度</strong>：必须 ≥ chunk 大小，否则长块会被截断；</li>
+<li><strong>推理成本</strong>：本地部署看显存，API 看单价；</li>
+<li><strong>是否支持指令</strong>：有些模型需要前缀（"为检索生成向量："），漏了会掉点。</li>
+</ol>
+<p><strong>一个反直觉的结论</strong>：换嵌入模型的收益，通常不如<strong>把切分改对</strong>。先调切分，再换模型。</p>
 <hr />
 <h2 id="2">2 检索<a class="headerlink" href="#2" title="Permanent link">¶</a></h2>
 <figure>
@@ -2752,6 +2818,45 @@
 <div class="arithmatex">\[\text{score}(B)=\frac{1}{60+2}+\frac{1}{60+1}=0.01613+0.01639=0.03252\]</div>
 <p><strong>B 略胜</strong>——它在两路里都靠前，而 A 有一路掉到第 3。</p>
 <p><strong><span class="arithmatex">\(k=60\)</span> 的作用</strong>：压平头部差距。<span class="arithmatex">\(k\)</span> 越小，第一名越占优势；<span class="arithmatex">\(k\)</span> 越大，越看重"两路都上榜"。</p>
+<h3 id="22">2.2 检索失败的三类原因<a class="headerlink" href="#22" title="Permanent link">¶</a></h3>
+<p>调 RAG 时最常见的困惑是"答案不对，但不知道是检索的错还是生成的错"。先把检索失败分成三类，对策完全不同：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>表现</th>
+<th>根因</th>
+<th>对策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>词汇鸿沟</strong></td>
+<td>用户说"报销"，文档写"费用核销"</td>
+<td>字面不匹配</td>
+<td>混合检索、查询改写、HyDE</td>
+</tr>
+<tr>
+<td><strong>分块切断</strong></td>
+<td>答案跨两个块，两块都不完整</td>
+<td>切分边界切断了语义</td>
+<td>加大重叠、按标题切、父子块</td>
+</tr>
+<tr>
+<td><strong>多跳缺失</strong></td>
+<td>答案需要 A→B 两步推理</td>
+<td>单次检索只取一段</td>
+<td>多轮检索、查询分解</td>
+</tr>
+</tbody>
+</table>
+<p><strong>怎么判断是哪一类</strong>：把检索到的 top-5 片段打出来人工看一遍。</p>
+<ul>
+<li>相关片段根本没出现 → 词汇鸿沟</li>
+<li>出现了但被切断 → 分块问题</li>
+<li>每段都对但答不出 → 多跳缺失</li>
+</ul>
+<p><strong>这个 5 分钟的检查，比调任何参数都有效</strong>——大多数团队跳过它，直接去换嵌入模型。</p>
 <hr />
 <h2 id="3">3 查询侧<a class="headerlink" href="#3" title="Permanent link">¶</a></h2>
 <p>用户的问题往往不适合直接检索：</p>
@@ -2782,6 +2887,15 @@
 </tbody>
 </table>
 <p><strong>HyDE 的直觉</strong>：问题与答案的用词分布不同。先让模型"编"一段答案，答案的措辞更接近文档，检索命中率更高。</p>
+<h3 id="23">2.3 调优顺序<a class="headerlink" href="#23" title="Permanent link">¶</a></h3>
+<p>RAG 的环节多，乱调会互相干扰。推荐的顺序与理由：</p>
+<ol>
+<li><strong>切分</strong>：决定召回上限，先定 256–512 并做重叠；改这一项，后面所有指标都要重测。</li>
+<li><strong>嵌入模型</strong>：在切分固定后对比 2–3 个候选，看 Recall@10。</li>
+<li><strong>混合检索</strong>：稀疏+稠密的融合通常带来 5–10 个点，且不依赖模型替换。</li>
+<li><strong>重排</strong>：最后做，因为它的收益依赖召回质量——召回烂，重排也救不回来。</li>
+</ol>
+<p><strong>为什么这个顺序</strong>：每一步的收益都建立在前面已经调好的基础上。反过来先调重排，会得到"重排没用"的错误结论。</p>
 <hr />
 <h2 id="4">4 重排与压缩<a class="headerlink" href="#4" title="Permanent link">¶</a></h2>
 <p><strong>重排</strong>（rerank）用交叉编码器对召回的 top-50 精排到 top-5：</p>
@@ -2799,6 +2913,13 @@
 <li><strong>允许说不知道</strong>：检索结果不足时明确说"资料里没有"；</li>
 <li><strong>格式约束</strong>：用第 15 讲的约束解码保证引用格式合法。</li>
 </ol>
+<h3 id="51">5.1 生成阶段的三个硬约束<a class="headerlink" href="#51" title="Permanent link">¶</a></h3>
+<ol>
+<li><strong>必须引用</strong>：要求每个结论标 <code>[1][2]</code>，没有来源的句子不允许出现。这一条能挡掉大部分幻觉。</li>
+<li><strong>允许说不知道</strong>：检索结果与问题无关时，明确输出"资料里没有"。没有这条，模型会硬编。</li>
+<li><strong>限制推断</strong>：只允许基于片段做<strong>直接推断</strong>，不允许引入外部知识。需要外部知识时，应该再检索一次。</li>
+</ol>
+<p><strong>怎么落地</strong>：用第 15 讲的约束解码保证引用格式合法；用后处理检查"每个 <code>[n]</code> 是否真的出现在上下文里"。</p>
 <hr />
 <h2 id="6">6 评估<a class="headerlink" href="#6" title="Permanent link">¶</a></h2>
 <figure>

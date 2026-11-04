@@ -1540,6 +1540,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 三个需求翻译模板
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1579,6 +1590,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 成本估算的三个陷阱
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1593,6 +1615,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="3 实现路径">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-mvp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 MVP 的三个"不要"
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1603,6 +1642,34 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="4 评测与上线">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 灰度怎么做才算数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 上线前检查清单
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1634,6 +1701,17 @@
     <span class="md-ellipsis">
       
         例 24.3 算一次加权总分
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-mvp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 两周 MVP 的日程表
       
     </span>
   </a>
@@ -2613,6 +2691,20 @@
 </table>
 <p><strong>结论</strong>：这个预算<strong>没有任何冗余</strong>。要么把生成压到 15 token（省 300 ms），要么加缓存（命中率 30% 就能省 600 ms）。</p>
 <p><strong>这就是"可测指标"的价值</strong>：它把"要快"变成了"哪一环超了就砍哪一环"。</p>
+<h3 id="11">1.1 三个需求翻译模板<a class="headerlink" href="#11" title="Permanent link">¶</a></h3>
+<p><strong>"要准"</strong> → 在什么数据上、用谁的标准、错多少可以接受？</p>
+<blockquote>
+<p>例：在 200 条标注合同上，要素抽取的字段级 F1 ≥ 0.85。</p>
+</blockquote>
+<p><strong>"要快"</strong> → P50 还是 P95？包含网络吗？</p>
+<blockquote>
+<p>例：P95 端到端延迟 ≤ 2s，其中首 token ≤ 400ms。</p>
+</blockquote>
+<p><strong>"要便宜"</strong> → 按请求算还是按月算？包含人力吗？</p>
+<blockquote>
+<p>例：单次请求成本 ≤ ¥0.02，不含运维人力。</p>
+</blockquote>
+<p><strong>模板的价值</strong>：它把"我觉得还行"变成"能不能过验收"。没有这句话，项目永远做不完。</p>
 <hr />
 <h2 id="2">2 选型<a class="headerlink" href="#2" title="Permanent link">¶</a></h2>
 <figure>
@@ -2634,6 +2726,13 @@
 <div class="arithmatex">\[\frac{1.5\times10^{9}}{10^{6}}\times2=3000\ \text{元/月}\]</div>
 <p>加上检索存储（约 3000 元）与运维人力（约 1 万），总成本约 <strong>1.6 万/月</strong>。</p>
 <p><strong>对照</strong>：换成大模型（单价 20 元/百万），光推理就是 3 万/月，总成本 4.5 万。</p>
+<h3 id="22">2.2 成本估算的三个陷阱<a class="headerlink" href="#22" title="Permanent link">¶</a></h3>
+<p><strong>陷阱一：只算输入单价。</strong> 输出 token 通常比输入贵 4–10 倍。一个"输入 1000、输出 500"的请求，按 GPT-5 的 1.25/10 计价，输出占成本的 80%。只按输入算，会低估 5 倍。</p>
+<p><strong>陷阱二：忘了折扣。</strong> 前缀缓存能省 30%–70% 的输入成本，批处理 API 常打五折。真实账单往往只有"标价 × 调用量"的三分之一。</p>
+<p><strong>陷阱三：忘了重试与多轮。</strong> agent 类应用一次任务平均 5–10 次模型调用，失败重试再加 20%。按"一次请求"估算，会低估一个数量级。</p>
+<p><strong>正确的算法</strong>：</p>
+<div class="arithmatex">\[\text{月成本}=\underbrace{\text{调用次数}\times\text{单次 token}}_{\text{基础}}\times\underbrace{(1+\text{重试率})}_{\text{可靠性}}\times\underbrace{(1-\text{缓存命中率})}_{\text{折扣}}\]</div>
+<p>按这个式子算出来的数，通常比"标价 × 次数"低 30%–50%——但比"只算输入"高得多。</p>
 <hr />
 <h2 id="3">3 实现路径<a class="headerlink" href="#3" title="Permanent link">¶</a></h2>
 <figure>
@@ -2678,6 +2777,11 @@
 </tbody>
 </table>
 <p><strong>MVP 的关键是"窄"</strong>：只做一类问题、一个数据源、一个模型。宽了就做不完。</p>
+<h3 id="31-mvp">3.1 MVP 的三个"不要"<a class="headerlink" href="#31-mvp" title="Permanent link">¶</a></h3>
+<p><strong>不要做多轮对话</strong>。多轮会把状态管理、上下文裁剪、指代消解全带进来，复杂度翻三倍。先做单轮。</p>
+<p><strong>不要做多数据源</strong>。一个 PDF 库和一个数据库的检索逻辑完全不同。先接一个。</p>
+<p><strong>不要做前端</strong>。命令行或一个输入框就够。前端会吃掉一半时间，而它对"能不能做"这个问题没有帮助。</p>
+<p><strong>判断标准</strong>：如果 MVP 的代码超过 500 行，说明范围还是太宽。</p>
 <hr />
 <h2 id="4">4 评测与上线<a class="headerlink" href="#4" title="Permanent link">¶</a></h2>
 <p>三层评测（第 23 讲）：</p>
@@ -2713,6 +2817,64 @@
 <li><strong>一键回滚</strong>：任何指标异常，30 秒内切回旧版本；</li>
 <li><strong>对比监控</strong>：新旧版本的核心指标并排看。</li>
 </ol>
+<h3 id="41">4.1 灰度怎么做才算数<a class="headerlink" href="#41" title="Permanent link">¶</a></h3>
+<p>四步，每一步都有明确的停留时间与观察指标：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>流量</th>
+<th>停留</th>
+<th>看什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>内部白名单</td>
+<td>10–20 人</td>
+<td>3 天</td>
+<td>崩溃、明显错误</td>
+</tr>
+<tr>
+<td>1%</td>
+<td>真实用户</td>
+<td>3–7 天</td>
+<td>错误率、P95 延迟、投诉</td>
+</tr>
+<tr>
+<td>10%</td>
+<td>真实用户</td>
+<td>1–2 周</td>
+<td>与旧版的 A/B 指标</td>
+</tr>
+<tr>
+<td>50% → 100%</td>
+<td>全量</td>
+<td>视稳定性</td>
+<td>容量与成本</td>
+</tr>
+</tbody>
+</table>
+<p><strong>两个容易被跳过的动作</strong>：</p>
+<ol>
+<li><strong>回滚演练</strong>：灰度前先演练一次"切回旧版"，确认 30 秒内能完成。没演练过的回滚，真出事时大概率失败。</li>
+<li><strong>对比监控</strong>：新旧版本的核心指标必须并排显示。只看新版"看起来还行"，等于没监控。</li>
+</ol>
+<h3 id="42">4.2 上线前检查清单<a class="headerlink" href="#42" title="Permanent link">¶</a></h3>
+<p>十条，逐条打勾：</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 有评测集，且与训练数据无重叠</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 有基线，且能复现</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> P95 延迟达标，压测过峰值</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 有成本监控，设了预算告警</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 有一键回滚，且演练过</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 有日志，能定位到具体请求</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 有降级方案（模型挂了怎么办）</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 有内容安全过滤（输入 + 输出）</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 有用户反馈入口</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 有负责人与值班表</li>
+</ul>
+<p><strong>前三条不过，不要上线；后七条不过，上线后会被叫醒。</strong></p>
 <hr />
 <h2 id="5">5 课程项目与评分<a class="headerlink" href="#5" title="Permanent link">¶</a></h2>
 <figure>
@@ -2758,6 +2920,59 @@
 </span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="n">a</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"技术深度"</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span> <span class="s2">"工程完整"</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span> <span class="s2">"评测严谨"</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s2">"文档清晰"</span><span class="p">:</span> <span class="mf">0.85</span><span class="p">,</span> <span class="s2">"创新性"</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">}</span>
 </span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"总分 </span><span class="si">{</span><span class="n">score</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">，最该补的是「</span><span class="si">{</span><span class="n">weakest</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="si">}</span><span class="s2">」"</span><span class="p">)</span>   <span class="c1"># 0.7825，创新性</span>
 </span></code></pre></div>
+<h3 id="52-mvp">5.2 两周 MVP 的日程表<a class="headerlink" href="#52-mvp" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>天</th>
+<th>做什么</th>
+<th>产出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1</td>
+<td>定指标、圈数据、写验收标准</td>
+<td>一页纸的需求</td>
+</tr>
+<tr>
+<td>D2–D3</td>
+<td>跑通最简链路（一个模型 + 一个数据源）</td>
+<td>20 条样本能出结果</td>
+</tr>
+<tr>
+<td>D4–D5</td>
+<td>建 50 条评测集，跑基线</td>
+<td>基线分数</td>
+</tr>
+<tr>
+<td>D6–D8</td>
+<td>迭代：切分、提示、检索</td>
+<td>分数提升</td>
+</tr>
+<tr>
+<td>D9–D10</td>
+<td>加错误处理与日志</td>
+<td>能定位失败原因</td>
+</tr>
+<tr>
+<td>D11–D12</td>
+<td>内部试用，收集 20 条反馈</td>
+<td>问题清单</td>
+</tr>
+<tr>
+<td>D13</td>
+<td>修 top-3 问题</td>
+<td>稳定版</td>
+</tr>
+<tr>
+<td>D14</td>
+<td>写文档、演示、定下一步</td>
+<td>可交付的 MVP</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最容易超时的是 D4</strong>：很多人跳过评测集直接调参，结果调了两周说不清有没有变好。</p>
 <hr />
 <h2 id="6">6 工程要点与坑<a class="headerlink" href="#6" title="Permanent link">¶</a></h2>
 <ol>

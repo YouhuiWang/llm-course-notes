@@ -1264,6 +1264,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="2 协议：MCP 与 A2A">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 三种编排抽象
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1294,6 +1311,17 @@
     <span class="md-ellipsis">
       
         例 18.2 拒绝采样的样本效率
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#31_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 轨迹数据要多少
       
     </span>
   </a>
@@ -1350,6 +1378,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#42" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 把五层归因做成流程
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1363,6 +1402,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="5 评测">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 小样本评测为什么不可信
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2596,6 +2652,8 @@
 <p class="admonition-title">一句话总结</p>
 <p>多 agent 是<strong>用通信成本换并行与专业化</strong>；换不来就是负收益。</p>
 </div>
+<p><strong>一个反直觉的经验</strong>：单 agent + 好工具，往往打败多 agent。因为多 agent 的每次交接都要序列化一次上下文，信息在传递中衰减；而单 agent 的上下文是连续的。</p>
+<p>只有在"子任务需要完全不同的系统提示"或"子任务可以真并行"时，多 agent 才有优势。</p>
 <hr />
 <h2 id="1">1 拓扑与通信<a class="headerlink" href="#1" title="Permanent link">¶</a></h2>
 <figure>
@@ -2674,6 +2732,43 @@
 <p><strong>MCP 的价值在生态</strong>：工具方写一次 server，所有支持 MCP 的宿主都能用。</p>
 <p><strong>A2A 的价值在跨组织</strong>：不同公司、不同框架的 agent 能互相调用，靠 Agent Card 描述"我能做什么"。</p>
 <p><strong>安全边界</strong>：MCP 的 server 返回内容会直接进入上下文——这是间接注入的主要入口（第 10 讲）。A2A 更危险，因为对端完全不受你控制。</p>
+<h3 id="21">2.1 三种编排抽象<a class="headerlink" href="#21" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>框架</th>
+<th>抽象</th>
+<th>控制流在哪</th>
+<th>适合</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LangGraph</strong></td>
+<td>图（节点+边+状态）</td>
+<td>代码</td>
+<td>生产、需可测可恢复</td>
+</tr>
+<tr>
+<td><strong>AutoGen</strong></td>
+<td>对话</td>
+<td>模型</td>
+<td>研究、多角色协作</td>
+</tr>
+<tr>
+<td><strong>CrewAI</strong></td>
+<td>角色+任务</td>
+<td>代码+模型</td>
+<td>快速原型</td>
+</tr>
+</tbody>
+</table>
+<p><strong>判断标准</strong>：能不能给"流程"写单元测试。</p>
+<ul>
+<li>图可以：每个节点单独测，每条边构造场景；</li>
+<li>对话不行：多 agent 自由对话的路径无法枚举。</li>
+</ul>
+<p><strong>结论</strong>：演示用对话式，上线用图。</p>
 <hr />
 <h2 id="3-agent">3 训练 agent<a class="headerlink" href="#3-agent" title="Permanent link">¶</a></h2>
 <figure>
@@ -2713,6 +2808,35 @@
 <div class="arithmatex">\[\text{至少成功一次}=1-(1-0.4)^4=1-0.1296=0.87\]</div>
 <p>也就是说，<strong>1000 次尝试能得到约 870 条成功轨迹</strong>，而不用人工标注。</p>
 <p>代价是 4 倍的推理成本——但比雇人写轨迹便宜得多。</p>
+<h3 id="31_1">3.1 轨迹数据要多少<a class="headerlink" href="#31_1" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>量级</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SFT 冷启动</td>
+<td>500–2000 条</td>
+<td>覆盖工具调用格式</td>
+</tr>
+<tr>
+<td>拒绝采样</td>
+<td>每任务 4–8 次</td>
+<td>成功率 40% 时约 0.8–0.97</td>
+</tr>
+<tr>
+<td>RL</td>
+<td>万级以上</td>
+<td>需要大量环境交互</td>
+</tr>
+</tbody>
+</table>
+<p><strong>判断够不够</strong>：留 10% 轨迹做验证，如果训练集和验证集的成功率差距 &gt; 15 个点，说明数据不够或过拟合。</p>
+<p><strong>最容易被忽略的是"负样本"</strong>：只训成功轨迹，模型学不到"什么不该做"。建议保留 20% 的失败轨迹，标注失败原因。</p>
 <h3 id="32">3.2 信用分配<a class="headerlink" href="#32" title="Permanent link">¶</a></h3>
 <p>一条 20 步的轨迹，最终失败了。是哪一步的错？</p>
 <p>三种做法：</p>
@@ -2810,6 +2934,39 @@
 </span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="n">bus</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">Message</span><span class="p">(</span><span class="s2">"worker-1"</span><span class="p">,</span> <span class="s2">"manager"</span><span class="p">,</span> <span class="s2">"4821 行"</span><span class="p">,</span> <span class="s2">"result"</span><span class="p">))</span>
 </span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="nb">print</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">stats</span><span class="p">())</span>
 </span></code></pre></div>
+<h3 id="42">4.2 把五层归因做成流程<a class="headerlink" href="#42" title="Permanent link">¶</a></h3>
+<p>人工归因 100 次失败要半天。更实际的做法是<strong>先用规则分类，再人工复核存疑项</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>可自动识别的信号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>决策</td>
+<td>同一任务多次采样，选的动作分布差异大</td>
+</tr>
+<tr>
+<td>状态</td>
+<td>上下文里出现"忘了前面说的"类表述</td>
+</tr>
+<tr>
+<td>执行</td>
+<td>工具返回非 200 / 参数校验失败</td>
+</tr>
+<tr>
+<td>环境</td>
+<td>工具超时、返回空、返回格式异常</td>
+</tr>
+<tr>
+<td>治理</td>
+<td>触发人工审批、被策略拦截</td>
+</tr>
+</tbody>
+</table>
+<p><strong>经验值</strong>：60%–70% 的失败能被规则自动归类，剩下的才需要人看。这能把归因成本降到 &#8531;，也让"每周复盘"变得可持续。</p>
 <hr />
 <h2 id="5">5 评测<a class="headerlink" href="#5" title="Permanent link">¶</a></h2>
 <table>
@@ -2844,6 +3001,17 @@
 </tbody>
 </table>
 <p><strong>统计功效问题</strong>：50 个任务的评测集，成功率的 95% 置信区间宽度约 ±14 个点。<strong>"提升 3%" 在这种规模下根本不显著</strong>——要可靠比较，至少 200 个任务。</p>
+<h3 id="51">5.1 小样本评测为什么不可信<a class="headerlink" href="#51" title="Permanent link">¶</a></h3>
+<p>agent 评测的任务往往很贵（要跑真实环境），所以大家只测 50 条。但 50 条的统计功效极低：</p>
+<div class="arithmatex">\[\text{95\% 置信区间}\approx \hat p \pm 1.96\sqrt{\frac{\hat p(1-\hat p)}{n}}\]</div>
+<p><span class="arithmatex">\(n=50\)</span>、<span class="arithmatex">\(\hat p=0.6\)</span> 时，区间是 <span class="arithmatex">\(0.6\pm0.136\)</span>，即 46%–74%。</p>
+<p><strong>含义</strong>：两个系统一个 60%、一个 55%，在 50 条样本上<strong>根本无法区分</strong>。</p>
+<p><strong>三个应对</strong>：</p>
+<ol>
+<li><strong>增加样本</strong>：至少 200 条，区间才收窄到 ±7 个点；</li>
+<li><strong>配对比较</strong>：同一批任务上跑两个系统，用配对检验，方差小得多；</li>
+<li><strong>报告区间</strong>：不报点估计，报置信区间——这比"提升了 3%"诚实得多。</li>
+</ol>
 <hr />
 <h2 id="6">6 工程要点与坑<a class="headerlink" href="#6" title="Permanent link">¶</a></h2>
 <ol>

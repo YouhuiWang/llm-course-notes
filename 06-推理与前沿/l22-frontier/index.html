@@ -1435,6 +1435,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 具身智能的三个坑
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1463,6 +1474,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 回放怎么实现
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1485,6 +1507,17 @@
     <span class="md-ellipsis">
       
         例 22.2 算一下交叉点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 混合架构的工程现实
       
     </span>
   </a>
@@ -1535,6 +1568,17 @@
     <span class="md-ellipsis">
       
         例 22.3 给一条新闻打分
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#51" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 给一条新闻打分的实操
       
     </span>
   </a>
@@ -2625,6 +2669,11 @@
 <h3 id="12">1.2 具身智能<a class="headerlink" href="#12" title="Permanent link">¶</a></h3>
 <p>机器人 + 大模型。难点不在模型，在<strong>数据</strong>：真实世界的交互数据比文本少几个数量级，且采集成本极高。</p>
 <p>三条路线：仿真里训（Sim2Real）、遥操作采集、视频预训练。</p>
+<h3 id="13">1.3 具身智能的三个坑<a class="headerlink" href="#13" title="Permanent link">¶</a></h3>
+<p><strong>坑一：仿真与现实的差距</strong>。在仿真里训练的策略，到了真实机器人上往往失效——摩擦、光照、传感器噪声都对不上。业界把这叫 sim-to-real gap，缓解手段是<strong>域随机化</strong>：训练时随机化物理参数，逼策略学会鲁棒。</p>
+<p><strong>坑二：数据贵且慢</strong>。遥操作采集一条 10 秒的抓取轨迹，需要一个人操作 + 一个人标注，成本是文本数据的几千倍。</p>
+<p><strong>坑三：评测无法自动化</strong>。文本任务可以跑测试用例，机器人任务只能真机试——这直接限制了迭代速度。</p>
+<p><strong>一个判断</strong>：具身智能的瓶颈在<strong>数据与评测</strong>，不在模型。这和语言模型恰好相反。</p>
 <hr />
 <h2 id="2">2 持续学习<a class="headerlink" href="#2" title="Permanent link">¶</a></h2>
 <figure>
@@ -2644,6 +2693,36 @@
 <li><strong>正则化</strong>（EWC）：惩罚重要参数的改动，便宜但效果有限；</li>
 <li><strong>LoRA 隔离</strong>：每个任务一组适配器，完全不共享参数——不遗忘，但也不能迁移。</li>
 </ol>
+<h3 id="21">2.1 回放怎么实现<a class="headerlink" href="#21" title="Permanent link">¶</a></h3>
+<p>三种粒度，成本递增：</p>
+<table>
+<thead>
+<tr>
+<th>粒度</th>
+<th>做法</th>
+<th>成本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>样本级</strong></td>
+<td>每步混入 10% 旧任务样本</td>
+<td>+10% 算力</td>
+</tr>
+<tr>
+<td><strong>特征级</strong></td>
+<td>存旧任务的隐状态，蒸馏回放</td>
+<td>+20%，但不用存原始数据</td>
+</tr>
+<tr>
+<td><strong>参数级</strong></td>
+<td>EWC 惩罚重要参数的变化</td>
+<td>几乎免费，效果有限</td>
+</tr>
+</tbody>
+</table>
+<p><strong>选择建议</strong>：数据能存就用样本级（最简单、最有效）；数据敏感（隐私）用特征级。</p>
+<p><strong>一个坑</strong>：回放比例不是越高越好。超过 30% 后，新任务学得明显变慢，而遗忘只再降几个点。</p>
 <hr />
 <h2 id="3">3 新架构<a class="headerlink" href="#3" title="Permanent link">¶</a></h2>
 <figure>
@@ -2662,6 +2741,36 @@
 <li><span class="arithmatex">\(n&gt;4096\)</span>（长文档、代码仓库）：线性方法开始占优。</li>
 </ul>
 <p><strong>但理论复杂度不等于实际速度</strong>：线性注意力的常数项大、硬件利用率低，实测往往要到 <span class="arithmatex">\(n&gt;32\)</span>K 才真正快。</p>
+<h3 id="32">3.2 混合架构的工程现实<a class="headerlink" href="#32" title="Permanent link">¶</a></h3>
+<p>纯线性架构（Mamba 类）在"精确检索"任务上明显落后：让它从 10 万 token 里找出一句原话，不如全注意力可靠。原因是状态压缩会丢细节。</p>
+<p>主流做法是<strong>混合</strong>：大部分层用线性/SSM（省算力），少数层保留全注意力（保检索）。</p>
+<table>
+<thead>
+<tr>
+<th>配置</th>
+<th>算力</th>
+<th>长文本检索</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全注意力</td>
+<td>1×</td>
+<td>最好</td>
+</tr>
+<tr>
+<td>纯线性</td>
+<td>0.3×</td>
+<td>明显变差</td>
+</tr>
+<tr>
+<td>混合（&frac14; 层全注意力）</td>
+<td>0.5×</td>
+<td>接近全注意力</td>
+</tr>
+</tbody>
+</table>
+<p><strong>工程含义</strong>：换架构不是"全有或全无"，按比例混合往往性价比最高。Jamba 这类模型就是按这个思路设计的。</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">flops</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">linear</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="sd">"""粗略 FLOPs：全注意力 O(n²d)，线性注意力 O(nd²)"""</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n</span> <span class="o">*</span> <span class="n">d</span><span class="o">**</span><span class="mi">2</span> <span class="k">if</span> <span class="n">linear</span> <span class="k">else</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">d</span>
@@ -2794,6 +2903,15 @@
 </tbody>
 </table>
 <p><strong>结论</strong>：L1–L2 之间，<strong>可以关注，不能据此改架构</strong>。</p>
+<h3 id="51">5.1 给一条新闻打分的实操<a class="headerlink" href="#51" title="Permanent link">¶</a></h3>
+<p>三步，五分钟：</p>
+<ol>
+<li><strong>找原始来源</strong>：是论文、官方博客，还是二手报道？二手报道常有夸大。</li>
+<li><strong>看基线</strong>：和谁比？如果是"未优化的 Transformer"，赢是应该的。</li>
+<li><strong>看条件</strong>：在什么序列长度、什么 batch、什么硬件下测的？换个条件还成立吗？</li>
+</ol>
+<p><strong>一个常见的夸大手法</strong>：只报"最快的那一项"。比如长文本快 10 倍，但短文本慢 2 倍——只提前者。</p>
+<p><strong>打分表</strong>：三项都通过 → L3；只过两项 → L2；只过一项 → L1。</p>
 <hr />
 <h2 id="6">6 工程要点与坑<a class="headerlink" href="#6" title="Permanent link">¶</a></h2>
 <ol>

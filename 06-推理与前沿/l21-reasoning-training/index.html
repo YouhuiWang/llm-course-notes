@@ -1435,6 +1435,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#21_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 三个奖励设计反例
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1457,6 +1468,17 @@
     <span class="md-ellipsis">
       
         例 21.2 手算组内优势
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 验证器怎么写
       
     </span>
   </a>
@@ -1502,6 +1524,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#44" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 冷启动数据从哪来
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1524,6 +1557,17 @@
     <span class="md-ellipsis">
       
         例 21.3 蒸馏的压缩比
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 长度控制的三种做法
       
     </span>
   </a>
@@ -2706,6 +2750,11 @@
 <p>对照：答错但格式对 → <span class="arithmatex">\(0+0.2=0.2\)</span>；答错且格式错 → <span class="arithmatex">\(0+0-0.1=-0.1\)</span>。</p>
 <p><strong>为什么要有长度惩罚</strong>：不加的话，模型会发现"写得越长越可能蒙对"，于是无限啰嗦。</p>
 <p><strong>为什么格式奖励要小</strong>：格式只是手段，不是目的。权重给大了，模型会为了格式牺牲正确性。</p>
+<h3 id="21_1">2.1 三个奖励设计反例<a class="headerlink" href="#21_1" title="Permanent link">¶</a></h3>
+<p><strong>反例一：把长度当奖励。</strong> 某团队奖励"推理更详细"，结果模型学会了重复同一段话 20 遍。长度是<strong>结果</strong>，不是目标。</p>
+<p><strong>反例二：格式奖励给太重。</strong> 格式分 0.5、正确性 0.5，模型很快学会"格式完美但答案乱写"——因为格式比正确容易拿分。</p>
+<p><strong>反例三：验证器有漏洞。</strong> 用正则匹配答案，模型发现"输出所有可能的数字"能命中任意一个。验证器必须<strong>严格</strong>，宁可漏判不可误判。</p>
+<p><strong>共同点</strong>：奖励是模型唯一能看见的目标。<strong>你奖励什么，就会得到什么</strong>——包括你没想奖励的那些。</p>
 <hr />
 <h2 id="3-grpo">3 GRPO：不要价值网络<a class="headerlink" href="#3-grpo" title="Permanent link">¶</a></h2>
 <figure>
@@ -2765,6 +2814,11 @@ A_{\text{错}}=\frac{0-0.375}{0.484}=-0.77\]</div>
 <li><strong>采样数决定信号质量</strong>：8 个里只有 3 个对，方差大，优势不稳。</li>
 </ol>
 </div>
+<h3 id="33">3.3 验证器怎么写<a class="headerlink" href="#33" title="Permanent link">¶</a></h3>
+<p><strong>数学题</strong>：不要用字符串匹配，要<strong>数值等价</strong>——"0.5" 与 "&frac12;" 应判为相同。做法是抽出答案表达式，用 sympy 化简后比较。</p>
+<p><strong>代码题</strong>：跑单元测试。注意<strong>隔离</strong>：在容器里跑，限制时间与内存，防止死循环拖垮评测。</p>
+<p><strong>选择题</strong>：正则抽 A/B/C/D，同时校验只有一个选项。</p>
+<p><strong>通用原则</strong>：验证器要能<strong>判定错</strong>，而不是"看起来对"。宽松的验证器会教出"钻空子"的模型。</p>
 <hr />
 <h2 id="4">4 长度为什么会长<a class="headerlink" href="#4" title="Permanent link">¶</a></h2>
 <figure>
@@ -2780,6 +2834,40 @@ A_{\text{错}}=\frac{0-0.375}{0.484}=-0.77\]</div>
 </ul>
 <h3 id="42">4.2 代价<a class="headerlink" href="#42" title="Permanent link">¶</a></h3>
 <p>长度涨 7.6 倍，推理成本也涨 7.6 倍。所以后来的工作都在做"<strong>长度控制</strong>"：在奖励里加长度惩罚，或训练模型"该停就停"。</p>
+<h3 id="44">4.4 冷启动数据从哪来<a class="headerlink" href="#44" title="Permanent link">¶</a></h3>
+<p>三条路，成本差一个数量级：</p>
+<table>
+<thead>
+<tr>
+<th>来源</th>
+<th>做法</th>
+<th>量级</th>
+<th>质量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>人工撰写</strong></td>
+<td>专家写完整推理链</td>
+<td>几百到几千条</td>
+<td>最高</td>
+</tr>
+<tr>
+<td><strong>强模型蒸馏</strong></td>
+<td>用 o1/R1 类模型生成</td>
+<td>几万条</td>
+<td>高，但继承教师偏差</td>
+</tr>
+<tr>
+<td><strong>拒绝采样</strong></td>
+<td>自己采多次，留正确的</td>
+<td>取决于成功率</td>
+<td>中，需过滤</td>
+</tr>
+</tbody>
+</table>
+<p><strong>经验值</strong>：1000 条人工 + 1 万条蒸馏，是性价比最高的组合。纯蒸馏的问题是"学生会继承老师的所有坏习惯"，纯人工的问题是"太贵、太慢"。</p>
+<p><strong>一个细节</strong>：冷启动数据的<strong>格式统一</strong>比内容更重要。推理链的风格不一致，模型会学到"格式混乱"，后面 RL 很难纠正。</p>
 <hr />
 <h2 id="5">5 冷启动与蒸馏<a class="headerlink" href="#5" title="Permanent link">¶</a></h2>
 <h3 id="213">例 21.3　蒸馏的压缩比<a class="headerlink" href="#213" title="Permanent link">¶</a></h3>
@@ -2787,6 +2875,35 @@ A_{\text{错}}=\frac{0-0.375}{0.484}=-0.77\]</div>
 <div class="arithmatex">\[\text{压缩比}=\frac{8000}{2000}=4\]</div>
 <p><strong>为什么能压缩</strong>：大模型的推理链里有大量"自我怀疑"和"重复验证"，蒸馏时这些冗余被过滤掉了——小模型学到的是<strong>主干路径</strong>。</p>
 <p>代价是上限降低：小模型在超难题上仍会输给大模型，但差距比"直接训小模型"小得多。</p>
+<h3 id="43">4.3 长度控制的三种做法<a class="headerlink" href="#43" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>做法</th>
+<th>怎么实现</th>
+<th>代价</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>奖励惩罚</strong></td>
+<td>在奖励里加 <span class="arithmatex">\(-\lambda\cdot\text{length}\)</span></td>
+<td>可能压制必要的长推理</td>
+</tr>
+<tr>
+<td><strong>长度预算</strong></td>
+<td>训练时按难度分配 token 上限</td>
+<td>需要难度估计</td>
+</tr>
+<tr>
+<td><strong>自适应停止</strong></td>
+<td>让模型学会输出"够了"标记</td>
+<td>需要额外标注</td>
+</tr>
+</tbody>
+</table>
+<p><strong>实践中最稳的是第二种</strong>：简单题给 1K 预算，难题给 16K。它不改变奖励结构，只是把"该想多久"变成先验。</p>
+<p><strong>一个反直觉的观察</strong>：强制所有题都用长推理，平均准确率反而下降——因为简单题上多想的收益是负的（过度思考，见 L20）。</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>

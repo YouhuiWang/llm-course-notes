@@ -1317,6 +1317,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#22-workork" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 零样本分类为什么能 workork
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1339,6 +1350,17 @@
     <span class="md-ellipsis">
       
         3.1 视觉指令微调的数据长什么样
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-projector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 projector 训练的两个技巧
       
     </span>
   </a>
@@ -1389,6 +1411,17 @@
     <span class="md-ellipsis">
       
         例 19.3 信噪比怎么变
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 扩散与自回归的取舍
       
     </span>
   </a>
@@ -2692,6 +2725,20 @@
 <p>损失：</p>
 <div class="arithmatex">\[\mathcal{L}_1=-\log 0.657=0.42\]</div>
 <p><strong>怎么读这个数</strong>：0.657 意味着模型只有 66% 的把握认出"这张图配这段文字"。训练就是把这个数推向 1。</p>
+<h3 id="22-workork">2.2 零样本分类为什么能 workork<a class="headerlink" href="#22-workork" title="Permanent link">¶</a></h3>
+<p>CLIP 训练完后，做图像分类不需要任何标注：</p>
+<ol>
+<li>把每个类别名写成句子（"一张猫的照片"），编码成文本向量；</li>
+<li>把待分类图像编码成图像向量；</li>
+<li>算余弦相似度，取最高的那一类。</li>
+</ol>
+<p><strong>为什么有效</strong>：训练时模型学的是"图文是否配对"，而不是"这是什么类别"。所以只要类别能用语言描述，它就能分类——<strong>类别空间是开放的</strong>。</p>
+<p><strong>什么时候会失效</strong>：</p>
+<ul>
+<li>类别无法用语言区分（"这只鸟是哪个亚种"）；</li>
+<li>类别名有歧义（"bank" 是银行还是河岸）；</li>
+<li>细粒度任务（CLIP 在鸟类亚种上远不如专用模型）。</li>
+</ul>
 <hr />
 <h2 id="3">3 三种架构<a class="headerlink" href="#3" title="Permanent link">¶</a></h2>
 <figure>
@@ -2738,6 +2785,10 @@
 </span></code></pre></div>
 <p>其中 <code>&lt;image&gt;</code> 会被替换成 576 个视觉 token（<span class="arithmatex">\(24\times24\)</span> 个 patch）。</p>
 <p><strong>关键点</strong>：训练时只对 assistant 部分算损失（第 8 讲的 loss mask），视觉 token 不产生梯度。这让"冻结视觉编码器"成为可能——只训 projector 和 LLM 的适配层。</p>
+<h3 id="32-projector">3.2 projector 训练的两个技巧<a class="headerlink" href="#32-projector" title="Permanent link">¶</a></h3>
+<p><strong>技巧一：先对齐、再指令。</strong> 第一阶段只用图文对（"这张图是什么"），冻结 LLM 只训 projector；第二阶段再放开 LLM 做指令微调。一上来就联合训练，容易把语言能力练坏。</p>
+<p><strong>技巧二：控制视觉 token 数。</strong> 一张图 576 个 token 会挤占对话空间。常见做法是<strong>池化</strong>到 256 个，或用 Q-Former 压到 32 个——代价是细节丢失。</p>
+<p><strong>经验值</strong>：projector 通常只有 2 层 MLP（约 20M 参数），却能带来显著效果——因为它做的是"翻译"，不是"理解"。</p>
 <hr />
 <h2 id="4">4 扩散模型<a class="headerlink" href="#4" title="Permanent link">¶</a></h2>
 <figure>
@@ -2822,6 +2873,40 @@
 </span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="nb">print</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>      <span class="c1"># torch.Size([1, 196, 768])</span>
 </span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="nb">print</span><span class="p">(</span><span class="mi">196</span> <span class="o">*</span> <span class="mi">768</span><span class="p">)</span>         <span class="c1"># 150528 = 3*16*16*196，与输入像素数一致</span>
 </span></code></pre></div>
+<h3 id="43">4.3 扩散与自回归的取舍<a class="headerlink" href="#43" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>自回归（GPT 类）</th>
+<th>扩散（Stable Diffusion 类）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>生成方式</td>
+<td>逐 token</td>
+<td>整体去噪</td>
+</tr>
+<tr>
+<td>速度</td>
+<td>慢（串行）</td>
+<td>快（并行，几十步）</td>
+</tr>
+<tr>
+<td>可控性</td>
+<td>强（prompt 精确）</td>
+<td>弱（需要额外条件）</td>
+</tr>
+<tr>
+<td>适合</td>
+<td>文本、代码</td>
+<td>图像、视频、音频</td>
+</tr>
+</tbody>
+</table>
+<p><strong>为什么文本不用扩散</strong>：文本是离散的，扩散需要连续空间；图像是连续的，天然适合。</p>
+<p><strong>融合趋势</strong>：2024 年之后出现"统一 tokenizer + 自回归生成图像"的路线（如 Chameleon），把图像也变成离散 token，用同一个模型生成——代价是图像质量暂时不如专用扩散模型。</p>
 <hr />
 <h2 id="5">5 统一多模态的路线<a class="headerlink" href="#5" title="Permanent link">¶</a></h2>
 <p>三条路线在竞争：</p>

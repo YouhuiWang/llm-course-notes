@@ -9966,6 +9966,16 @@ P_i=\frac{1}{T}\sum_{t}g_i(x_t)
 </tbody>
 </table>
 <p><strong>一个常见误区</strong>：以为维度越高越好。1024 维与 4096 维在多数任务上差距很小，但存储和检索成本差 4 倍。</p>
+<h3 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l16-rag-13">1.3 嵌入模型的选型清单<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l16-rag-13" title="Permanent link">¶</a></h3>
+<p>五个维度，按重要性排序：</p>
+<ol>
+<li><strong>中文效果</strong>：MTEB 的中文子集（C-MTEB）比总榜更有参考价值；</li>
+<li><strong>维度</strong>：768–1024 是甜点区，4096 维的存储与检索成本高 4 倍，收益通常不到 2 个点；</li>
+<li><strong>最大长度</strong>：必须 ≥ chunk 大小，否则长块会被截断；</li>
+<li><strong>推理成本</strong>：本地部署看显存，API 看单价；</li>
+<li><strong>是否支持指令</strong>：有些模型需要前缀（"为检索生成向量："），漏了会掉点。</li>
+</ol>
+<p><strong>一个反直觉的结论</strong>：换嵌入模型的收益，通常不如<strong>把切分改对</strong>。先调切分，再换模型。</p>
 <hr />
 <h05-%e5%ba%94%e7%94%a8%e5%b1%82-l16-rag-2 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l16-rag-2">2 检索<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l16-rag-2" title="Permanent link">¶</a></h2>
 <figure>
@@ -10013,6 +10023,45 @@ P_i=\frac{1}{T}\sum_{t}g_i(x_t)
 <div class="arithmatex">\[\text{score}(B)=\frac{1}{60+2}+\frac{1}{60+1}=0.01613+0.01639=0.03252\]</div>
 <p><strong>B 略胜</strong>——它在两路里都靠前，而 A 有一路掉到第 3。</p>
 <p><strong><span class="arithmatex">\(k=60\)</span> 的作用</strong>：压平头部差距。<span class="arithmatex">\(k\)</span> 越小，第一名越占优势；<span class="arithmatex">\(k\)</span> 越大，越看重"两路都上榜"。</p>
+<h3 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l16-rag-22">2.2 检索失败的三类原因<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l16-rag-22" title="Permanent link">¶</a></h3>
+<p>调 RAG 时最常见的困惑是"答案不对，但不知道是检索的错还是生成的错"。先把检索失败分成三类，对策完全不同：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>表现</th>
+<th>根因</th>
+<th>对策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>词汇鸿沟</strong></td>
+<td>用户说"报销"，文档写"费用核销"</td>
+<td>字面不匹配</td>
+<td>混合检索、查询改写、HyDE</td>
+</tr>
+<tr>
+<td><strong>分块切断</strong></td>
+<td>答案跨两个块，两块都不完整</td>
+<td>切分边界切断了语义</td>
+<td>加大重叠、按标题切、父子块</td>
+</tr>
+<tr>
+<td><strong>多跳缺失</strong></td>
+<td>答案需要 A→B 两步推理</td>
+<td>单次检索只取一段</td>
+<td>多轮检索、查询分解</td>
+</tr>
+</tbody>
+</table>
+<p><strong>怎么判断是哪一类</strong>：把检索到的 top-5 片段打出来人工看一遍。</p>
+<ul>
+<li>相关片段根本没出现 → 词汇鸿沟</li>
+<li>出现了但被切断 → 分块问题</li>
+<li>每段都对但答不出 → 多跳缺失</li>
+</ul>
+<p><strong>这个 5 分钟的检查，比调任何参数都有效</strong>——大多数团队跳过它，直接去换嵌入模型。</p>
 <hr />
 <h2 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l16-rag-3">3 查询侧<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l16-rag-3" title="Permanent link">¶</a></h2>
 <p>用户的问题往往不适合直接检索：</p>
@@ -10043,6 +10092,15 @@ P_i=\frac{1}{T}\sum_{t}g_i(x_t)
 </tbody>
 </table>
 <p><strong>HyDE 的直觉</strong>：问题与答案的用词分布不同。先让模型"编"一段答案，答案的措辞更接近文档，检索命中率更高。</p>
+<h3 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l16-rag-23">2.3 调优顺序<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l16-rag-23" title="Permanent link">¶</a></h3>
+<p>RAG 的环节多，乱调会互相干扰。推荐的顺序与理由：</p>
+<ol>
+<li><strong>切分</strong>：决定召回上限，先定 256–512 并做重叠；改这一项，后面所有指标都要重测。</li>
+<li><strong>嵌入模型</strong>：在切分固定后对比 2–3 个候选，看 Recall@10。</li>
+<li><strong>混合检索</strong>：稀疏+稠密的融合通常带来 5–10 个点，且不依赖模型替换。</li>
+<li><strong>重排</strong>：最后做，因为它的收益依赖召回质量——召回烂，重排也救不回来。</li>
+</ol>
+<p><strong>为什么这个顺序</strong>：每一步的收益都建立在前面已经调好的基础上。反过来先调重排，会得到"重排没用"的错误结论。</p>
 <hr />
 <h2 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l16-rag-4">4 重排与压缩<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l16-rag-4" title="Permanent link">¶</a></h2>
 <p><strong>重排</strong>（rerank）用交叉编码器对召回的 top-50 精排到 top-5：</p>
@@ -10060,6 +10118,13 @@ P_i=\frac{1}{T}\sum_{t}g_i(x_t)
 <li><strong>允许说不知道</strong>：检索结果不足时明确说"资料里没有"；</li>
 <li><strong>格式约束</strong>：用第 15 讲的约束解码保证引用格式合法。</li>
 </ol>
+<h3 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l16-rag-51">5.1 生成阶段的三个硬约束<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l16-rag-51" title="Permanent link">¶</a></h3>
+<ol>
+<li><strong>必须引用</strong>：要求每个结论标 <code>[1][2]</code>，没有来源的句子不允许出现。这一条能挡掉大部分幻觉。</li>
+<li><strong>允许说不知道</strong>：检索结果与问题无关时，明确输出"资料里没有"。没有这条，模型会硬编。</li>
+<li><strong>限制推断</strong>：只允许基于片段做<strong>直接推断</strong>，不允许引入外部知识。需要外部知识时，应该再检索一次。</li>
+</ol>
+<p><strong>怎么落地</strong>：用第 15 讲的约束解码保证引用格式合法；用后处理检查"每个 <code>[n]</code> 是否真的出现在上下文里"。</p>
 <hr />
 <h2 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l16-rag-6">6 评估<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l16-rag-6" title="Permanent link">¶</a></h2>
 <figure>
@@ -11092,6 +11157,8 @@ P_i=\frac{1}{T}\sum_{t}g_i(x_t)
 <p class="admonition-title">一句话总结</p>
 <p>多 agent 是<strong>用通信成本换并行与专业化</strong>；换不来就是负收益。</p>
 </div>
+<p><strong>一个反直觉的经验</strong>：单 agent + 好工具，往往打败多 agent。因为多 agent 的每次交接都要序列化一次上下文，信息在传递中衰减；而单 agent 的上下文是连续的。</p>
+<p>只有在"子任务需要完全不同的系统提示"或"子任务可以真并行"时，多 agent 才有优势。</p>
 <hr />
 <h2 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l18-agent-2-1">1 拓扑与通信<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l18-agent-2-1" title="Permanent link">¶</a></h2>
 <figure>
@@ -11170,6 +11237,43 @@ P_i=\frac{1}{T}\sum_{t}g_i(x_t)
 <p><strong>MCP 的价值在生态</strong>：工具方写一次 server，所有支持 MCP 的宿主都能用。</p>
 <p><strong>A2A 的价值在跨组织</strong>：不同公司、不同框架的 agent 能互相调用，靠 Agent Card 描述"我能做什么"。</p>
 <p><strong>安全边界</strong>：MCP 的 server 返回内容会直接进入上下文——这是间接注入的主要入口（第 10 讲）。A2A 更危险，因为对端完全不受你控制。</p>
+<h3 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l18-agent-2-21">2.1 三种编排抽象<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l18-agent-2-21" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>框架</th>
+<th>抽象</th>
+<th>控制流在哪</th>
+<th>适合</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LangGraph</strong></td>
+<td>图（节点+边+状态）</td>
+<td>代码</td>
+<td>生产、需可测可恢复</td>
+</tr>
+<tr>
+<td><strong>AutoGen</strong></td>
+<td>对话</td>
+<td>模型</td>
+<td>研究、多角色协作</td>
+</tr>
+<tr>
+<td><strong>CrewAI</strong></td>
+<td>角色+任务</td>
+<td>代码+模型</td>
+<td>快速原型</td>
+</tr>
+</tbody>
+</table>
+<p><strong>判断标准</strong>：能不能给"流程"写单元测试。</p>
+<ul>
+<li>图可以：每个节点单独测，每条边构造场景；</li>
+<li>对话不行：多 agent 自由对话的路径无法枚举。</li>
+</ul>
+<p><strong>结论</strong>：演示用对话式，上线用图。</p>
 <hr />
 <h2 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l18-agent-2-3-agent">3 训练 agent<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l18-agent-2-3-agent" title="Permanent link">¶</a></h2>
 <figure>
@@ -11209,6 +11313,35 @@ P_i=\frac{1}{T}\sum_{t}g_i(x_t)
 <div class="arithmatex">\[\text{至少成功一次}=1-(1-0.4)^4=1-0.1296=0.87\]</div>
 <p>也就是说，<strong>1000 次尝试能得到约 870 条成功轨迹</strong>，而不用人工标注。</p>
 <p>代价是 4 倍的推理成本——但比雇人写轨迹便宜得多。</p>
+<h3 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l18-agent-2-31_1">3.1 轨迹数据要多少<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l18-agent-2-31_1" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>量级</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SFT 冷启动</td>
+<td>500–2000 条</td>
+<td>覆盖工具调用格式</td>
+</tr>
+<tr>
+<td>拒绝采样</td>
+<td>每任务 4–8 次</td>
+<td>成功率 40% 时约 0.8–0.97</td>
+</tr>
+<tr>
+<td>RL</td>
+<td>万级以上</td>
+<td>需要大量环境交互</td>
+</tr>
+</tbody>
+</table>
+<p><strong>判断够不够</strong>：留 10% 轨迹做验证，如果训练集和验证集的成功率差距 &gt; 15 个点，说明数据不够或过拟合。</p>
+<p><strong>最容易被忽略的是"负样本"</strong>：只训成功轨迹，模型学不到"什么不该做"。建议保留 20% 的失败轨迹，标注失败原因。</p>
 <h3 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l18-agent-2-32">3.2 信用分配<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l18-agent-2-32" title="Permanent link">¶</a></h3>
 <p>一条 20 步的轨迹，最终失败了。是哪一步的错？</p>
 <p>三种做法：</p>
@@ -11306,6 +11439,39 @@ P_i=\frac{1}{T}\sum_{t}g_i(x_t)
 </span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l18-agent-2-__codelineno-0-31"></a><span class="n">bus</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">Message</span><span class="p">(</span><span class="s2">"worker-1"</span><span class="p">,</span> <span class="s2">"manager"</span><span class="p">,</span> <span class="s2">"4821 行"</span><span class="p">,</span> <span class="s2">"result"</span><span class="p">))</span>
 </span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l18-agent-2-__codelineno-0-32"></a><span class="nb">print</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">stats</span><span class="p">())</span>
 </span></code></pre></div>
+<h3 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l18-agent-2-42">4.2 把五层归因做成流程<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l18-agent-2-42" title="Permanent link">¶</a></h3>
+<p>人工归因 100 次失败要半天。更实际的做法是<strong>先用规则分类，再人工复核存疑项</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>可自动识别的信号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>决策</td>
+<td>同一任务多次采样，选的动作分布差异大</td>
+</tr>
+<tr>
+<td>状态</td>
+<td>上下文里出现"忘了前面说的"类表述</td>
+</tr>
+<tr>
+<td>执行</td>
+<td>工具返回非 200 / 参数校验失败</td>
+</tr>
+<tr>
+<td>环境</td>
+<td>工具超时、返回空、返回格式异常</td>
+</tr>
+<tr>
+<td>治理</td>
+<td>触发人工审批、被策略拦截</td>
+</tr>
+</tbody>
+</table>
+<p><strong>经验值</strong>：60%–70% 的失败能被规则自动归类，剩下的才需要人看。这能把归因成本降到 &#8531;，也让"每周复盘"变得可持续。</p>
 <hr />
 <h2 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l18-agent-2-5">5 评测<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l18-agent-2-5" title="Permanent link">¶</a></h2>
 <table>
@@ -11340,6 +11506,17 @@ P_i=\frac{1}{T}\sum_{t}g_i(x_t)
 </tbody>
 </table>
 <p><strong>统计功效问题</strong>：50 个任务的评测集，成功率的 95% 置信区间宽度约 ±14 个点。<strong>"提升 3%" 在这种规模下根本不显著</strong>——要可靠比较，至少 200 个任务。</p>
+<h3 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l18-agent-2-51">5.1 小样本评测为什么不可信<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l18-agent-2-51" title="Permanent link">¶</a></h3>
+<p>agent 评测的任务往往很贵（要跑真实环境），所以大家只测 50 条。但 50 条的统计功效极低：</p>
+<div class="arithmatex">\[\text{95\% 置信区间}\approx \hat p \pm 1.96\sqrt{\frac{\hat p(1-\hat p)}{n}}\]</div>
+<p><span class="arithmatex">\(n=50\)</span>、<span class="arithmatex">\(\hat p=0.6\)</span> 时，区间是 <span class="arithmatex">\(0.6\pm0.136\)</span>，即 46%–74%。</p>
+<p><strong>含义</strong>：两个系统一个 60%、一个 55%，在 50 条样本上<strong>根本无法区分</strong>。</p>
+<p><strong>三个应对</strong>：</p>
+<ol>
+<li><strong>增加样本</strong>：至少 200 条，区间才收窄到 ±7 个点；</li>
+<li><strong>配对比较</strong>：同一批任务上跑两个系统，用配对检验，方差小得多；</li>
+<li><strong>报告区间</strong>：不报点估计，报置信区间——这比"提升了 3%"诚实得多。</li>
+</ol>
 <hr />
 <h2 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l18-agent-2-6">6 工程要点与坑<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l18-agent-2-6" title="Permanent link">¶</a></h2>
 <ol>
@@ -11540,6 +11717,20 @@ P_i=\frac{1}{T}\sum_{t}g_i(x_t)
 <p>损失：</p>
 <div class="arithmatex">\[\mathcal{L}_1=-\log 0.657=0.42\]</div>
 <p><strong>怎么读这个数</strong>：0.657 意味着模型只有 66% 的把握认出"这张图配这段文字"。训练就是把这个数推向 1。</p>
+<h3 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l19-multimodal-22-workork">2.2 零样本分类为什么能 workork<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l19-multimodal-22-workork" title="Permanent link">¶</a></h3>
+<p>CLIP 训练完后，做图像分类不需要任何标注：</p>
+<ol>
+<li>把每个类别名写成句子（"一张猫的照片"），编码成文本向量；</li>
+<li>把待分类图像编码成图像向量；</li>
+<li>算余弦相似度，取最高的那一类。</li>
+</ol>
+<p><strong>为什么有效</strong>：训练时模型学的是"图文是否配对"，而不是"这是什么类别"。所以只要类别能用语言描述，它就能分类——<strong>类别空间是开放的</strong>。</p>
+<p><strong>什么时候会失效</strong>：</p>
+<ul>
+<li>类别无法用语言区分（"这只鸟是哪个亚种"）；</li>
+<li>类别名有歧义（"bank" 是银行还是河岸）；</li>
+<li>细粒度任务（CLIP 在鸟类亚种上远不如专用模型）。</li>
+</ul>
 <hr />
 <h2 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l19-multimodal-3">3 三种架构<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l19-multimodal-3" title="Permanent link">¶</a></h2>
 <figure>
@@ -11586,6 +11777,10 @@ P_i=\frac{1}{T}\sum_{t}g_i(x_t)
 </span></code></pre></div>
 <p>其中 <code>&lt;image&gt;</code> 会被替换成 576 个视觉 token（<span class="arithmatex">\(24\times24\)</span> 个 patch）。</p>
 <p><strong>关键点</strong>：训练时只对 assistant 部分算损失（第 8 讲的 loss mask），视觉 token 不产生梯度。这让"冻结视觉编码器"成为可能——只训 projector 和 LLM 的适配层。</p>
+<h3 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l19-multimodal-32-projector">3.2 projector 训练的两个技巧<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l19-multimodal-32-projector" title="Permanent link">¶</a></h3>
+<p><strong>技巧一：先对齐、再指令。</strong> 第一阶段只用图文对（"这张图是什么"），冻结 LLM 只训 projector；第二阶段再放开 LLM 做指令微调。一上来就联合训练，容易把语言能力练坏。</p>
+<p><strong>技巧二：控制视觉 token 数。</strong> 一张图 576 个 token 会挤占对话空间。常见做法是<strong>池化</strong>到 256 个，或用 Q-Former 压到 32 个——代价是细节丢失。</p>
+<p><strong>经验值</strong>：projector 通常只有 2 层 MLP（约 20M 参数），却能带来显著效果——因为它做的是"翻译"，不是"理解"。</p>
 <hr />
 <h2 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l19-multimodal-4">4 扩散模型<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l19-multimodal-4" title="Permanent link">¶</a></h2>
 <figure>
@@ -11670,6 +11865,40 @@ P_i=\frac{1}{T}\sum_{t}g_i(x_t)
 </span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l19-multimodal-__codelineno-1-15"></a><span class="nb">print</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>      <span class="c1"># torch.Size([1, 196, 768])</span>
 </span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l19-multimodal-__codelineno-1-16"></a><span class="nb">print</span><span class="p">(</span><span class="mi">196</span> <span class="o">*</span> <span class="mi">768</span><span class="p">)</span>         <span class="c1"># 150528 = 3*16*16*196，与输入像素数一致</span>
 </span></code></pre></div>
+<h3 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l19-multimodal-43">4.3 扩散与自回归的取舍<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l19-multimodal-43" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>自回归（GPT 类）</th>
+<th>扩散（Stable Diffusion 类）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>生成方式</td>
+<td>逐 token</td>
+<td>整体去噪</td>
+</tr>
+<tr>
+<td>速度</td>
+<td>慢（串行）</td>
+<td>快（并行，几十步）</td>
+</tr>
+<tr>
+<td>可控性</td>
+<td>强（prompt 精确）</td>
+<td>弱（需要额外条件）</td>
+</tr>
+<tr>
+<td>适合</td>
+<td>文本、代码</td>
+<td>图像、视频、音频</td>
+</tr>
+</tbody>
+</table>
+<p><strong>为什么文本不用扩散</strong>：文本是离散的，扩散需要连续空间；图像是连续的，天然适合。</p>
+<p><strong>融合趋势</strong>：2024 年之后出现"统一 tokenizer + 自回归生成图像"的路线（如 Chameleon），把图像也变成离散 token，用同一个模型生成——代价是图像质量暂时不如专用扩散模型。</p>
 <hr />
 <h2 id="05-%e5%ba%94%e7%94%a8%e5%b1%82-l19-multimodal-5">5 统一多模态的路线<a class="headerlink" href="#05-%e5%ba%94%e7%94%a8%e5%b1%82-l19-multimodal-5" title="Permanent link">¶</a></h2>
 <p>三条路线在竞争：</p>
@@ -12258,6 +12487,11 @@ P_i=\frac{1}{T}\sum_{t}g_i(x_t)
 <p>对照：答错但格式对 → <span class="arithmatex">\(0+0.2=0.2\)</span>；答错且格式错 → <span class="arithmatex">\(0+0-0.1=-0.1\)</span>。</p>
 <p><strong>为什么要有长度惩罚</strong>：不加的话，模型会发现"写得越长越可能蒙对"，于是无限啰嗦。</p>
 <p><strong>为什么格式奖励要小</strong>：格式只是手段，不是目的。权重给大了，模型会为了格式牺牲正确性。</p>
+<h3 id="06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l21-reasoning-training-21_1">2.1 三个奖励设计反例<a class="headerlink" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l21-reasoning-training-21_1" title="Permanent link">¶</a></h3>
+<p><strong>反例一：把长度当奖励。</strong> 某团队奖励"推理更详细"，结果模型学会了重复同一段话 20 遍。长度是<strong>结果</strong>，不是目标。</p>
+<p><strong>反例二：格式奖励给太重。</strong> 格式分 0.5、正确性 0.5，模型很快学会"格式完美但答案乱写"——因为格式比正确容易拿分。</p>
+<p><strong>反例三：验证器有漏洞。</strong> 用正则匹配答案，模型发现"输出所有可能的数字"能命中任意一个。验证器必须<strong>严格</strong>，宁可漏判不可误判。</p>
+<p><strong>共同点</strong>：奖励是模型唯一能看见的目标。<strong>你奖励什么，就会得到什么</strong>——包括你没想奖励的那些。</p>
 <hr />
 <h2 id="06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l21-reasoning-training-3-grpo">3 GRPO：不要价值网络<a class="headerlink" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l21-reasoning-training-3-grpo" title="Permanent link">¶</a></h2>
 <figure>
@@ -12317,6 +12551,11 @@ A_{\text{错}}=\frac{0-0.375}{0.484}=-0.77\]</div>
 <li><strong>采样数决定信号质量</strong>：8 个里只有 3 个对，方差大，优势不稳。</li>
 </ol>
 </div>
+<h3 id="06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l21-reasoning-training-33">3.3 验证器怎么写<a class="headerlink" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l21-reasoning-training-33" title="Permanent link">¶</a></h3>
+<p><strong>数学题</strong>：不要用字符串匹配，要<strong>数值等价</strong>——"0.5" 与 "&frac12;" 应判为相同。做法是抽出答案表达式，用 sympy 化简后比较。</p>
+<p><strong>代码题</strong>：跑单元测试。注意<strong>隔离</strong>：在容器里跑，限制时间与内存，防止死循环拖垮评测。</p>
+<p><strong>选择题</strong>：正则抽 A/B/C/D，同时校验只有一个选项。</p>
+<p><strong>通用原则</strong>：验证器要能<strong>判定错</strong>，而不是"看起来对"。宽松的验证器会教出"钻空子"的模型。</p>
 <hr />
 <h2 id="06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l21-reasoning-training-4">4 长度为什么会长<a class="headerlink" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l21-reasoning-training-4" title="Permanent link">¶</a></h2>
 <figure>
@@ -12332,6 +12571,40 @@ A_{\text{错}}=\frac{0-0.375}{0.484}=-0.77\]</div>
 </ul>
 <h3 id="06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l21-reasoning-training-42">4.2 代价<a class="headerlink" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l21-reasoning-training-42" title="Permanent link">¶</a></h3>
 <p>长度涨 7.6 倍，推理成本也涨 7.6 倍。所以后来的工作都在做"<strong>长度控制</strong>"：在奖励里加长度惩罚，或训练模型"该停就停"。</p>
+<h3 id="06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l21-reasoning-training-44">4.4 冷启动数据从哪来<a class="headerlink" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l21-reasoning-training-44" title="Permanent link">¶</a></h3>
+<p>三条路，成本差一个数量级：</p>
+<table>
+<thead>
+<tr>
+<th>来源</th>
+<th>做法</th>
+<th>量级</th>
+<th>质量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>人工撰写</strong></td>
+<td>专家写完整推理链</td>
+<td>几百到几千条</td>
+<td>最高</td>
+</tr>
+<tr>
+<td><strong>强模型蒸馏</strong></td>
+<td>用 o1/R1 类模型生成</td>
+<td>几万条</td>
+<td>高，但继承教师偏差</td>
+</tr>
+<tr>
+<td><strong>拒绝采样</strong></td>
+<td>自己采多次，留正确的</td>
+<td>取决于成功率</td>
+<td>中，需过滤</td>
+</tr>
+</tbody>
+</table>
+<p><strong>经验值</strong>：1000 条人工 + 1 万条蒸馏，是性价比最高的组合。纯蒸馏的问题是"学生会继承老师的所有坏习惯"，纯人工的问题是"太贵、太慢"。</p>
+<p><strong>一个细节</strong>：冷启动数据的<strong>格式统一</strong>比内容更重要。推理链的风格不一致，模型会学到"格式混乱"，后面 RL 很难纠正。</p>
 <hr />
 <h2 id="06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l21-reasoning-training-5">5 冷启动与蒸馏<a class="headerlink" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l21-reasoning-training-5" title="Permanent link">¶</a></h2>
 <h3 id="06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l21-reasoning-training-213">例 21.3　蒸馏的压缩比<a class="headerlink" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l21-reasoning-training-213" title="Permanent link">¶</a></h3>
@@ -12339,6 +12612,35 @@ A_{\text{错}}=\frac{0-0.375}{0.484}=-0.77\]</div>
 <div class="arithmatex">\[\text{压缩比}=\frac{8000}{2000}=4\]</div>
 <p><strong>为什么能压缩</strong>：大模型的推理链里有大量"自我怀疑"和"重复验证"，蒸馏时这些冗余被过滤掉了——小模型学到的是<strong>主干路径</strong>。</p>
 <p>代价是上限降低：小模型在超难题上仍会输给大模型，但差距比"直接训小模型"小得多。</p>
+<h3 id="06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l21-reasoning-training-43">4.3 长度控制的三种做法<a class="headerlink" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l21-reasoning-training-43" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>做法</th>
+<th>怎么实现</th>
+<th>代价</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>奖励惩罚</strong></td>
+<td>在奖励里加 <span class="arithmatex">\(-\lambda\cdot\text{length}\)</span></td>
+<td>可能压制必要的长推理</td>
+</tr>
+<tr>
+<td><strong>长度预算</strong></td>
+<td>训练时按难度分配 token 上限</td>
+<td>需要难度估计</td>
+</tr>
+<tr>
+<td><strong>自适应停止</strong></td>
+<td>让模型学会输出"够了"标记</td>
+<td>需要额外标注</td>
+</tr>
+</tbody>
+</table>
+<p><strong>实践中最稳的是第二种</strong>：简单题给 1K 预算，难题给 16K。它不改变奖励结构，只是把"该想多久"变成先验。</p>
+<p><strong>一个反直觉的观察</strong>：强制所有题都用长推理，平均准确率反而下降——因为简单题上多想的收益是负的（过度思考，见 L20）。</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l21-reasoning-training-__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l21-reasoning-training-__codelineno-0-2"></a>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l21-reasoning-training-__codelineno-0-3"></a>
@@ -12519,6 +12821,11 @@ A_{\text{错}}=\frac{0-0.375}{0.484}=-0.77\]</div>
 <h3 id="06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l22-frontier-12">1.2 具身智能<a class="headerlink" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l22-frontier-12" title="Permanent link">¶</a></h3>
 <p>机器人 + 大模型。难点不在模型，在<strong>数据</strong>：真实世界的交互数据比文本少几个数量级，且采集成本极高。</p>
 <p>三条路线：仿真里训（Sim2Real）、遥操作采集、视频预训练。</p>
+<h3 id="06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l22-frontier-13">1.3 具身智能的三个坑<a class="headerlink" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l22-frontier-13" title="Permanent link">¶</a></h3>
+<p><strong>坑一：仿真与现实的差距</strong>。在仿真里训练的策略，到了真实机器人上往往失效——摩擦、光照、传感器噪声都对不上。业界把这叫 sim-to-real gap，缓解手段是<strong>域随机化</strong>：训练时随机化物理参数，逼策略学会鲁棒。</p>
+<p><strong>坑二：数据贵且慢</strong>。遥操作采集一条 10 秒的抓取轨迹，需要一个人操作 + 一个人标注，成本是文本数据的几千倍。</p>
+<p><strong>坑三：评测无法自动化</strong>。文本任务可以跑测试用例，机器人任务只能真机试——这直接限制了迭代速度。</p>
+<p><strong>一个判断</strong>：具身智能的瓶颈在<strong>数据与评测</strong>，不在模型。这和语言模型恰好相反。</p>
 <hr />
 <h06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l22-frontier-2 id="06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l22-frontier-2">2 持续学习<a class="headerlink" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l22-frontier-2" title="Permanent link">¶</a></h2>
 <figure>
@@ -12538,6 +12845,36 @@ A_{\text{错}}=\frac{0-0.375}{0.484}=-0.77\]</div>
 <li><strong>正则化</strong>（EWC）：惩罚重要参数的改动，便宜但效果有限；</li>
 <li><strong>LoRA 隔离</strong>：每个任务一组适配器，完全不共享参数——不遗忘，但也不能迁移。</li>
 </ol>
+<h3 id="06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l22-frontier-21">2.1 回放怎么实现<a class="headerlink" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l22-frontier-21" title="Permanent link">¶</a></h3>
+<p>三种粒度，成本递增：</p>
+<table>
+<thead>
+<tr>
+<th>粒度</th>
+<th>做法</th>
+<th>成本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>样本级</strong></td>
+<td>每步混入 10% 旧任务样本</td>
+<td>+10% 算力</td>
+</tr>
+<tr>
+<td><strong>特征级</strong></td>
+<td>存旧任务的隐状态，蒸馏回放</td>
+<td>+20%，但不用存原始数据</td>
+</tr>
+<tr>
+<td><strong>参数级</strong></td>
+<td>EWC 惩罚重要参数的变化</td>
+<td>几乎免费，效果有限</td>
+</tr>
+</tbody>
+</table>
+<p><strong>选择建议</strong>：数据能存就用样本级（最简单、最有效）；数据敏感（隐私）用特征级。</p>
+<p><strong>一个坑</strong>：回放比例不是越高越好。超过 30% 后，新任务学得明显变慢，而遗忘只再降几个点。</p>
 <hr />
 <h2 id="06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l22-frontier-3">3 新架构<a class="headerlink" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l22-frontier-3" title="Permanent link">¶</a></h2>
 <figure>
@@ -12556,6 +12893,36 @@ A_{\text{错}}=\frac{0-0.375}{0.484}=-0.77\]</div>
 <li><span class="arithmatex">\(n&gt;4096\)</span>（长文档、代码仓库）：线性方法开始占优。</li>
 </ul>
 <p><strong>但理论复杂度不等于实际速度</strong>：线性注意力的常数项大、硬件利用率低，实测往往要到 <span class="arithmatex">\(n&gt;32\)</span>K 才真正快。</p>
+<h3 id="06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l22-frontier-32">3.2 混合架构的工程现实<a class="headerlink" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l22-frontier-32" title="Permanent link">¶</a></h3>
+<p>纯线性架构（Mamba 类）在"精确检索"任务上明显落后：让它从 10 万 token 里找出一句原话，不如全注意力可靠。原因是状态压缩会丢细节。</p>
+<p>主流做法是<strong>混合</strong>：大部分层用线性/SSM（省算力），少数层保留全注意力（保检索）。</p>
+<table>
+<thead>
+<tr>
+<th>配置</th>
+<th>算力</th>
+<th>长文本检索</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全注意力</td>
+<td>1×</td>
+<td>最好</td>
+</tr>
+<tr>
+<td>纯线性</td>
+<td>0.3×</td>
+<td>明显变差</td>
+</tr>
+<tr>
+<td>混合（&frac14; 层全注意力）</td>
+<td>0.5×</td>
+<td>接近全注意力</td>
+</tr>
+</tbody>
+</table>
+<p><strong>工程含义</strong>：换架构不是"全有或全无"，按比例混合往往性价比最高。Jamba 这类模型就是按这个思路设计的。</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l22-frontier-__codelineno-0-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">flops</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">linear</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l22-frontier-__codelineno-0-2"></a><span class="w">    </span><span class="sd">"""粗略 FLOPs：全注意力 O(n²d)，线性注意力 O(nd²)"""</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l22-frontier-__codelineno-0-3"></a>    <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n</span> <span class="o">*</span> <span class="n">d</span><span class="o">**</span><span class="mi">2</span> <span class="k">if</span> <span class="n">linear</span> <span class="k">else</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">d</span>
@@ -12688,6 +13055,15 @@ A_{\text{错}}=\frac{0-0.375}{0.484}=-0.77\]</div>
 </tbody>
 </table>
 <p><strong>结论</strong>：L1–L2 之间，<strong>可以关注，不能据此改架构</strong>。</p>
+<h3 id="06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l22-frontier-51">5.1 给一条新闻打分的实操<a class="headerlink" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l22-frontier-51" title="Permanent link">¶</a></h3>
+<p>三步，五分钟：</p>
+<ol>
+<li><strong>找原始来源</strong>：是论文、官方博客，还是二手报道？二手报道常有夸大。</li>
+<li><strong>看基线</strong>：和谁比？如果是"未优化的 Transformer"，赢是应该的。</li>
+<li><strong>看条件</strong>：在什么序列长度、什么 batch、什么硬件下测的？换个条件还成立吗？</li>
+</ol>
+<p><strong>一个常见的夸大手法</strong>：只报"最快的那一项"。比如长文本快 10 倍，但短文本慢 2 倍——只提前者。</p>
+<p><strong>打分表</strong>：三项都通过 → L3；只过两项 → L2；只过一项 → L1。</p>
 <hr />
 <h2 id="06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l22-frontier-6">6 工程要点与坑<a class="headerlink" href="#06-%e6%8e%a8%e7%90%86%e4%b8%8e%e5%89%8d%e6%b2%bf-l22-frontier-6" title="Permanent link">¶</a></h2>
 <ol>
@@ -13211,6 +13587,20 @@ A_{\text{错}}=\frac{0-0.375}{0.484}=-0.77\]</div>
 </table>
 <p><strong>结论</strong>：这个预算<strong>没有任何冗余</strong>。要么把生成压到 15 token（省 300 ms），要么加缓存（命中率 30% 就能省 600 ms）。</p>
 <p><strong>这就是"可测指标"的价值</strong>：它把"要快"变成了"哪一环超了就砍哪一环"。</p>
+<h3 id="07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-11">1.1 三个需求翻译模板<a class="headerlink" href="#07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-11" title="Permanent link">¶</a></h3>
+<p><strong>"要准"</strong> → 在什么数据上、用谁的标准、错多少可以接受？</p>
+<blockquote>
+<p>例：在 200 条标注合同上，要素抽取的字段级 F1 ≥ 0.85。</p>
+</blockquote>
+<p><strong>"要快"</strong> → P50 还是 P95？包含网络吗？</p>
+<blockquote>
+<p>例：P95 端到端延迟 ≤ 2s，其中首 token ≤ 400ms。</p>
+</blockquote>
+<p><strong>"要便宜"</strong> → 按请求算还是按月算？包含人力吗？</p>
+<blockquote>
+<p>例：单次请求成本 ≤ ¥0.02，不含运维人力。</p>
+</blockquote>
+<p><strong>模板的价值</strong>：它把"我觉得还行"变成"能不能过验收"。没有这句话，项目永远做不完。</p>
 <hr />
 <h07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-2 id="07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-2">2 选型<a class="headerlink" href="#07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-2" title="Permanent link">¶</a></h2>
 <figure>
@@ -13232,6 +13622,13 @@ A_{\text{错}}=\frac{0-0.375}{0.484}=-0.77\]</div>
 <div class="arithmatex">\[\frac{1.5\times10^{9}}{10^{6}}\times2=3000\ \text{元/月}\]</div>
 <p>加上检索存储（约 3000 元）与运维人力（约 1 万），总成本约 <strong>1.6 万/月</strong>。</p>
 <p><strong>对照</strong>：换成大模型（单价 20 元/百万），光推理就是 3 万/月，总成本 4.5 万。</p>
+<h3 id="07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-22">2.2 成本估算的三个陷阱<a class="headerlink" href="#07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-22" title="Permanent link">¶</a></h3>
+<p><strong>陷阱一：只算输入单价。</strong> 输出 token 通常比输入贵 4–10 倍。一个"输入 1000、输出 500"的请求，按 GPT-5 的 1.25/10 计价，输出占成本的 80%。只按输入算，会低估 5 倍。</p>
+<p><strong>陷阱二：忘了折扣。</strong> 前缀缓存能省 30%–70% 的输入成本，批处理 API 常打五折。真实账单往往只有"标价 × 调用量"的三分之一。</p>
+<p><strong>陷阱三：忘了重试与多轮。</strong> agent 类应用一次任务平均 5–10 次模型调用，失败重试再加 20%。按"一次请求"估算，会低估一个数量级。</p>
+<p><strong>正确的算法</strong>：</p>
+<div class="arithmatex">\[\text{月成本}=\underbrace{\text{调用次数}\times\text{单次 token}}_{\text{基础}}\times\underbrace{(1+\text{重试率})}_{\text{可靠性}}\times\underbrace{(1-\text{缓存命中率})}_{\text{折扣}}\]</div>
+<p>按这个式子算出来的数，通常比"标价 × 次数"低 30%–50%——但比"只算输入"高得多。</p>
 <hr />
 <h2 id="07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-3">3 实现路径<a class="headerlink" href="#07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-3" title="Permanent link">¶</a></h2>
 <figure>
@@ -13276,6 +13673,11 @@ A_{\text{错}}=\frac{0-0.375}{0.484}=-0.77\]</div>
 </tbody>
 </table>
 <p><strong>MVP 的关键是"窄"</strong>：只做一类问题、一个数据源、一个模型。宽了就做不完。</p>
+<h3 id="07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-31-mvp">3.1 MVP 的三个"不要"<a class="headerlink" href="#07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-31-mvp" title="Permanent link">¶</a></h3>
+<p><strong>不要做多轮对话</strong>。多轮会把状态管理、上下文裁剪、指代消解全带进来，复杂度翻三倍。先做单轮。</p>
+<p><strong>不要做多数据源</strong>。一个 PDF 库和一个数据库的检索逻辑完全不同。先接一个。</p>
+<p><strong>不要做前端</strong>。命令行或一个输入框就够。前端会吃掉一半时间，而它对"能不能做"这个问题没有帮助。</p>
+<p><strong>判断标准</strong>：如果 MVP 的代码超过 500 行，说明范围还是太宽。</p>
 <hr />
 <h2 id="07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-4">4 评测与上线<a class="headerlink" href="#07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-4" title="Permanent link">¶</a></h2>
 <p>三层评测（第 23 讲）：</p>
@@ -13311,6 +13713,64 @@ A_{\text{错}}=\frac{0-0.375}{0.484}=-0.77\]</div>
 <li><strong>一键回滚</strong>：任何指标异常，30 秒内切回旧版本；</li>
 <li><strong>对比监控</strong>：新旧版本的核心指标并排看。</li>
 </ol>
+<h3 id="07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-41">4.1 灰度怎么做才算数<a class="headerlink" href="#07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-41" title="Permanent link">¶</a></h3>
+<p>四步，每一步都有明确的停留时间与观察指标：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>流量</th>
+<th>停留</th>
+<th>看什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>内部白名单</td>
+<td>10–20 人</td>
+<td>3 天</td>
+<td>崩溃、明显错误</td>
+</tr>
+<tr>
+<td>1%</td>
+<td>真实用户</td>
+<td>3–7 天</td>
+<td>错误率、P95 延迟、投诉</td>
+</tr>
+<tr>
+<td>10%</td>
+<td>真实用户</td>
+<td>1–2 周</td>
+<td>与旧版的 A/B 指标</td>
+</tr>
+<tr>
+<td>50% → 100%</td>
+<td>全量</td>
+<td>视稳定性</td>
+<td>容量与成本</td>
+</tr>
+</tbody>
+</table>
+<p><strong>两个容易被跳过的动作</strong>：</p>
+<ol>
+<li><strong>回滚演练</strong>：灰度前先演练一次"切回旧版"，确认 30 秒内能完成。没演练过的回滚，真出事时大概率失败。</li>
+<li><strong>对比监控</strong>：新旧版本的核心指标必须并排显示。只看新版"看起来还行"，等于没监控。</li>
+</ol>
+<h3 id="07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-42">4.2 上线前检查清单<a class="headerlink" href="#07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-42" title="Permanent link">¶</a></h3>
+<p>十条，逐条打勾：</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 有评测集，且与训练数据无重叠</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 有基线，且能复现</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> P95 延迟达标，压测过峰值</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 有成本监控，设了预算告警</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 有一键回滚，且演练过</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 有日志，能定位到具体请求</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 有降级方案（模型挂了怎么办）</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 有内容安全过滤（输入 + 输出）</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 有用户反馈入口</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 有负责人与值班表</li>
+</ul>
+<p><strong>前三条不过，不要上线；后七条不过，上线后会被叫醒。</strong></p>
 <hr />
 <h2 id="07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-5">5 课程项目与评分<a class="headerlink" href="#07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-5" title="Permanent link">¶</a></h2>
 <figure>
@@ -13356,6 +13816,59 @@ A_{\text{错}}=\frac{0-0.375}{0.484}=-0.77\]</div>
 </span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-__codelineno-1-19"></a><span class="n">a</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"技术深度"</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span> <span class="s2">"工程完整"</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span> <span class="s2">"评测严谨"</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s2">"文档清晰"</span><span class="p">:</span> <span class="mf">0.85</span><span class="p">,</span> <span class="s2">"创新性"</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">}</span>
 </span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-__codelineno-1-20"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"总分 </span><span class="si">{</span><span class="n">score</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">，最该补的是「</span><span class="si">{</span><span class="n">weakest</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="si">}</span><span class="s2">」"</span><span class="p">)</span>   <span class="c1"># 0.7825，创新性</span>
 </span></code></pre></div>
+<h3 id="07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-52-mvp">5.2 两周 MVP 的日程表<a class="headerlink" href="#07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-52-mvp" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>天</th>
+<th>做什么</th>
+<th>产出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1</td>
+<td>定指标、圈数据、写验收标准</td>
+<td>一页纸的需求</td>
+</tr>
+<tr>
+<td>D2–D3</td>
+<td>跑通最简链路（一个模型 + 一个数据源）</td>
+<td>20 条样本能出结果</td>
+</tr>
+<tr>
+<td>D4–D5</td>
+<td>建 50 条评测集，跑基线</td>
+<td>基线分数</td>
+</tr>
+<tr>
+<td>D6–D8</td>
+<td>迭代：切分、提示、检索</td>
+<td>分数提升</td>
+</tr>
+<tr>
+<td>D9–D10</td>
+<td>加错误处理与日志</td>
+<td>能定位失败原因</td>
+</tr>
+<tr>
+<td>D11–D12</td>
+<td>内部试用，收集 20 条反馈</td>
+<td>问题清单</td>
+</tr>
+<tr>
+<td>D13</td>
+<td>修 top-3 问题</td>
+<td>稳定版</td>
+</tr>
+<tr>
+<td>D14</td>
+<td>写文档、演示、定下一步</td>
+<td>可交付的 MVP</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最容易超时的是 D4</strong>：很多人跳过评测集直接调参，结果调了两周说不清有没有变好。</p>
 <hr />
 <h2 id="07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-6">6 工程要点与坑<a class="headerlink" href="#07-%e6%b2%bb%e7%90%86%e4%b8%8e%e5%ae%9e%e8%b7%b5-l24-capstone-6" title="Permanent link">¶</a></h2>
 <ol>
